@@ -146,12 +146,12 @@
         "placeholder": false
       },
       {
-        "name": "Bischof",
-        "overall": 86,
-        "version": "Future Stars",
-        "item_id": "67372629",
-        "finish": "HOLO",
-        "placeholder": false
+        "name": "Player Card",
+        "overall": null,
+        "version": "",
+        "item_id": null,
+        "finish": null,
+        "placeholder": true
       },
       {
         "name": "Player Card",
