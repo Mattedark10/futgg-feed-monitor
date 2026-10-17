@@ -191,14 +191,17 @@ def resolve_finish(item_id, cache, previous_cards):
 
     item_id = str(item_id)
 
+    # Known finish
     if item_id in KNOWN_FINISHES:
         finish = KNOWN_FINISHES[item_id]
         cache[item_id] = finish
         return finish
 
+    # Cache
     if item_id in cache:
         return cache[item_id]
 
+    # Previous state
     for card in previous_cards:
         if not card:
             continue
@@ -253,6 +256,11 @@ def extract_lineup(
             "item_id": item_id,
         })
 
+    # --------------------------------------------------------
+    # Remove exact duplicate occurrences
+    # Different Item IDs remain separate.
+    # --------------------------------------------------------
+
     unique_cards = []
     seen_occurrences = set()
 
@@ -272,12 +280,20 @@ def extract_lineup(
 
     cards = unique_cards
 
+    # --------------------------------------------------------
+    # Keep expected amount
+    # --------------------------------------------------------
+
     real_count = min(
         len(cards),
         expected_slots
     )
 
     cards = cards[:real_count]
+
+    # --------------------------------------------------------
+    # Resolve finishes
+    # --------------------------------------------------------
 
     for card in cards:
         item_id = card["item_id"]
@@ -291,6 +307,10 @@ def extract_lineup(
         card["finish"] = finish
 
         lineup.append(card)
+
+    # --------------------------------------------------------
+    # Fill remaining slots with Player Card
+    # --------------------------------------------------------
 
     while len(lineup) < expected_slots:
         lineup.append(None)
@@ -330,7 +350,7 @@ def card_label(card):
     player_text = f"<b>{name} {overall}</b>"
 
     if finish:
-        return f"{player_text} — {finish}"
+        return f"{player_text} · {finish}"
 
     return player_text
 
@@ -365,16 +385,34 @@ def compare_cards(previous, current):
     outs = []
     ins = []
 
-    for key, count in previous_counter.items():
-        difference = count - current_counter.get(key, 0)
+    # --------------------------------------------------------
+    # OUT
+    # --------------------------------------------------------
 
-        for _ in range(max(0, difference)):
+    for key, count in previous_counter.items():
+        difference = count - current_counter.get(
+            key,
+            0
+        )
+
+        for _ in range(
+            max(0, difference)
+        ):
             outs.append(key)
 
-    for key, count in current_counter.items():
-        difference = count - previous_counter.get(key, 0)
+    # --------------------------------------------------------
+    # IN
+    # --------------------------------------------------------
 
-        for _ in range(max(0, difference)):
+    for key, count in current_counter.items():
+        difference = count - previous_counter.get(
+            key,
+            0
+        )
+
+        for _ in range(
+            max(0, difference)
+        ):
             ins.append(key)
 
     return outs, ins
@@ -490,7 +528,10 @@ def process_category(
     # --------------------------------------------------------
 
     if has_unknown_finish(current):
-        print("Finish unresolved - keeping previous state")
+        print(
+            "Finish unresolved - "
+            "keeping previous state"
+        )
 
         return {
             "changed": False,
@@ -502,7 +543,7 @@ def process_category(
         }
 
     # --------------------------------------------------------
-    # INITIAL RUN
+    # FIRST RUN
     # --------------------------------------------------------
 
     if not previous:
@@ -529,6 +570,10 @@ def process_category(
     changed = bool(
         outs or ins
     )
+
+    # --------------------------------------------------------
+    # SAVE
+    # --------------------------------------------------------
 
     players[category] = current
 
@@ -671,7 +716,7 @@ def format_category(
         )
 
     # --------------------------------------------------------
-    # NORMAL
+    # NORMAL RUN
     # --------------------------------------------------------
 
     else:
@@ -700,7 +745,7 @@ def format_category(
 
                     if finish:
                         lines.append(
-                            f"<b>{name} {overall}</b> — {finish}"
+                            f"<b>{name} {overall}</b> · {finish}"
                         )
                     else:
                         lines.append(
@@ -722,12 +767,16 @@ def format_category(
 
                     if finish:
                         lines.append(
-                            f"<b>{name} {overall}</b> — {finish}"
+                            f"<b>{name} {overall}</b> · {finish}"
                         )
                     else:
                         lines.append(
                             f"<b>{name} {overall}</b>"
                         )
+
+        # ----------------------------------------------------
+        # NO CHANGES
+        # ----------------------------------------------------
 
         if not outs and not ins:
             lines.append(
@@ -787,6 +836,10 @@ def main():
 
     results = {}
 
+    # --------------------------------------------------------
+    # SCAN ALL CATEGORIES
+    # --------------------------------------------------------
+
     for category, config in PAGES.items():
         results[category] = process_category(
             category,
@@ -796,7 +849,7 @@ def main():
         )
 
     # --------------------------------------------------------
-    # SAVE
+    # SAVE DATA
     # --------------------------------------------------------
 
     save_json(
@@ -810,7 +863,7 @@ def main():
     )
 
     # --------------------------------------------------------
-    # TELEGRAM MESSAGE
+    # BUILD TELEGRAM MESSAGE
     # --------------------------------------------------------
 
     parts = []
@@ -825,7 +878,7 @@ def main():
         )
 
     # --------------------------------------------------------
-    # SEPARATOR BETWEEN CATEGORIES
+    # CATEGORY SEPARATOR
     # --------------------------------------------------------
 
     message = (
@@ -835,11 +888,19 @@ def main():
         )
     )
 
+    # --------------------------------------------------------
+    # PRINT
+    # --------------------------------------------------------
+
     print("\n" + "=" * 60)
     print("TELEGRAM MESSAGE")
     print("=" * 60)
     print(message)
     print("=" * 60)
+
+    # --------------------------------------------------------
+    # SEND
+    # --------------------------------------------------------
 
     send_telegram(message)
 
