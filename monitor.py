@@ -2,12 +2,8 @@ import os
 import re
 import json
 import html
-import time
-from collections import Counter
-
 import requests
-from bs4 import BeautifulSoup
-
+from collections import Counter
 
 # ============================================================
 # CONFIG
@@ -17,21 +13,18 @@ PAGES = {
     "Heroes": {
         "url": "https://www.fut.gg/fut-gallery/rarities/heroes/",
         "expected": 5,
+        "emoji": "🦸‍♂️",
     },
     "Holographics": {
         "url": "https://www.fut.gg/fut-gallery/rarities/holographics/",
         "expected": 5,
+        "emoji": "✨️",
     },
     "Season 1": {
         "url": "https://www.fut.gg/fut-gallery/rarities/season-1/",
         "expected": 9,
+        "emoji": "1️⃣",
     },
-}
-
-PAGE_EMOJIS = {
-    "Heroes": "🦸‍♂️",
-    "Holographics": "✨️",
-    "Season 1": "1️⃣",
 }
 
 PLAYERS_FILE = "players.json"
@@ -40,21 +33,28 @@ CACHE_FILE = "card_cache.json"
 
 CACHE_VERSION = 2
 
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+
 HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
         "Chrome/140.0.0.0 Safari/537.36"
     ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "en-US,en;q=0.9",
 }
 
 
 # ============================================================
-# JSON
+# FILE HELPERS
 # ============================================================
 
 def load_json(path, default):
+    if not os.path.exists(path):
+        return default
+
     try:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
@@ -78,10 +78,34 @@ def save_json(path, data):
 
 
 # ============================================================
-# DOWNLOAD
+# CACHE
 # ============================================================
 
-def download_page(url):
+def load_cache():
+    cache = load_json(CACHE_FILE, {})
+
+    if cache.get("cache_version") != CACHE_VERSION:
+        print("Cache version mismatch. Resetting finish cache.")
+        return {
+            "cache_version": CACHE_VERSION,
+            "finishes": {},
+        }
+
+    if "finishes" not in cache:
+        cache["finishes"] = {}
+
+    return cache
+
+
+def save_cache(cache):
+    save_json(CACHE_FILE, cache)
+
+
+# ============================================================
+# DOWNLOAD PAGE
+# ============================================================
+
+def fetch_page(url):
     response = requests.get(
         url,
         headers=HEADERS,
@@ -94,549 +118,265 @@ def download_page(url):
 
 
 # ============================================================
-# LINEUP HTML
+# FIND LINEUP SECTION
 # ============================================================
 
 def get_lineup_html(page_html):
     """
-    Cerca la sezione della lineup in modo flessibile.
+    Tries to isolate the visible 'Cheapest grade X lineup'
+    section from the page.
+
+    We intentionally avoid the internal 'solution:' RSC object.
     """
 
-    soup = BeautifulSoup(
-        page_html,
-        "html.parser",
-    )
-
-    # --------------------------------------------------------
-    # 1. Cerca il testo "Cheapest grade ... lineup"
-    # --------------------------------------------------------
-
-    candidates = []
-
-    for element in soup.find_all(
-        string=re.compile(
-            r"cheapest\s+grade.*lineup",
-            re.IGNORECASE,
-        )
-    ):
-        candidates.append(element)
-
-    if candidates:
-        target = candidates[0]
-        parent = target.parent
-
-        # Risali nell'albero HTML
-        for _ in range(10):
-            if parent is None:
-                break
-
-            text = parent.get_text(
-                " ",
-                strip=True,
-            )
-
-            if (
-                "add players" in text.lower()
-            ):
-                return str(parent)
-
-            parent = parent.parent
-
-        if target.parent:
-            return str(target.parent)
-
-    # --------------------------------------------------------
-    # 2. Fallback sul raw HTML
-    # --------------------------------------------------------
-
-    lower = page_html.lower()
-
+    # First try the exact visible text
     patterns = [
-        r"cheapest\s+grade\s+\d+\s+lineup",
-        r"cheapest\s+grade\s+lineup",
-        r"cheapest\s+grade.{0,150}lineup",
+        r"Cheapest\s+grade\s+[^<]{0,100}lineup",
+        r"cheapest\s+grade\s+[^<]{0,100}lineup",
     ]
 
-    start = -1
+    match = None
 
     for pattern in patterns:
         match = re.search(
             pattern,
-            lower,
+            page_html,
             re.IGNORECASE,
         )
 
         if match:
-            start = match.start()
             break
 
-    if start == -1:
-        # Ultimo fallback
-        match = re.search(
-            r"lineup",
-            lower,
+    if match:
+        start = max(0, match.start() - 3000)
+
+        # The lineup normally ends before "Add players"
+        add_players = re.search(
+            r"Add\s+players",
+            page_html[match.end():],
             re.IGNORECASE,
         )
 
-        if match:
-            start = max(
-                0,
-                match.start() - 5000,
+        if add_players:
+            end = (
+                match.end()
+                + add_players.start()
+            )
+        else:
+            end = min(
+                len(page_html),
+                match.end() + 250000,
             )
 
-    if start == -1:
-        raise RuntimeError(
-            "Could not find lineup section"
-        )
+        return page_html[start:end]
 
-    end = lower.find(
-        "add players",
-        start,
+    # Fallback: search for the lineup container
+    lineup_match = re.search(
+        r"lineup",
+        page_html,
+        re.IGNORECASE,
     )
 
-    if end == -1:
+    if lineup_match:
+        start = max(0, lineup_match.start() - 3000)
         end = min(
-            start + 250000,
             len(page_html),
+            lineup_match.start() + 250000,
         )
 
-    return page_html[start:end]
+        return page_html[start:end]
+
+    raise ValueError(
+        "Could not find 'Cheapest grade X lineup'"
+    )
 
 
 # ============================================================
-# PLAYER ALT
+# CARD URL
 # ============================================================
 
-def parse_player_alt(alt):
-    if not alt:
-        return None
+def find_card_urls(section_html):
+    """
+    Extract FUT.GG player/card URLs.
+    """
 
-    alt = " ".join(
-        alt.split()
+    urls = re.findall(
+        r'https://www\.fut\.gg/[A-Za-z0-9_\-./%]+',
+        section_html,
+        re.IGNORECASE,
+    )
+
+    cleaned = []
+
+    for url in urls:
+        url = url.rstrip(
+            "\"'<>),.;"
+        )
+
+        if "/fut/player/" not in url:
+            continue
+
+        if url not in cleaned:
+            cleaned.append(url)
+
+    return cleaned
+
+
+# ============================================================
+# ITEM IDS
+# ============================================================
+
+def extract_item_ids(section_html):
+    """
+    Extract item IDs while preserving order and duplicates.
+    """
+
+    patterns = [
+        r'"itemId"\s*:\s*(\d+)',
+        r'"item_id"\s*:\s*(\d+)',
+        r'"ItemID"\s*:\s*(\d+)',
+        r'itemId=(\d+)',
+        r'item_id=(\d+)',
+    ]
+
+    ids = []
+
+    for pattern in patterns:
+        found = re.findall(
+            pattern,
+            section_html,
+            re.IGNORECASE,
+        )
+
+        for item_id in found:
+            if item_id not in ids:
+                ids.append(item_id)
+
+    return ids
+
+
+# ============================================================
+# CARD INFORMATION
+# ============================================================
+
+def clean_name(name):
+    name = html.unescape(name)
+    name = re.sub(r"\s+", " ", name)
+    return name.strip()
+
+
+def parse_card_url(url):
+    """
+    Attempts to extract player name / version / overall
+    from the FUT.GG URL/title information.
+    """
+
+    clean_url = url.rstrip("/")
+
+    slug = clean_url.split("/")[-1]
+
+    slug = slug.replace(
+        "-",
+        " ",
+    )
+
+    slug = re.sub(
+        r"\b\d{2}\b$",
+        "",
+        slug,
+    )
+
+    slug = re.sub(
+        r"\b\d{2}\s+OVR\b",
+        "",
+        slug,
+        flags=re.IGNORECASE,
+    )
+
+    slug = re.sub(
+        r"\s+",
+        " ",
+        slug,
     ).strip()
 
-    match = re.match(
-        r"^(.*?)\s*-\s*(\d{2})\s*-\s*(.+?)\s*$",
-        alt,
+    overall_match = re.search(
+        r"\b(\d{2})\b",
+        clean_url,
     )
 
-    if not match:
-        return None
+    overall = (
+        overall_match.group(1)
+        if overall_match
+        else "?"
+    )
 
     return {
-        "name": match.group(1).strip(),
-        "overall": int(match.group(2)),
-        "rarity": match.group(3).strip(),
+        "name": clean_name(slug),
+        "overall": overall,
+        "url": url,
     }
 
 
 # ============================================================
-# ITEM ID
+# EXACT CARD PAGE / FINISH
 # ============================================================
 
-def find_item_id_from_element(element):
-    if element is None:
-        return None
+def detect_finish_from_card_page(url):
+    """
+    Opens the exact card page and checks the title/name.
 
-    # --------------------------------------------------------
-    # Link
-    # --------------------------------------------------------
-
-    for a in element.find_all(
-        "a",
-        href=True,
-    ):
-        href = a.get("href", "")
-
-        match = re.search(
-            r"/27-(\d+)/?",
-            href,
-            re.IGNORECASE,
-        )
-
-        if match:
-            return match.group(1)
-
-    # --------------------------------------------------------
-    # Attributi
-    # --------------------------------------------------------
-
-    attributes = [
-        "item_id",
-        "itemid",
-        "itemId",
-        "eaId",
-        "eaid",
-        "player_id",
-        "playerId",
-    ]
-
-    nodes = [
-        element,
-        *element.find_all(True),
-    ]
-
-    for node in nodes:
-        for attribute in attributes:
-            value = node.get(
-                attribute
-            )
-
-            if value is None:
-                continue
-
-            match = re.search(
-                r"\d+",
-                str(value),
-            )
-
-            if match:
-                return match.group(0)
-
-    # --------------------------------------------------------
-    # HTML
-    # --------------------------------------------------------
-
-    raw = str(element)
-
-    patterns = [
-        r"/27-(\d+)/?",
-        r'"itemId"\s*:\s*"?(\\?\d+)',
-        r'"item_id"\s*:\s*"?(\\?\d+)',
-        r'"eaId"\s*:\s*"?(\\?\d+)',
-        r'"ea_id"\s*:\s*"?(\\?\d+)',
-    ]
-
-    for pattern in patterns:
-        match = re.search(
-            pattern,
-            raw,
-            re.IGNORECASE,
-        )
-
-        if match:
-            return match.group(1).replace(
-                "\\",
-                "",
-            )
-
-    return None
-
-
-# ============================================================
-# EXACT CARD URL
-# ============================================================
-
-def find_exact_card_url(
-    page_html,
-    item_id,
-):
-    if not item_id:
-        return None
-
-    pattern = re.compile(
-        rf"/players/[^\"']*/27-{re.escape(str(item_id))}/?",
-        re.IGNORECASE,
-    )
-
-    soup = BeautifulSoup(
-        page_html,
-        "html.parser",
-    )
-
-    for a in soup.find_all(
-        "a",
-        href=True,
-    ):
-        href = a.get("href", "")
-
-        match = pattern.search(href)
-
-        if match:
-            url = match.group(0)
-
-            if url.startswith("/"):
-                url = (
-                    "https://www.fut.gg"
-                    + url
-                )
-
-            return url
-
-    match = pattern.search(
-        page_html
-    )
-
-    if match:
-        return (
-            "https://www.fut.gg"
-            + match.group(0)
-        )
-
-    return None
-
-
-# ============================================================
-# FINISH DETECTION
-# ============================================================
-
-def detect_finish_from_card_page(
-    card_html
-):
-    soup = BeautifulSoup(
-        card_html,
-        "html.parser",
-    )
-
-    texts = []
-
-    # H1
-    h1 = soup.find("h1")
-
-    if h1:
-        texts.append(
-            h1.get_text(
-                " ",
-                strip=True,
-            )
-        )
-
-    # OG title
-    meta = soup.find(
-        "meta",
-        attrs={
-            "property": "og:title"
-        },
-    )
-
-    if meta and meta.get("content"):
-        texts.append(
-            meta.get("content")
-        )
-
-    # HTML title
-    if soup.title:
-        texts.append(
-            soup.title.get_text(
-                " ",
-                strip=True,
-            )
-        )
-
-    combined = " ".join(
-        texts
-    ).lower()
-
-    # PRISTINE deve essere controllato prima
-    if (
-        "pristine holographic" in combined
-        or "pristine holo" in combined
-    ):
-        return "PRISTINE HOLO"
-
-    if "holographic" in combined:
-        return "HOLO"
-
-    return "BASE"
-
-
-def resolve_card_finish(
-    card_url,
-    cache,
-):
-    if not card_url:
-        return "BASE"
-
-    match = re.search(
-        r"/27-(\d+)/?",
-        card_url,
-        re.IGNORECASE,
-    )
-
-    if not match:
-        return "BASE"
-
-    item_id = match.group(1)
-
-    # --------------------------------------------------------
-    # CACHE
-    # --------------------------------------------------------
-
-    if (
-        cache.get("cache_version")
-        == CACHE_VERSION
-    ):
-        cached = (
-            cache
-            .get("cards", {})
-            .get(item_id)
-        )
-
-        if cached in {
-            "BASE",
-            "HOLO",
-            "PRISTINE HOLO",
-        }:
-            return cached
-
-    # --------------------------------------------------------
-    # REQUEST CARTA
-    # --------------------------------------------------------
+    BASE
+    HOLO
+    PRISTINE HOLO
+    """
 
     try:
         response = requests.get(
-            card_url,
+            url,
             headers=HEADERS,
-            timeout=30,
+            timeout=20,
         )
 
         response.raise_for_status()
 
-        finish = detect_finish_from_card_page(
-            response.text
+        text = response.text
+
+        # Prefer title
+        title_match = re.search(
+            r"<title[^>]*>(.*?)</title>",
+            text,
+            re.IGNORECASE | re.DOTALL,
         )
 
-        cache["cache_version"] = CACHE_VERSION
-        cache.setdefault(
-            "cards",
-            {},
-        )
+        if title_match:
+            title = html.unescape(
+                title_match.group(1)
+            )
 
-        cache["cards"][item_id] = finish
+            title = re.sub(
+                r"\s+",
+                " ",
+                title,
+            ).strip()
+        else:
+            title = text[:5000]
 
-        return finish
+        title_upper = title.upper()
 
-    except Exception as e:
-        print(
-            f"  Finish error: {e}"
-        )
+        if "PRISTINE HOLOGRAPHIC" in title_upper:
+            return "PRISTINE HOLO"
+
+        if "HOLOGRAPHIC" in title_upper:
+            return "HOLO"
 
         return "BASE"
 
-
-# ============================================================
-# EXTRACT LINEUP
-# ============================================================
-
-def extract_cheapest_lineup(
-    page_html,
-    expected_count,
-):
-    lineup_html = get_lineup_html(
-        page_html
-    )
-
-    soup = BeautifulSoup(
-        lineup_html,
-        "html.parser",
-    )
-
-    players = []
-
-    # --------------------------------------------------------
-    # IMG ALT
-    # --------------------------------------------------------
-
-    for img in soup.find_all("img"):
-        alt = img.get("alt")
-
-        parsed = parse_player_alt(
-            alt
+    except Exception as e:
+        print(
+            f"  Finish error: {url} -> {e}"
         )
 
-        if not parsed:
-            continue
-
-        item_id = None
-        element = img
-
-        # Risali nell'HTML per trovare l'ID
-        for _ in range(8):
-            if element is None:
-                break
-
-            item_id = find_item_id_from_element(
-                element
-            )
-
-            if item_id:
-                break
-
-            element = element.parent
-
-        players.append(
-            {
-                **parsed,
-                "item_id": item_id,
-            }
-        )
-
-    # --------------------------------------------------------
-    # Se il numero è corretto, abbiamo finito
-    # --------------------------------------------------------
-
-    if len(players) == expected_count:
-        return players
-
-    # --------------------------------------------------------
-    # FALLBACK REGEX
-    # --------------------------------------------------------
-
-    pattern = re.compile(
-        r'alt=["\']([^"\']+?)\s*-\s*(\d{2})\s*-\s*([^"\']+)["\']',
-        re.IGNORECASE,
-    )
-
-    fallback = []
-
-    for match in pattern.finditer(
-        lineup_html
-    ):
-        name = match.group(1).strip()
-        overall = int(
-            match.group(2)
-        )
-        rarity = match.group(3).strip()
-
-        nearby_start = max(
-            0,
-            match.start() - 8000,
-        )
-
-        nearby_end = min(
-            len(lineup_html),
-            match.end() + 8000,
-        )
-
-        nearby = lineup_html[
-            nearby_start:nearby_end
-        ]
-
-        id_match = re.search(
-            r"/27-(\d+)/?",
-            nearby,
-            re.IGNORECASE,
-        )
-
-        item_id = (
-            id_match.group(1)
-            if id_match
-            else None
-        )
-
-        fallback.append(
-            {
-                "name": name,
-                "overall": overall,
-                "rarity": rarity,
-                "item_id": item_id,
-            }
-        )
-
-    if len(fallback) == expected_count:
-        return fallback
-
-    return players
+        return "BASE"
 
 
 # ============================================================
@@ -644,30 +384,114 @@ def extract_cheapest_lineup(
 # ============================================================
 
 def card_key(card):
-    item_id = card.get(
-        "item_id"
-    )
+    """
+    Item ID is the primary identity.
+
+    This means changing BASE/HOLO/PRISTINE HOLO
+    does NOT create a false OUT/IN.
+    """
+
+    item_id = card.get("item_id")
 
     if item_id:
-        return (
-            f"item:{item_id}"
-        )
+        return f"item:{item_id}"
 
     return (
-        f"name:{card.get('name', '')}"
-        f"|overall:{card.get('overall', '')}"
-        f"|rarity:{card.get('rarity', '')}"
+        f"{card.get('name', '')}|"
+        f"{card.get('overall', '')}|"
+        f"{card.get('version', '')}"
     )
 
 
 # ============================================================
-# COMPARE
+# BUILD LINEUP
 # ============================================================
 
-def compare_cards(
-    old_cards,
-    new_cards,
-):
+def build_lineup(page_html, expected, cache):
+    section = get_lineup_html(page_html)
+
+    urls = find_card_urls(section)
+    item_ids = extract_item_ids(section)
+
+    print(
+        f"Found {len(urls)} card URLs."
+    )
+
+    cards = []
+
+    # --------------------------------------------------------
+    # Try to pair URLs and item IDs
+    # --------------------------------------------------------
+
+    count = max(
+        len(urls),
+        len(item_ids),
+    )
+
+    for i in range(count):
+        url = urls[i] if i < len(urls) else None
+        item_id = (
+            item_ids[i]
+            if i < len(item_ids)
+            else None
+        )
+
+        if not url and not item_id:
+            continue
+
+        if url:
+            info = parse_card_url(url)
+        else:
+            info = {
+                "name": "Unknown",
+                "overall": "?",
+                "url": "",
+            }
+
+        info["item_id"] = item_id
+
+        # ----------------------------------------------------
+        # Finish cache
+        # ----------------------------------------------------
+
+        if item_id and item_id in cache["finishes"]:
+            version = cache["finishes"][item_id]
+        elif url:
+            version = detect_finish_from_card_page(
+                url
+            )
+
+            if item_id:
+                cache["finishes"][item_id] = version
+
+        else:
+            version = "BASE"
+
+        info["version"] = version
+
+        cards.append(info)
+
+    # --------------------------------------------------------
+    # If parsing produced too many cards, trim to expected.
+    # --------------------------------------------------------
+
+    if len(cards) > expected:
+        cards = cards[:expected]
+
+    return cards
+
+
+# ============================================================
+# COMPARE LINEUPS
+# ============================================================
+
+def compare_lineups(old_cards, new_cards):
+    """
+    Order-independent comparison.
+
+    Duplicate cards are preserved.
+    """
+
     old_counter = Counter(
         card_key(card)
         for card in old_cards
@@ -678,111 +502,71 @@ def compare_cards(
         for card in new_cards
     )
 
-    old_by_key = {}
-
-    for card in old_cards:
-        key = card_key(card)
-
-        old_by_key.setdefault(
-            key,
-            [],
-        ).append(card)
-
-    new_by_key = {}
-
-    for card in new_cards:
-        key = card_key(card)
-
-        new_by_key.setdefault(
-            key,
-            [],
-        ).append(card)
-
-    out_cards = []
-    in_cards = []
+    out = []
+    incoming = []
 
     # --------------------------------------------------------
     # OUT
     # --------------------------------------------------------
 
-    for key, count in old_counter.items():
+    for key, old_count in old_counter.items():
         difference = (
-            count
-            - new_counter.get(
-                key,
-                0,
-            )
+            old_count
+            - new_counter.get(key, 0)
         )
 
-        if difference > 0:
-            out_cards.extend(
-                old_by_key[key][
-                    :difference
-                ]
-            )
+        if difference <= 0:
+            continue
+
+        matching = [
+            card
+            for card in old_cards
+            if card_key(card) == key
+        ]
+
+        for card in matching[:difference]:
+            out.append(card)
 
     # --------------------------------------------------------
     # IN
     # --------------------------------------------------------
 
-    for key, count in new_counter.items():
+    for key, new_count in new_counter.items():
         difference = (
-            count
-            - old_counter.get(
-                key,
-                0,
-            )
+            new_count
+            - old_counter.get(key, 0)
         )
 
-        if difference > 0:
-            in_cards.extend(
-                new_by_key[key][
-                    :difference
-                ]
-            )
+        if difference <= 0:
+            continue
 
-    return (
-        out_cards,
-        in_cards,
-    )
+        matching = [
+            card
+            for card in new_cards
+            if card_key(card) == key
+        ]
+
+        for card in matching[:difference]:
+            incoming.append(card)
+
+    return out, incoming
 
 
 # ============================================================
-# CARD FORMAT
+# FORMAT CARD
 # ============================================================
 
-def format_card_vertical(card):
-    """
-    Formato Telegram:
-
-    Nome Overall — Versione
-    """
-
+def format_card(card):
     name = html.escape(
-        str(
-            card.get(
-                "name",
-                "Unknown",
-            )
-        )
+        str(card.get("name", "Unknown"))
     )
 
     overall = html.escape(
-        str(
-            card.get(
-                "overall",
-                "?",
-            )
-        )
+        str(card.get("overall", "?"))
     )
 
     version = html.escape(
-        str(
-            card.get(
-                "version",
-                "BASE",
-            )
-        )
+        str(card.get("version", "BASE"))
     )
 
     return (
@@ -791,31 +575,132 @@ def format_card_vertical(card):
 
 
 # ============================================================
+# CATEGORY TELEGRAM SECTION
+# ============================================================
+
+def build_category_section(
+    category,
+    old_cards,
+    new_cards,
+    incoming,
+    out,
+):
+    config = PAGES[category]
+
+    emoji = config["emoji"]
+
+    lines = [
+        f"{emoji} <b>{html.escape(category)}</b>",
+        "",
+    ]
+
+    # --------------------------------------------------------
+    # NO CHANGES
+    # --------------------------------------------------------
+
+    if not incoming and not out:
+        lines.append(
+            "No feed changes"
+        )
+
+        return "\n".join(lines)
+
+    # --------------------------------------------------------
+    # OUT
+    # --------------------------------------------------------
+
+    if out:
+        lines.extend(
+            [
+                "🔴 <b>OUT</b>",
+                "",
+            ]
+        )
+
+        for card in out:
+            lines.append(
+                f"• {format_card(card)}"
+            )
+
+        lines.append("")
+
+    # --------------------------------------------------------
+    # IN
+    # --------------------------------------------------------
+
+    if incoming:
+        lines.extend(
+            [
+                "🟢 <b>IN</b>",
+                "",
+            ]
+        )
+
+        for card in incoming:
+            lines.append(
+                f"• {format_card(card)}"
+            )
+
+        lines.append("")
+
+    # --------------------------------------------------------
+    # CURRENT LINEUP
+    # --------------------------------------------------------
+
+    lines.extend(
+        [
+            "<b>Current lineup</b>",
+            "",
+        ]
+    )
+
+    incoming_keys = Counter(
+        card_key(card)
+        for card in incoming
+    )
+
+    for card in new_cards:
+        key = card_key(card)
+
+        if incoming_keys.get(key, 0) > 0:
+            lines.append(
+                f"🟢 {format_card(card)}"
+            )
+
+            incoming_keys[key] -= 1
+
+        else:
+            lines.append(
+                format_card(card)
+            )
+
+    return "\n".join(lines)
+
+
+# ============================================================
 # TELEGRAM
 # ============================================================
 
-def telegram_send(message):
-    token = os.getenv(
-        "TELEGRAM_BOT_TOKEN"
-    )
-
-    chat_id = os.getenv(
-        "TELEGRAM_CHAT_ID"
-    )
-
-    if not token or not chat_id:
+def send_telegram(message):
+    if not TELEGRAM_BOT_TOKEN:
         print(
-            "Telegram credentials not configured."
+            "Telegram token missing."
+        )
+        return False
+
+    if not TELEGRAM_CHAT_ID:
+        print(
+            "Telegram chat ID missing."
         )
         return False
 
     url = (
-        "https://api.telegram.org/"
-        f"bot{token}/sendMessage"
+        f"https://api.telegram.org/"
+        f"bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     )
 
     payload = {
-        "chat_id": chat_id,
+        "chat_id": TELEGRAM_CHAT_ID,
         "text": message,
         "parse_mode": "HTML",
         "disable_web_page_preview": True,
@@ -825,14 +710,10 @@ def telegram_send(message):
         response = requests.post(
             url,
             json=payload,
-            timeout=30,
+            timeout=20,
         )
 
         response.raise_for_status()
-
-        print(
-            "Telegram notification sent."
-        )
 
         return True
 
@@ -845,100 +726,35 @@ def telegram_send(message):
 
 
 # ============================================================
-# TELEGRAM CATEGORY
+# TRENDING DATA
 # ============================================================
 
-def build_category_section(
-    page_name,
-    config,
-    players,
-    out_cards,
-    in_cards,
-    error=None,
-):
-    emoji = PAGE_EMOJIS[
-        page_name
-    ]
-
-    title = (
-        f"{emoji} "
-        f"<b>{html.escape(page_name)}</b>"
+def update_trending(results):
+    data = load_json(
+        TRENDING_FILE,
+        {
+            "updated_at": 0,
+            "pages": {},
+        },
     )
 
-    # --------------------------------------------------------
-    # ERROR
-    # --------------------------------------------------------
+    import time
 
-    if error:
-        return (
-            f"{title}\n\n"
-            f"⚠️ <b>Feed error</b>\n"
-            f"{html.escape(str(error))}"
-        )
-
-    parts = [
-        title
-    ]
-
-    # --------------------------------------------------------
-    # OUT
-    # --------------------------------------------------------
-
-    if out_cards:
-        parts.append(
-            "🔴 <b>OUT</b>\n\n"
-            + "\n".join(
-                "• "
-                + format_card_vertical(card)
-                for card in out_cards
-            )
-        )
-
-    # --------------------------------------------------------
-    # IN
-    # --------------------------------------------------------
-
-    if in_cards:
-        parts.append(
-            "🟢 <b>IN</b>\n\n"
-            + "\n".join(
-                "• "
-                + format_card_vertical(card)
-                for card in in_cards
-            )
-        )
-
-    # --------------------------------------------------------
-    # NO CHANGE
-    # --------------------------------------------------------
-
-    if not out_cards and not in_cards:
-        parts.append(
-            "No feed changes"
-        )
-
-        if players:
-            parts.append(
-                "\n".join(
-                    format_card_vertical(
-                        card
-                    )
-                    for card in players
-                )
-            )
-
-    # --------------------------------------------------------
-    # LINK
-    # --------------------------------------------------------
-
-    parts.append(
-        f'<a href="{html.escape(config["url"])}">'
-        f"Open FUT.GG"
-        f"</a>"
+    data["updated_at"] = int(
+        time.time()
     )
 
-    return "\n\n".join(
-        parts
+    for category, result in results.items():
+        if not result.get("success"):
+            continue
+
+        data["pages"][category] = (
+            result["new_cards"]
+        )
+
+    save_json(
+        TRENDING_FILE,
+        data,
     )
 
 
@@ -947,15 +763,15 @@ def build_category_section(
 # ============================================================
 
 def main():
+    print()
     print(
         "FUT.GG MONITOR"
     )
-
     print(
         "=" * 60
     )
 
-    players_state = load_json(
+    old_state = load_json(
         PLAYERS_FILE,
         {
             "Heroes": [],
@@ -964,307 +780,181 @@ def main():
         },
     )
 
-    trending_state = load_json(
-        TRENDING_FILE,
-        {
-            "updated_at": 0,
-            "pages": {
-                "Heroes": [],
-                "Holographics": [],
-                "Season 1": [],
-            },
-        },
-    )
+    cache = load_cache()
 
-    cache = load_json(
-        CACHE_FILE,
-        {},
-    )
-
-    # --------------------------------------------------------
-    # CACHE VERSION
-    # --------------------------------------------------------
-
-    if (
-        cache.get("cache_version")
-        != CACHE_VERSION
-    ):
-        print(
-            "Cache version mismatch. "
-            "Resetting finish cache."
-        )
-
-        cache = {
-            "cache_version": CACHE_VERSION,
-            "cards": {},
-        }
+    results = {}
 
     telegram_sections = []
 
-    successful_updates = {}
-
-    any_real_change = False
+    total_changes = False
 
     # ========================================================
-    # SCAN ALL PAGES
+    # SCAN EACH PAGE
     # ========================================================
 
-    for page_name, config in PAGES.items():
+    for category, config in PAGES.items():
 
         print()
         print(
-            f"Scanning 🏆 "
-            f"{page_name.upper()}"
+            f"Scanning {config['emoji']} "
+            f"{category}"
         )
-
         print(
             config["url"]
         )
-
         print(
             "=" * 60
         )
 
-        old_players = players_state.get(
-            page_name,
-            [],
-        )
-
         try:
-            # ------------------------------------------------
-            # DOWNLOAD
-            # ------------------------------------------------
-
-            page_html = download_page(
+            page_html = fetch_page(
                 config["url"]
             )
 
-            # ------------------------------------------------
-            # EXTRACT
-            # ------------------------------------------------
-
-            players = extract_cheapest_lineup(
+            new_cards = build_lineup(
                 page_html,
                 config["expected"],
-            )
-
-            print(
-                f"Found {len(players)} "
-                f"players."
+                cache,
             )
 
             # ------------------------------------------------
-            # VALIDATE
+            # Validate card count
             # ------------------------------------------------
 
-            if len(players) != config["expected"]:
-                raise RuntimeError(
+            if len(new_cards) != config["expected"]:
+                raise ValueError(
                     f"Expected "
                     f"{config['expected']} cards, "
-                    f"found {len(players)}"
+                    f"found {len(new_cards)}"
                 )
 
-            # ------------------------------------------------
-            # FINISH
-            # ------------------------------------------------
-
-            for index, player in enumerate(
-                players,
-                start=1,
-            ):
-                item_id = player.get(
-                    "item_id"
-                )
-
-                card_url = find_exact_card_url(
-                    page_html,
-                    item_id,
-                )
-
-                finish = resolve_card_finish(
-                    card_url,
-                    cache,
-                )
-
-                player["version"] = finish
-
-                print(
-                    f"{index}. "
-                    f"{player['name']} "
-                    f"{player['overall']} "
-                    f"{player['rarity']} "
-                    f"[{finish}] "
-                    f"ItemID={item_id}"
-                )
-
-            # ------------------------------------------------
-            # COMPARE
-            # ------------------------------------------------
-
-            out_cards, in_cards = compare_cards(
-                old_players,
-                players,
+            old_cards = old_state.get(
+                category,
+                [],
             )
 
-            if out_cards or in_cards:
-                any_real_change = True
-
-            # ------------------------------------------------
-            # SAVE SUCCESS
-            # ------------------------------------------------
-
-            successful_updates[
-                page_name
-            ] = players
-
-            # ------------------------------------------------
-            # TELEGRAM SECTION
-            # ------------------------------------------------
-
-            section = build_category_section(
-                page_name,
-                config,
-                players,
-                out_cards,
-                in_cards,
+            out, incoming = compare_lineups(
+                old_cards,
+                new_cards,
             )
 
-            telegram_sections.append(
-                section
+            changed = bool(
+                out or incoming
             )
 
-            # ------------------------------------------------
-            # LOG
-            # ------------------------------------------------
+            if changed:
+                total_changes = True
 
-            if out_cards:
-                print()
+            results[category] = {
+                "success": True,
+                "changed": changed,
+                "old_cards": old_cards,
+                "new_cards": new_cards,
+                "out": out,
+                "incoming": incoming,
+            }
+
+            print(
+                f"Found {len(new_cards)} "
+                f"valid cards."
+            )
+
+            if changed:
                 print(
-                    "OUT:"
+                    f"OUT: {len(out)}"
                 )
-
-                for card in out_cards:
-                    print(
-                        "- "
-                        f"{card.get('name')} "
-                        f"{card.get('overall')} "
-                        f"["
-                        f"{card.get('version', 'BASE')}"
-                        f"]"
-                    )
-
-            if in_cards:
-                print()
                 print(
-                    "IN:"
+                    f"IN: {len(incoming)}"
                 )
-
-                for card in in_cards:
-                    print(
-                        "+ "
-                        f"{card.get('name')} "
-                        f"{card.get('overall')} "
-                        f"["
-                        f"{card.get('version', 'BASE')}"
-                        f"]"
-                    )
-
-            if (
-                not out_cards
-                and not in_cards
-            ):
+            else:
                 print(
                     "No feed changes."
                 )
 
+            telegram_sections.append(
+                build_category_section(
+                    category=category,
+                    old_cards=old_cards,
+                    new_cards=new_cards,
+                    incoming=incoming,
+                    out=out,
+                )
+            )
+
         except Exception as e:
 
             print(
-                f"ERROR on "
-                f"{page_name}: {e}"
+                f"ERROR on {category}: {e}"
             )
 
-            # Non sovrascrivere lo stato
-            # precedente in caso di errore.
-
-            section = build_category_section(
-                page_name,
-                config,
-                [],
-                [],
-                [],
-                error=e,
-            )
+            results[category] = {
+                "success": False,
+                "error": str(e),
+            }
 
             telegram_sections.append(
-                section
+                "\n".join(
+                    [
+                        (
+                            f"{config['emoji']} "
+                            f"<b>{html.escape(category)}</b>"
+                        ),
+                        "",
+                        "⚠️ Error scanning feed",
+                    ]
+                )
             )
 
     # ========================================================
-    # UPDATE STATE
+    # SAVE ONLY SUCCESSFUL PAGES
     # ========================================================
 
-    for page_name, players in (
-        successful_updates.items()
-    ):
-        players_state[
-            page_name
-        ] = players
+    new_state = dict(old_state)
 
-        trending_state.setdefault(
-            "pages",
-            {},
+    for category, result in results.items():
+        if not result.get("success"):
+            continue
+
+        new_state[category] = (
+            result["new_cards"]
         )
-
-        trending_state[
-            "pages"
-        ][page_name] = players
-
-    trending_state[
-        "updated_at"
-    ] = int(
-        time.time()
-    )
-
-    # ========================================================
-    # SAVE
-    # ========================================================
 
     save_json(
         PLAYERS_FILE,
-        players_state,
+        new_state,
     )
 
-    save_json(
-        TRENDING_FILE,
-        trending_state,
-    )
+    save_cache(cache)
 
-    save_json(
-        CACHE_FILE,
-        cache,
-    )
+    update_trending(results)
 
     # ========================================================
-    # ONE TELEGRAM MESSAGE
+    # TELEGRAM MESSAGE
     # ========================================================
 
-    separator = (
+    message = (
         "\n\n"
         "------------------------------"
         "\n\n"
-    )
-
-    message = separator.join(
+    ).join(
         telegram_sections
     )
 
-    telegram_send(
+    telegram_ok = send_telegram(
         message
     )
 
+    if telegram_ok:
+        print(
+            "Telegram notification sent."
+        )
+    else:
+        print(
+            "Telegram notification failed."
+        )
+
     # ========================================================
-    # RESULT
+    # SUMMARY
     # ========================================================
 
     print()
@@ -1272,9 +962,9 @@ def main():
         "=" * 60
     )
 
-    if any_real_change:
+    if total_changes:
         print(
-            "RESULT: FEED CHANGED"
+            "RESULT: FEED CHANGES DETECTED"
         )
     else:
         print(
