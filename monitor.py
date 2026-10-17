@@ -13,22 +13,23 @@ from collections import Counter
 # ============================================================
 
 PAGES = {
-    "HEROES": {
+    "Heroes": {
         "url": "https://www.fut.gg/fut-gallery/rarities/heroes/",
         "emoji": "🦸‍♂️",
         "slots": 5,
     },
-    "HOLOGRAPHICS": {
+    "Holographics": {
         "url": "https://www.fut.gg/fut-gallery/rarities/holographics/",
         "emoji": "✨️",
         "slots": 5,
     },
-    "SEASON 1": {
+    "Season 1": {
         "url": "https://www.fut.gg/fut-gallery/rarities/season-1/",
         "emoji": "1️⃣",
         "slots": 10,
     },
 }
+
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
@@ -39,22 +40,24 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 # ============================================================
 
 KNOWN_FINISHES = {
+    # HEROES
     "67335170": "PRISTINE HOLO",
     "67114537": "PRISTINE HOLO",
     "67335237": "PRISTINE HOLO",
     "67371135": "PRISTINE HOLO",
+    "67186651": "PRISTINE HOLO",
 
     "226306": "BASE",
     "233700": "BASE",
 
-    "67186651": "PRISTINE HOLO",
-
+    # HOLOGRAPHICS
     "67335157": "PRISTINE HOLO",
     "67384140": "PRISTINE HOLO",
     "67275770": "PRISTINE HOLO",
     "67180472": "PRISTINE HOLO",
     "67298908": "PRISTINE HOLO",
 
+    # SEASON 1
     "67348095": "PRISTINE HOLO",
     "67368151": "PRISTINE HOLO",
 
@@ -104,15 +107,13 @@ def get_previous_category(state, category):
     if not isinstance(state, dict):
         return []
 
-    category_state = state.get(category, [])
+    value = state.get(category, [])
 
-    # New format
-    if isinstance(category_state, list):
-        return category_state
+    if isinstance(value, list):
+        return value
 
-    # Old format
-    if isinstance(category_state, dict):
-        current = category_state.get("current", [])
+    if isinstance(value, dict):
+        current = value.get("current", [])
 
         if isinstance(current, list):
             return current
@@ -121,7 +122,7 @@ def get_previous_category(state, category):
 
 
 # ============================================================
-# FETCH PAGE
+# FETCH
 # ============================================================
 
 def fetch_page(url):
@@ -141,55 +142,17 @@ def fetch_page(url):
         timeout=30,
     )
 
-    print(f"HTTP status: {response.status_code}")
+    print(
+        f"HTTP status: {response.status_code}"
+    )
 
     response.raise_for_status()
 
-    print(f"Downloaded: {len(response.text)} characters")
+    print(
+        f"Downloaded: {len(response.text)} characters"
+    )
 
     return response.text
-
-
-# ============================================================
-# FIND LINEUP
-# ============================================================
-
-def find_lineup(soup):
-    candidates = []
-
-    for element in soup.find_all(["div", "section", "main"]):
-        text = element.get_text(" ", strip=True)
-
-        if "Cheapest grade" in text:
-            images = element.find_all("img")
-
-            if images:
-                candidates.append(
-                    (
-                        len(images),
-                        element,
-                    )
-                )
-
-    if not candidates:
-        return None
-
-    candidates.sort(
-        key=lambda x: x[0],
-        reverse=True,
-    )
-
-    container = candidates[0][1]
-
-    print(
-        f"Cheapest grade matches found: {len(candidates)}"
-    )
-
-    print(
-        "Lineup container found at DOM level 1"
-    )
-
-    return container
 
 
 # ============================================================
@@ -200,19 +163,20 @@ def extract_item_id(src):
     if not src:
         return None
 
-    # Example:
+    # FUT.GG asset examples:
     # .../27-67368151-xxxxx.webp
+
     match = re.search(
-        r"(?:^|/)(?:27-)?(\d{5,})",
+        r"27-(\d{5,})",
         src,
     )
 
     if match:
         return match.group(1)
 
-    # Fallback: find long number after 27-
+    # Fallback
     match = re.search(
-        r"27-(\d{5,})",
+        r"/(\d{5,})[-_]",
         src,
     )
 
@@ -240,22 +204,20 @@ def parse_alt(alt):
             "placeholder": True,
         }
 
-    # Example:
-    # Harder - 88 - Destined for Glory
     match = re.match(
         r"^(.*?)\s*-\s*(\d+)\s*-\s*(.*?)$",
         alt,
     )
 
-    if match:
-        return {
-            "name": match.group(1).strip(),
-            "overall": int(match.group(2)),
-            "version": match.group(3).strip(),
-            "placeholder": False,
-        }
+    if not match:
+        return None
 
-    return None
+    return {
+        "name": match.group(1).strip(),
+        "overall": int(match.group(2)),
+        "version": match.group(3).strip(),
+        "placeholder": False,
+    }
 
 
 # ============================================================
@@ -266,9 +228,166 @@ def resolve_finish(item_id):
     if not item_id:
         return None
 
-    item_id = str(item_id)
+    return KNOWN_FINISHES.get(
+        str(item_id)
+    )
 
-    return KNOWN_FINISHES.get(item_id)
+
+# ============================================================
+# IMAGE -> CARD
+# ============================================================
+
+def image_to_card(img):
+    alt = img.get("alt", "")
+    src = img.get("src", "")
+
+    parsed = parse_alt(alt)
+
+    if not parsed:
+        return None
+
+    if parsed.get("placeholder"):
+        return parsed
+
+    item_id = extract_item_id(src)
+
+    return {
+        "name": parsed["name"],
+        "overall": parsed["overall"],
+        "version": parsed["version"],
+        "item_id": item_id,
+        "finish": resolve_finish(item_id),
+        "placeholder": False,
+    }
+
+
+# ============================================================
+# LINEUP CANDIDATE
+# ============================================================
+
+def candidate_cards(element):
+    cards = []
+
+    for img in element.find_all("img"):
+        card = image_to_card(img)
+
+        if card:
+            cards.append(card)
+
+    return cards
+
+
+def candidate_score(cards, expected_slots):
+    """
+    Score a possible lineup.
+
+    Prefer:
+    - exact number of slots
+    - known finishes
+    - real cards
+    - fewer duplicate HTML copies
+    """
+
+    if not cards:
+        return -999999
+
+    real = [
+        c for c in cards
+        if not c.get("placeholder")
+    ]
+
+    placeholders = [
+        c for c in cards
+        if c.get("placeholder")
+    ]
+
+    # Exact slot count is extremely important
+    score = 0
+
+    if len(cards) == expected_slots:
+        score += 10000
+
+    # A candidate with more than the required slots is likely
+    # a parent/container containing multiple lineups.
+    if len(cards) > expected_slots:
+        score -= (len(cards) - expected_slots) * 100
+
+    # Known finishes are strong evidence.
+    for card in real:
+        if card.get("finish"):
+            score += 100
+
+    # Real cards are preferred.
+    score += len(real) * 20
+
+    # Player Card placeholders are legitimate Season 1 slots.
+    score += len(placeholders) * 10
+
+    return score
+
+
+# ============================================================
+# FIND BEST LINEUP
+# ============================================================
+
+def find_lineup(soup, expected_slots):
+    candidates = []
+
+    # Search all elements containing "Cheapest grade".
+    for element in soup.find_all(
+        ["div", "section", "main", "article"]
+    ):
+        text = element.get_text(
+            " ",
+            strip=True,
+        )
+
+        if "Cheapest grade" not in text:
+            continue
+
+        cards = candidate_cards(element)
+
+        if not cards:
+            continue
+
+        score = candidate_score(
+            cards,
+            expected_slots,
+        )
+
+        candidates.append(
+            (
+                score,
+                len(cards),
+                element,
+                cards,
+            )
+        )
+
+    print(
+        f"Cheapest grade matches found: {len(candidates)}"
+    )
+
+    if not candidates:
+        return None
+
+    # Highest score wins.
+    candidates.sort(
+        key=lambda x: x[0],
+        reverse=True,
+    )
+
+    best_score, best_count, best_element, best_cards = (
+        candidates[0]
+    )
+
+    print(
+        f"Selected lineup candidate: "
+        f"{best_count} cards "
+        f"(score {best_score})"
+    )
+
+    return best_element
 
 
 # ============================================================
@@ -276,75 +395,65 @@ def resolve_finish(item_id):
 # ============================================================
 
 def extract_lineup(container, expected_slots):
-    images = container.find_all("img")
+    cards = candidate_cards(container)
 
     print(
-        f"Images inside container: {len(images)}"
+        f"Images/cards detected in selected container: "
+        f"{len(cards)}"
     )
 
-    print(
-        f"Scanning {len(images)} images..."
-    )
+    # --------------------------------------------------------
+    # If the selected container still contains more cards than
+    # the expected lineup, try to find a consecutive window
+    # containing the expected number of valid cards.
+    # --------------------------------------------------------
 
-    lineup = []
+    if len(cards) > expected_slots:
+        windows = []
 
-    seen_signatures = set()
+        for start in range(
+            0,
+            len(cards) - expected_slots + 1,
+        ):
+            window = cards[
+                start:start + expected_slots
+            ]
 
-    for img in images:
-        alt = img.get("alt", "")
-        src = img.get("src", "")
+            score = candidate_score(
+                window,
+                expected_slots,
+            )
 
-        parsed = parse_alt(alt)
+            windows.append(
+                (
+                    score,
+                    start,
+                    window,
+                )
+            )
 
-        if not parsed:
-            continue
-
-        # Ignore repeated HTML copies of the exact same image
-        signature = (
-            alt,
-            src,
+        windows.sort(
+            key=lambda x: x[0],
+            reverse=True,
         )
 
-        if signature in seen_signatures:
-            continue
+        if windows:
+            cards = windows[0][2]
 
-        seen_signatures.add(signature)
-
-        if parsed.get("placeholder"):
-            lineup.append(parsed)
-            continue
-
-        item_id = extract_item_id(src)
-
-        finish = resolve_finish(item_id)
-
-        card = {
-            "name": parsed.get("name"),
-            "overall": parsed.get("overall"),
-            "version": parsed.get("version"),
-            "item_id": item_id,
-            "finish": finish,
-            "placeholder": False,
-        }
-
-        lineup.append(card)
-
-    # Keep only the actual lineup slots
-    lineup = lineup[:expected_slots]
+    cards = cards[:expected_slots]
 
     real_count = sum(
         1
-        for card in lineup
+        for card in cards
         if not card.get("placeholder")
     )
 
     print(
-        f"Rendered lineup: {real_count}/{expected_slots} real cards"
+        f"Rendered lineup: "
+        f"{real_count}/{expected_slots} real cards"
     )
 
-    # IMPORTANT:
-    # Print Item ID for every real card
-    for card in lineup:
+    for card in cards:
         if card.get("placeholder"):
             print("- Player Card")
             continue
@@ -357,7 +466,7 @@ def extract_lineup(container, expected_slots):
             f"— {card.get('finish') or 'UNKNOWN'}"
         )
 
-    return lineup
+    return cards
 
 
 # ============================================================
@@ -385,18 +494,32 @@ def card_key(card):
 
 
 # ============================================================
-# CARD LABEL
+# LABEL
 # ============================================================
 
 def card_label(card):
-    name = card.get("name", "Unknown")
-    overall = card.get("overall", "")
-    finish = card.get("finish")
+    name = card.get(
+        "name",
+        "Unknown",
+    )
 
-    player_text = f"<b>{name} {overall}</b>"
+    overall = card.get(
+        "overall",
+        "",
+    )
+
+    finish = card.get(
+        "finish"
+    )
+
+    player_text = (
+        f"<b>{name} {overall}</b>"
+    )
 
     if finish:
-        return f"{player_text}　·　{finish}"
+        return (
+            f"{player_text}　·　{finish}"
+        )
 
     return player_text
 
@@ -432,29 +555,39 @@ def compare_cards(previous, current):
     )
 
     incoming = Counter()
-
-    for key, count in current_counter.items():
-        difference = count - previous_counter.get(key, 0)
-
-        if difference > 0:
-            incoming[key] = difference
-
     outgoing = Counter()
 
-    for key, count in previous_counter.items():
-        difference = count - current_counter.get(key, 0)
+    for key, count in current_counter.items():
+        diff = count - previous_counter.get(
+            key,
+            0,
+        )
 
-        if difference > 0:
-            outgoing[key] = difference
+        if diff > 0:
+            incoming[key] = diff
+
+    for key, count in previous_counter.items():
+        diff = count - current_counter.get(
+            key,
+            0,
+        )
+
+        if diff > 0:
+            outgoing[key] = diff
 
     return incoming, outgoing
 
 
 # ============================================================
-# UNKNOWN FINISH
+# UNKNOWN CHECK
 # ============================================================
 
 def has_unknown_finish(cards):
+    """
+    Only cards in the FINAL SELECTED LINEUP are checked.
+    Images outside the selected lineup are irrelevant.
+    """
+
     for card in real_cards(cards):
         if not card.get("finish"):
             return True
@@ -466,35 +599,51 @@ def has_unknown_finish(cards):
 # PROCESS CATEGORY
 # ============================================================
 
-def process_category(category, config, previous_state):
+def process_category(
+    category,
+    config,
+    previous_state,
+):
     print()
     print(
         f"Checking {config['emoji']} "
-        f"{category} ({config['slots']} players)..."
+        f"{category.upper()} "
+        f"({config['slots']} players)..."
     )
+
     print("=" * 60)
 
+    previous = get_previous_category(
+        previous_state,
+        category,
+    )
+
     try:
-        html = fetch_page(config["url"])
+        html = fetch_page(
+            config["url"]
+        )
 
         soup = BeautifulSoup(
             html,
             "html.parser",
         )
 
-        container = find_lineup(soup)
+        container = find_lineup(
+            soup,
+            config["slots"],
+        )
 
         if not container:
-            print("ERROR: Lineup container not found.")
+            print(
+                "ERROR: Lineup container not found."
+            )
+
             return {
-                "current": get_previous_category(
-                    previous_state,
-                    category,
-                ),
+                "current": previous,
+                "previous": previous,
                 "incoming": [],
                 "outgoing": [],
                 "status": "error",
-                "message": "⚠️ Feed unavailable",
             }
 
         current = extract_lineup(
@@ -502,15 +651,14 @@ def process_category(category, config, previous_state):
             config["slots"],
         )
 
-        previous = get_previous_category(
-            previous_state,
-            category,
-        )
+        # ----------------------------------------------------
+        # IMPORTANT
+        # Only the final selected lineup is checked.
+        # ----------------------------------------------------
 
-        # Do not update state if any finish is unknown
-        if has_unknown_finish(current):
+        if len(current) != config["slots"]:
             print(
-                "WARNING: Unknown finish detected."
+                "WARNING: Wrong lineup size."
             )
 
             print(
@@ -519,10 +667,28 @@ def process_category(category, config, previous_state):
 
             return {
                 "current": previous,
+                "previous": previous,
                 "incoming": [],
                 "outgoing": [],
                 "status": "unresolved",
-                "message": "⚠️ Finish unresolved\nPrevious state kept",
+            }
+
+        if has_unknown_finish(current):
+            print(
+                "WARNING: Unknown finish detected "
+                "inside selected lineup."
+            )
+
+            print(
+                "Previous state kept."
+            )
+
+            return {
+                "current": previous,
+                "previous": previous,
+                "incoming": [],
+                "outgoing": [],
+                "status": "unresolved",
             }
 
         incoming, outgoing = compare_cards(
@@ -532,10 +698,14 @@ def process_category(category, config, previous_state):
 
         return {
             "current": current,
-            "incoming": list(incoming.elements()),
-            "outgoing": list(outgoing.elements()),
+            "previous": previous,
+            "incoming": list(
+                incoming.elements()
+            ),
+            "outgoing": list(
+                outgoing.elements()
+            ),
             "status": "ok",
-            "message": None,
         }
 
     except Exception as e:
@@ -546,25 +716,27 @@ def process_category(category, config, previous_state):
         traceback.print_exc()
 
         return {
-            "current": get_previous_category(
-                previous_state,
-                category,
-            ),
+            "current": previous,
+            "previous": previous,
             "incoming": [],
             "outgoing": [],
             "status": "error",
-            "message": "⚠️ Feed error\nPrevious state kept",
         }
 
 
 # ============================================================
-# CURRENT LINEUP FORMAT
+# CURRENT LINEUP
 # ============================================================
 
-def format_current_lineup(current, incoming):
+def format_current_lineup(
+    current,
+    incoming,
+):
     lines = []
 
-    incoming_counter = Counter(incoming)
+    incoming_counter = Counter(
+        incoming
+    )
 
     for card in current:
         if card.get("placeholder"):
@@ -576,9 +748,13 @@ def format_current_lineup(current, incoming):
 
         if (
             key is not None
-            and incoming_counter.get(key, 0) > 0
+            and incoming_counter.get(
+                key,
+                0,
+            ) > 0
         ):
             prefix = "🟢 "
+
             incoming_counter[key] -= 1
 
         lines.append(
@@ -592,17 +768,44 @@ def format_current_lineup(current, incoming):
 
 
 # ============================================================
-# CATEGORY FORMAT
+# CATEGORY TELEGRAM
 # ============================================================
 
-def format_category(category, config, result):
+def format_category(
+    category,
+    config,
+    result,
+):
     lines = []
 
     lines.append(
-        f"{config['emoji']} <b>{category}</b>"
+        f"{config['emoji']} "
+        f"<b>{category.upper()}</b>"
     )
 
-    status = result.get("status")
+    status = result.get(
+        "status"
+    )
+
+    incoming = result.get(
+        "incoming",
+        [],
+    )
+
+    outgoing = result.get(
+        "outgoing",
+        [],
+    )
+
+    previous = result.get(
+        "previous",
+        [],
+    )
+
+    current = result.get(
+        "current",
+        [],
+    )
 
     if status == "unresolved":
         lines.append("")
@@ -616,40 +819,38 @@ def format_category(category, config, result):
     elif status == "error":
         lines.append("")
         lines.append(
-            result.get(
-                "message",
-                "⚠️ Feed error",
-            )
+            "⚠️ Feed error"
+        )
+        lines.append(
+            "Previous state kept"
         )
 
     else:
-        incoming = result.get(
-            "incoming",
-            [],
-        )
-
-        outgoing = result.get(
-            "outgoing",
-            [],
-        )
-
         if outgoing:
             lines.append("")
-            lines.append("🔴 OUT")
-
-            # Find outgoing cards from previous state
-            previous = result.get(
-                "previous",
-                [],
+            lines.append(
+                "🔴 OUT"
             )
 
-            for key in outgoing:
-                for card in previous:
-                    if card_key(card) == key:
-                        lines.append(
-                            f"🔴 {card_label(card)}"
-                        )
-                        break
+            remaining = Counter(
+                outgoing
+            )
+
+            for card in previous:
+                key = card_key(card)
+
+                if (
+                    key is not None
+                    and remaining.get(
+                        key,
+                        0,
+                    ) > 0
+                ):
+                    lines.append(
+                        f"🔴 {card_label(card)}"
+                    )
+
+                    remaining[key] -= 1
 
         elif incoming:
             lines.append("")
@@ -657,28 +858,9 @@ def format_category(category, config, result):
                 "🟢 IN"
             )
 
-            current = result.get(
-                "current",
-                [],
-            )
-
-            incoming_counter = Counter(
-                incoming
-            )
-
-            for card in current:
-                key = card_key(card)
-
-                if (
-                    key is not None
-                    and incoming_counter.get(key, 0) > 0
-                ):
-                    lines.append(
-                        f"🟢 {card_label(card)}"
-                    )
-
-                    incoming_counter[key] -= 1
-
+            # The current lineup already marks
+            # incoming cards with 🟢.
+            # No duplicate listing here.
         else:
             lines.append("")
             lines.append(
@@ -689,10 +871,11 @@ def format_category(category, config, result):
     lines.append(
         "📋 <b>Current lineup</b> 📋"
     )
+
     lines.append(
         format_current_lineup(
-            result.get("current", []),
-            result.get("incoming", []),
+            current,
+            incoming,
         )
     )
 
@@ -717,7 +900,7 @@ def send_telegram(message):
         return
 
     url = (
-        f"https://api.telegram.org/"
+        "https://api.telegram.org/"
         f"bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     )
 
@@ -735,7 +918,8 @@ def send_telegram(message):
     )
 
     print(
-        f"Telegram status: {response.status_code}"
+        f"Telegram status: "
+        f"{response.status_code}"
     )
 
     response.raise_for_status()
@@ -752,14 +936,9 @@ def main():
     )
 
     new_state = {}
-
     results = []
 
     for category, config in PAGES.items():
-        previous = get_previous_category(
-            state,
-            category,
-        )
 
         result = process_category(
             category,
@@ -767,10 +946,9 @@ def main():
             state,
         )
 
-        # Keep previous cards available for OUT detection
-        result["previous"] = previous
-
-        new_state[category] = result["current"]
+        new_state[category] = (
+            result["current"]
+        )
 
         results.append(
             (
@@ -781,7 +959,7 @@ def main():
         )
 
     # --------------------------------------------------------
-    # SAVE STATE
+    # SAVE
     # --------------------------------------------------------
 
     save_json(
@@ -790,7 +968,7 @@ def main():
     )
 
     # --------------------------------------------------------
-    # TELEGRAM MESSAGE
+    # TELEGRAM
     # --------------------------------------------------------
 
     parts = []
@@ -818,7 +996,9 @@ def main():
     print(message)
     print("=" * 60)
 
-    send_telegram(message)
+    send_telegram(
+        message
+    )
 
 
 # ============================================================
