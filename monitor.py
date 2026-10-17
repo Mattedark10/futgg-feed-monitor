@@ -2,6 +2,7 @@ import os
 import re
 import json
 import html
+import time
 from collections import Counter
 
 import requests
@@ -50,7 +51,7 @@ HEADERS = {
 
 
 # ============================================================
-# FILE HELPERS
+# JSON
 # ============================================================
 
 def load_json(path, default):
@@ -68,11 +69,16 @@ def save_json(path, data):
         os.makedirs(directory, exist_ok=True)
 
     with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+        json.dump(
+            data,
+            f,
+            ensure_ascii=False,
+            indent=2,
+        )
 
 
 # ============================================================
-# HTML DOWNLOAD
+# DOWNLOAD
 # ============================================================
 
 def download_page(url):
@@ -88,79 +94,134 @@ def download_page(url):
 
 
 # ============================================================
-# LINEUP EXTRACTION
+# LINEUP HTML
 # ============================================================
 
 def get_lineup_html(page_html):
     """
-    Isola solamente la parte della pagina relativa a:
+    Manteniamo una ricerca molto più flessibile.
 
-        Cheapest grade X lineup
-
-    fino a:
-
-        Add players
-
-    Questo evita di prendere giocatori presenti
-    in altre sezioni della pagina.
+    FUT.GG può cambiare maiuscole/minuscole,
+    spazi, HTML o testo attorno alla lineup.
     """
+
+    soup = BeautifulSoup(
+        page_html,
+        "html.parser",
+    )
+
+    # --------------------------------------------------------
+    # 1. Cerca direttamente il testo nella pagina
+    # --------------------------------------------------------
+
+    candidates = []
+
+    for element in soup.find_all(
+        string=re.compile(
+            r"cheapest\s+grade.*lineup",
+            re.IGNORECASE,
+        )
+    ):
+        candidates.append(element)
+
+    if candidates:
+        target = candidates[0]
+
+        # Risali fino a un contenitore abbastanza grande
+        parent = target.parent
+
+        for _ in range(8):
+            if parent is None:
+                break
+
+            text = parent.get_text(
+                " ",
+                strip=True,
+            )
+
+            if (
+                "Add players" in text
+                or "add players" in text.lower()
+            ):
+                return str(parent)
+
+            parent = parent.parent
+
+        # Se non troviamo Add players,
+        # prendiamo comunque il contenitore
+        if target.parent:
+            return str(target.parent)
+
+    # --------------------------------------------------------
+    # 2. Fallback sul raw HTML
+    # --------------------------------------------------------
 
     lower = page_html.lower()
 
-    start_candidates = [
-        lower.find("cheapest grade 10 lineup"),
-        lower.find("cheapest grade 9 lineup"),
-        lower.find("cheapest grade 8 lineup"),
-        lower.find("cheapest grade 7 lineup"),
-        lower.find("cheapest grade 6 lineup"),
-        lower.find("cheapest grade 5 lineup"),
-        lower.find("cheapest grade 4 lineup"),
-        lower.find("cheapest grade 3 lineup"),
-        lower.find("cheapest grade 2 lineup"),
-        lower.find("cheapest grade 1 lineup"),
-        lower.find("cheapest grade lineup"),
+    patterns = [
+        r"cheapest\s+grade\s+\d+\s+lineup",
+        r"cheapest\s+grade\s+lineup",
+        r"cheapest\s+grade.{0,100}lineup",
     ]
 
-    start_candidates = [
-        x for x in start_candidates
-        if x != -1
-    ]
+    start = -1
 
-    if not start_candidates:
-        raise RuntimeError(
-            "Could not find 'Cheapest grade X lineup'"
+    for pattern in patterns:
+        match = re.search(
+            pattern,
+            lower,
+            re.IGNORECASE,
         )
 
-    start = min(start_candidates)
+        if match:
+            start = match.start()
+            break
 
-    end = lower.find("add players", start)
+    if start == -1:
+        # Ultimo fallback:
+        # cerca solamente "lineup"
+        match = re.search(
+            r"lineup",
+            lower,
+            re.IGNORECASE,
+        )
+
+        if match:
+            start = max(
+                0,
+                match.start() - 5000,
+            )
+
+    if start == -1:
+        raise RuntimeError(
+            "Could not find lineup section"
+        )
+
+    end = lower.find(
+        "add players",
+        start,
+    )
 
     if end == -1:
-        # fallback: prendiamo una porzione abbastanza ampia
-        end = min(start + 250000, len(page_html))
+        end = min(
+            start + 250000,
+            len(page_html),
+        )
 
     return page_html[start:end]
 
 
 # ============================================================
-# PLAYER NAME / RATING / RARITY
+# PLAYER ALT
 # ============================================================
 
 def parse_player_alt(alt):
-    """
-    Esempio:
-
-        Celia Šašić - 89 - Base Hero
-
-    oppure:
-
-        Mora - 87 - Future Stars
-    """
-
     if not alt:
         return None
 
-    alt = " ".join(alt.split()).strip()
+    alt = " ".join(
+        alt.split()
+    ).strip()
 
     match = re.match(
         r"^(.*?)\s*-\s*(\d{2})\s*-\s*(.+?)\s*$",
@@ -170,14 +231,10 @@ def parse_player_alt(alt):
     if not match:
         return None
 
-    name = match.group(1).strip()
-    overall = int(match.group(2))
-    rarity = match.group(3).strip()
-
     return {
-        "name": name,
-        "overall": overall,
-        "rarity": rarity,
+        "name": match.group(1).strip(),
+        "overall": int(match.group(2)),
+        "rarity": match.group(3).strip(),
     }
 
 
@@ -186,16 +243,17 @@ def parse_player_alt(alt):
 # ============================================================
 
 def find_item_id_from_element(element):
-    """
-    Cerca l'Item ID direttamente nell'elemento
-    o nei suoi attributi/link.
-    """
+    if element is None:
+        return None
 
     # --------------------------------------------------------
-    # 1. Cerca URL del player
+    # Cerca nei link
     # --------------------------------------------------------
 
-    for a in element.find_all("a", href=True):
+    for a in element.find_all(
+        "a",
+        href=True,
+    ):
         href = a.get("href", "")
 
         match = re.search(
@@ -208,22 +266,27 @@ def find_item_id_from_element(element):
             return match.group(1)
 
     # --------------------------------------------------------
-    # 2. Cerca attributi comuni
+    # Cerca attributi
     # --------------------------------------------------------
 
-    possible_attributes = [
+    attributes = [
         "item_id",
         "itemid",
         "itemId",
-        "eaid",
         "eaId",
+        "eaid",
         "player_id",
         "playerId",
     ]
 
-    for node in [element] + element.find_all(True):
-        for attr in possible_attributes:
-            value = node.get(attr)
+    for node in [
+        element,
+        *element.find_all(True),
+    ]:
+        for attribute in attributes:
+            value = node.get(
+                attribute
+            )
 
             if value is None:
                 continue
@@ -237,7 +300,7 @@ def find_item_id_from_element(element):
                 return match.group(0)
 
     # --------------------------------------------------------
-    # 3. Cerca nel testo HTML dell'elemento
+    # Cerca nell'HTML
     # --------------------------------------------------------
 
     raw = str(element)
@@ -258,7 +321,10 @@ def find_item_id_from_element(element):
         )
 
         if match:
-            return match.group(1).replace("\\", "")
+            return match.group(1).replace(
+                "\\",
+                "",
+            )
 
     return None
 
@@ -267,62 +333,62 @@ def find_item_id_from_element(element):
 # EXACT CARD URL
 # ============================================================
 
-def find_exact_card_url(page_html, item_id):
-    """
-    Trova l'URL preciso della carta.
-
-    Esempio:
-
-    /players/226306-celia-sasic/27-67335170/
-    """
-
+def find_exact_card_url(
+    page_html,
+    item_id,
+):
     if not item_id:
         return None
-
-    soup = BeautifulSoup(
-        page_html,
-        "html.parser",
-    )
 
     pattern = re.compile(
         rf"/players/[^\"']*/27-{re.escape(str(item_id))}/?",
         re.IGNORECASE,
     )
 
-    # Prima cerca negli href
-    for a in soup.find_all("a", href=True):
+    soup = BeautifulSoup(
+        page_html,
+        "html.parser",
+    )
+
+    for a in soup.find_all(
+        "a",
+        href=True,
+    ):
         href = a.get("href", "")
 
         match = pattern.search(href)
 
         if match:
-            return "https://www.fut.gg" + match.group(0)
+            url = match.group(0)
 
-    # Fallback sul raw HTML
-    match = pattern.search(page_html)
+            if url.startswith("/"):
+                url = (
+                    "https://www.fut.gg"
+                    + url
+                )
+
+            return url
+
+    match = pattern.search(
+        page_html
+    )
 
     if match:
-        return "https://www.fut.gg" + match.group(0)
+        return (
+            "https://www.fut.gg"
+            + match.group(0)
+        )
 
     return None
 
 
 # ============================================================
-# CARD FINISH
+# FINISH DETECTION
 # ============================================================
 
-def detect_finish_from_card_page(card_html):
-    """
-    Determina:
-
-        BASE
-        HOLO
-        PRISTINE HOLO
-
-    usando solamente le informazioni della pagina
-    della carta specifica.
-    """
-
+def detect_finish_from_card_page(
+    card_html
+):
     soup = BeautifulSoup(
         card_html,
         "html.parser",
@@ -334,7 +400,12 @@ def detect_finish_from_card_page(card_html):
     h1 = soup.find("h1")
 
     if h1:
-        texts.append(h1.get_text(" ", strip=True))
+        texts.append(
+            h1.get_text(
+                " ",
+                strip=True,
+            )
+        )
 
     # OG title
     meta = soup.find(
@@ -345,7 +416,9 @@ def detect_finish_from_card_page(card_html):
     )
 
     if meta and meta.get("content"):
-        texts.append(meta["content"])
+        texts.append(
+            meta.get("content")
+        )
 
     # HTML title
     if soup.title:
@@ -356,11 +429,12 @@ def detect_finish_from_card_page(card_html):
             )
         )
 
-    combined = " ".join(texts).lower()
+    combined = " ".join(
+        texts
+    ).lower()
 
-    # IMPORTANTISSIMO:
-    # pristine holographic deve essere controllato
-    # prima di holographic.
+    # IMPORTANT:
+    # PRISTINE prima di HOLO
     if (
         "pristine holographic" in combined
         or "pristine holo" in combined
@@ -369,7 +443,7 @@ def detect_finish_from_card_page(card_html):
 
     if (
         "holographic" in combined
-        or " holo" in combined
+        or " holographic " in f" {combined} "
     ):
         return "HOLO"
 
@@ -380,31 +454,29 @@ def resolve_card_finish(
     card_url,
     cache,
 ):
-    """
-    Usa la cache solamente per il finish.
-
-    La cache NON viene usata per decidere
-    se una carta è IN o OUT.
-    """
-
     if not card_url:
         return "BASE"
 
-    item_id_match = re.search(
+    match = re.search(
         r"/27-(\d+)/?",
         card_url,
         re.IGNORECASE,
     )
 
-    if not item_id_match:
+    if not match:
         return "BASE"
 
-    item_id = item_id_match.group(1)
+    item_id = match.group(1)
 
-    cache_version = cache.get("cache_version")
-
-    if cache_version == CACHE_VERSION:
-        cached = cache.get("cards", {}).get(item_id)
+    if (
+        cache.get("cache_version")
+        == CACHE_VERSION
+    ):
+        cached = (
+            cache
+            .get("cards", {})
+            .get(item_id)
+        )
 
         if cached in {
             "BASE",
@@ -426,25 +498,26 @@ def resolve_card_finish(
             response.text
         )
 
-        if "cache_version" not in cache:
-            cache.clear()
-
         cache["cache_version"] = CACHE_VERSION
-        cache.setdefault("cards", {})
+        cache.setdefault(
+            "cards",
+            {},
+        )
+
         cache["cards"][item_id] = finish
 
         return finish
 
     except Exception as e:
         print(
-            f"  Finish error for {card_url}: {e}"
+            f"  Finish error: {e}"
         )
 
         return "BASE"
 
 
 # ============================================================
-# EXTRACT CHEAPEST LINEUP
+# EXTRACT LINEUP
 # ============================================================
 
 def extract_cheapest_lineup(
@@ -463,25 +536,36 @@ def extract_cheapest_lineup(
     players = []
 
     # --------------------------------------------------------
-    # Prima scelta: immagini con alt
+    # IMG ALT
     # --------------------------------------------------------
 
     for img in soup.find_all("img"):
         alt = img.get("alt")
 
-        parsed = parse_player_alt(alt)
+        parsed = parse_player_alt(
+            alt
+        )
 
         if not parsed:
             continue
 
-        item_id = find_item_id_from_element(
-            img.parent if img.parent else img
-        )
+        # Cerca l'ID partendo dal parent
+        element = img
 
-        if not item_id:
+        item_id = None
+
+        for _ in range(8):
+            if element is None:
+                break
+
             item_id = find_item_id_from_element(
-                img
+                element
             )
+
+            if item_id:
+                break
+
+            element = element.parent
 
         players.append(
             {
@@ -491,75 +575,51 @@ def extract_cheapest_lineup(
         )
 
     # --------------------------------------------------------
-    # Rimuovi duplicati IDENTICI solo se il parser
-    # ha trovato esattamente gli stessi nodi.
+    # NON rimuoviamo duplicati reali.
     #
-    # Le carte duplicate reali devono invece rimanere.
-    # --------------------------------------------------------
-
-    cleaned = []
-
-    seen_signatures = set()
-
-    for player in players:
-        signature = (
-            player.get("name"),
-            player.get("overall"),
-            player.get("rarity"),
-            player.get("item_id"),
-        )
-
-        if signature in seen_signatures:
-            continue
-
-        seen_signatures.add(signature)
-        cleaned.append(player)
-
-    players = cleaned
-
-    # --------------------------------------------------------
-    # Se abbiamo trovato il numero corretto, usiamo questo.
+    # Le carte duplicate devono rimanere.
     # --------------------------------------------------------
 
     if len(players) == expected_count:
         return players
 
     # --------------------------------------------------------
-    # FALLBACK regex
+    # FALLBACK REGEX
     # --------------------------------------------------------
 
-    fallback_pattern = re.compile(
+    pattern = re.compile(
         r'alt=["\']([^"\']+?)\s*-\s*(\d{2})\s*-\s*([^"\']+)["\']',
         re.IGNORECASE,
     )
 
     fallback = []
 
-    for match in fallback_pattern.finditer(
+    for match in pattern.finditer(
         lineup_html
     ):
         name = match.group(1).strip()
-        overall = int(match.group(2))
+        overall = int(
+            match.group(2)
+        )
         rarity = match.group(3).strip()
 
-        # Cerchiamo l'ID vicino al match
-        surrounding_start = max(
+        nearby_start = max(
             0,
-            match.start() - 5000,
+            match.start() - 8000,
         )
 
-        surrounding_end = min(
+        nearby_end = min(
             len(lineup_html),
-            match.end() + 5000,
+            match.end() + 8000,
         )
 
-        surrounding = lineup_html[
-            surrounding_start:surrounding_end
+        nearby = lineup_html[
+            nearby_start:nearby_end
         ]
 
         id_match = re.search(
             r"/27-(\d+)/?",
-            surrounding,
+            nearby,
             re.IGNORECASE,
         )
 
@@ -578,35 +638,25 @@ def extract_cheapest_lineup(
             }
         )
 
-    # Se il fallback ha il numero giusto, usalo
     if len(fallback) == expected_count:
         return fallback
-
-    # --------------------------------------------------------
-    # Se nessuno dei due coincide, restituiamo comunque
-    # il risultato principale: il chiamante farà fallire
-    # la pagina invece di sovrascrivere dati buoni.
-    # --------------------------------------------------------
 
     return players
 
 
 # ============================================================
-# CARD IDENTITY
+# CARD KEY
 # ============================================================
 
 def card_key(card):
-    """
-    L'Item ID è l'identità principale della carta.
-
-    Questo significa che un semplice cambio di label
-    BASE/HOLO non genera falsi OUT/IN.
-    """
-
-    item_id = card.get("item_id")
+    item_id = card.get(
+        "item_id"
+    )
 
     if item_id:
-        return f"item:{item_id}"
+        return (
+            f"item:{item_id}"
+        )
 
     return (
         f"name:{card.get('name', '')}"
@@ -619,16 +669,10 @@ def card_key(card):
 # COMPARE
 # ============================================================
 
-def compare_cards(old_cards, new_cards):
-    """
-    Confronto che:
-
-    - ignora l'ordine
-    - mantiene i duplicati
-    - trova OUT
-    - trova IN
-    """
-
+def compare_cards(
+    old_cards,
+    new_cards,
+):
     old_counter = Counter(
         card_key(card)
         for card in old_cards
@@ -642,17 +686,21 @@ def compare_cards(old_cards, new_cards):
     old_by_key = {}
 
     for card in old_cards:
+        key = card_key(card)
+
         old_by_key.setdefault(
-            card_key(card),
-            []
+            key,
+            [],
         ).append(card)
 
     new_by_key = {}
 
     for card in new_cards:
+        key = card_key(card)
+
         new_by_key.setdefault(
-            card_key(card),
-            []
+            key,
+            [],
         ).append(card)
 
     out_cards = []
@@ -660,29 +708,42 @@ def compare_cards(old_cards, new_cards):
 
     # OUT
     for key, count in old_counter.items():
-        difference = count - new_counter.get(
-            key,
-            0,
+        difference = (
+            count
+            - new_counter.get(
+                key,
+                0,
+            )
         )
 
         if difference > 0:
             out_cards.extend(
-                old_by_key[key][:difference]
+                old_by_key[key][
+                    :difference
+                ]
             )
 
     # IN
     for key, count in new_counter.items():
-        difference = count - old_counter.get(
-            key,
-            0,
+        difference = (
+            count
+            - old_counter.get(
+                key,
+                0,
+            )
         )
 
         if difference > 0:
             in_cards.extend(
-                new_by_key[key][:difference]
+                new_by_key[key][
+                    :difference
+                ]
             )
 
-    return out_cards, in_cards
+    return (
+        out_cards,
+        in_cards,
+    )
 
 
 # ============================================================
@@ -690,23 +751,31 @@ def compare_cards(old_cards, new_cards):
 # ============================================================
 
 def format_card_vertical(card):
-    """
-    Formato:
-
-    Nome Overall
-    VERSIONE
-    """
-
     name = html.escape(
-        str(card.get("name", "Unknown"))
+        str(
+            card.get(
+                "name",
+                "Unknown",
+            )
+        )
     )
 
     overall = html.escape(
-        str(card.get("overall", "?"))
+        str(
+            card.get(
+                "overall",
+                "?",
+            )
+        )
     )
 
     version = html.escape(
-        str(card.get("version", "BASE"))
+        str(
+            card.get(
+                "version",
+                "BASE",
+            )
+        )
     )
 
     return (
@@ -735,7 +804,7 @@ def telegram_send(message):
         return False
 
     url = (
-        f"https://api.telegram.org/"
+        "https://api.telegram.org/"
         f"bot{token}/sendMessage"
     )
 
@@ -755,7 +824,9 @@ def telegram_send(message):
 
         response.raise_for_status()
 
-        print("Telegram notification sent.")
+        print(
+            "Telegram notification sent."
+        )
 
         return True
 
@@ -768,7 +839,7 @@ def telegram_send(message):
 
 
 # ============================================================
-# TELEGRAM SECTION
+# TELEGRAM CATEGORY
 # ============================================================
 
 def build_category_section(
@@ -779,10 +850,9 @@ def build_category_section(
     in_cards,
     error=None,
 ):
-    emoji = PAGE_EMOJIS.get(
-        page_name,
-        "",
-    )
+    emoji = PAGE_EMOJIS[
+        page_name
+    ]
 
     title = (
         f"{emoji} "
@@ -800,26 +870,34 @@ def build_category_section(
             f"{html.escape(str(error))}"
         )
 
-    # --------------------------------------------------------
-    # CHANGED
-    # --------------------------------------------------------
+    parts = [
+        title
+    ]
 
-    parts = [title]
+    # --------------------------------------------------------
+    # OUT
+    # --------------------------------------------------------
 
     if out_cards:
         parts.append(
             "🔴 <b>OUT</b>\n\n"
             + "\n\n".join(
-                "• " + format_card_vertical(card)
+                "• "
+                + format_card_vertical(card)
                 for card in out_cards
             )
         )
+
+    # --------------------------------------------------------
+    # IN
+    # --------------------------------------------------------
 
     if in_cards:
         parts.append(
             "🟢 <b>IN</b>\n\n"
             + "\n\n".join(
-                "• " + format_card_vertical(card)
+                "• "
+                + format_card_vertical(card)
                 for card in in_cards
             )
         )
@@ -830,13 +908,15 @@ def build_category_section(
 
     if not out_cards and not in_cards:
         parts.append(
-            "No feed changes."
+            "No feed changes"
         )
 
         if players:
             parts.append(
                 "\n\n".join(
-                    format_card_vertical(card)
+                    format_card_vertical(
+                        card
+                    )
                     for card in players
                 )
             )
@@ -851,7 +931,9 @@ def build_category_section(
         f"</a>"
     )
 
-    return "\n\n".join(parts)
+    return "\n\n".join(
+        parts
+    )
 
 
 # ============================================================
@@ -859,9 +941,13 @@ def build_category_section(
 # ============================================================
 
 def main():
-    print("=" * 60)
-    print("FUT.GG MONITOR")
-    print("=" * 60)
+    print(
+        "FUT.GG MONITOR"
+    )
+
+    print(
+        "=" * 60
+    )
 
     players_state = load_json(
         PLAYERS_FILE,
@@ -889,7 +975,14 @@ def main():
         {},
     )
 
-    if cache.get("cache_version") != CACHE_VERSION:
+    # --------------------------------------------------------
+    # CACHE
+    # --------------------------------------------------------
+
+    if (
+        cache.get("cache_version")
+        != CACHE_VERSION
+    ):
         print(
             "Cache version mismatch. "
             "Resetting finish cache."
@@ -907,17 +1000,24 @@ def main():
     any_real_change = False
 
     # ========================================================
-    # SCAN ALL PAGES
+    # SCAN
     # ========================================================
 
     for page_name, config in PAGES.items():
+
         print()
         print(
-            f"Scanning 🏆 {page_name.upper()}"
+            f"Scanning 🏆 "
+            f"{page_name.upper()}"
         )
 
-        print(config["url"])
-        print("=" * 60)
+        print(
+            config["url"]
+        )
+
+        print(
+            "=" * 60
+        )
 
         old_players = players_state.get(
             page_name,
@@ -944,22 +1044,22 @@ def main():
 
             print(
                 f"Found {len(players)} "
-                f"players."
+                f"unique players."
             )
 
             # ------------------------------------------------
-            # VALIDATE COUNT
+            # CHECK COUNT
             # ------------------------------------------------
 
             if len(players) != config["expected"]:
                 raise RuntimeError(
                     f"Expected "
                     f"{config['expected']} cards, "
-                    f"found {len(players)}."
+                    f"found {len(players)}"
                 )
 
             # ------------------------------------------------
-            # RESOLVE FINISH
+            # FINISH
             # ------------------------------------------------
 
             for index, player in enumerate(
@@ -1004,21 +1104,23 @@ def main():
                 any_real_change = True
 
             # ------------------------------------------------
-            # SAVE SUCCESSFUL STATE
+            # SAVE IN MEMORY
             # ------------------------------------------------
 
-            successful_updates[page_name] = players
+            successful_updates[
+                page_name
+            ] = players
 
             # ------------------------------------------------
-            # TELEGRAM SECTION
+            # TELEGRAM
             # ------------------------------------------------
 
             section = build_category_section(
-                page_name=page_name,
-                config=config,
-                players=players,
-                out_cards=out_cards,
-                in_cards=in_cards,
+                page_name,
+                config,
+                players,
+                out_cards,
+                in_cards,
             )
 
             telegram_sections.append(
@@ -1026,57 +1128,65 @@ def main():
             )
 
             # ------------------------------------------------
-            # LOG CHANGES
+            # LOG
             # ------------------------------------------------
 
             if out_cards:
                 print()
-                print("OUT:")
+                print(
+                    "OUT:"
+                )
 
                 for card in out_cards:
                     print(
-                        f"- "
-                        f"{card['name']} "
-                        f"{card['overall']} "
-                        f"[{card.get('version', 'BASE')}]"
+                        "- "
+                        f"{card.get('name')} "
+                        f"{card.get('overall')} "
+                        f"["
+                        f"{card.get('version', 'BASE')}"
+                        f"]"
                     )
 
             if in_cards:
                 print()
-                print("IN:")
+                print(
+                    "IN:"
+                )
 
                 for card in in_cards:
                     print(
-                        f"+ "
-                        f"{card['name']} "
-                        f"{card['overall']} "
-                        f"[{card.get('version', 'BASE')}]"
+                        "+ "
+                        f"{card.get('name')} "
+                        f"{card.get('overall')} "
+                        f"["
+                        f"{card.get('version', 'BASE')}"
+                        f"]"
                     )
 
-            if not out_cards and not in_cards:
+            if (
+                not out_cards
+                and not in_cards
+            ):
                 print(
                     "No feed changes."
                 )
 
         except Exception as e:
-            # ------------------------------------------------
-            # ERROR
-            # ------------------------------------------------
 
             print(
-                f"ERROR on {page_name}: {e}"
+                f"ERROR on "
+                f"{page_name}: {e}"
             )
 
-            # IMPORTANT:
-            # Non sovrascriviamo il vecchio stato
-            # quando una pagina ha un errore.
+            # IMPORTANTE:
+            # manteniamo il vecchio stato.
 
             section = build_category_section(
-                page_name=page_name,
-                config=config,
-                players=[],
-                out_cards=[],
-                in_cards=[],
+                page_name,
+                config,
+                [],
+                [],
+                [],
                 error=e,
             )
 
@@ -1088,23 +1198,28 @@ def main():
     # UPDATE STATE
     # ========================================================
 
-    for page_name, players in successful_updates.items():
-        players_state[page_name] = players
+    for page_name, players in (
+        successful_updates.items()
+    ):
+        players_state[
+            page_name
+        ] = players
+
         trending_state.setdefault(
             "pages",
-            {}
+            {},
         )
-        trending_state["pages"][page_name] = players
 
-    # timestamp
-    import time
+        trending_state[
+            "pages"
+        ][page_name] = players
 
-    trending_state["updated_at"] = int(
-        time.time()
-    )
+    trending_state[
+        "updated_at"
+    ] = int(time.time())
 
     # ========================================================
-    # SAVE FILES
+    # SAVE
     # ========================================================
 
     save_json(
@@ -1126,11 +1241,13 @@ def main():
     # ONE TELEGRAM MESSAGE
     # ========================================================
 
-    message = (
+    separator = (
         "\n\n"
         "------------------------------"
         "\n\n"
-    ).join(
+    )
+
+    message = separator.join(
         telegram_sections
     )
 
@@ -1139,11 +1256,13 @@ def main():
     )
 
     # ========================================================
-    # FINAL LOG
+    # RESULT
     # ========================================================
 
     print()
-    print("=" * 60)
+    print(
+        "=" * 60
+    )
 
     if any_real_change:
         print(
@@ -1158,7 +1277,9 @@ def main():
         "Telegram: 1 combined message"
     )
 
-    print("=" * 60)
+    print(
+        "=" * 60
+    )
 
 
 if __name__ == "__main__":
