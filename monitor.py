@@ -17,8 +17,6 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 PLAYERS_FILE = "players.json"
-CARD_CACHE_FILE = "card_cache.json"
-
 HOLO_DB_FILE = "card_database.json"
 
 HEADERS = {
@@ -35,11 +33,13 @@ CATEGORY_CONFIG = {
         "emoji": "🦸‍♂️",
         "expected_slots": 5,
     },
+
     "Holographics": {
         "url": "https://www.fut.gg/fut-gallery/rarities/holographics/",
         "emoji": "✨️",
         "expected_slots": 5,
     },
+
     "Season 1": {
         "url": "https://www.fut.gg/fut-gallery/rarities/season-1/",
         "emoji": "1️⃣",
@@ -53,13 +53,31 @@ CATEGORY_CONFIG = {
 # ============================================================
 
 KNOWN_FINISHES = {
+
+    # --------------------------------------------------------
+    # HEROES
+    # --------------------------------------------------------
+
+    # Pristine Holographic
     "67335170": "PRISTINE HOLO",
     "67114537": "PRISTINE HOLO",
     "67335237": "PRISTINE HOLO",
     "67371135": "PRISTINE HOLO",
 
+    # Vialli Pristine Holographic
+    "67342564": "PRISTINE HOLO",
+
+    # Standard Base
     "226306": "BASE",
     "233700": "BASE",
+
+    # Litmanen standard Base Hero
+    "5673": "BASE",
+
+
+    # --------------------------------------------------------
+    # OTHER KNOWN PRISTINE HOLOGRAPHICS
+    # --------------------------------------------------------
 
     "67186651": "PRISTINE HOLO",
     "67335157": "PRISTINE HOLO",
@@ -70,6 +88,11 @@ KNOWN_FINISHES = {
     "67348095": "PRISTINE HOLO",
     "67368151": "PRISTINE HOLO",
 
+
+    # --------------------------------------------------------
+    # KNOWN HOLOGRAPHICS
+    # --------------------------------------------------------
+
     "67179830": "HOLO",
     "67188263": "HOLO",
     "67368429": "HOLO",
@@ -77,6 +100,11 @@ KNOWN_FINISHES = {
     "67372629": "HOLO",
     "67386815": "HOLO",
     "67374557": "HOLO",
+
+
+    # --------------------------------------------------------
+    # KNOWN BASE
+    # --------------------------------------------------------
 
     "50590935": "BASE",
 }
@@ -91,26 +119,39 @@ ITEM_ID_PATTERN = re.compile(
     re.IGNORECASE
 )
 
+GENERIC_27_ID_PATTERN = re.compile(
+    r"(?:^|[/_-])27-(\d+)",
+    re.IGNORECASE
+)
+
 ALT_PATTERN = re.compile(
     r"^\s*(.*?)\s*-\s*(\d+)\s*-\s*(.*?)\s*$"
 )
 
 
 # ============================================================
-# JSON HELPERS
+# JSON
 # ============================================================
 
 def load_json(path, default):
+
     try:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
+
     except Exception:
         return default
 
 
 def save_json(path, data):
+
     with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+        json.dump(
+            data,
+            f,
+            ensure_ascii=False,
+            indent=2
+        )
 
 
 # ============================================================
@@ -118,6 +159,7 @@ def save_json(path, data):
 # ============================================================
 
 def fetch_html(url):
+
     print(f"Fetching: {url}")
 
     response = requests.get(
@@ -126,38 +168,45 @@ def fetch_html(url):
         timeout=30
     )
 
-    print(f"HTTP status: {response.status_code}")
+    print(
+        f"HTTP status: {response.status_code}"
+    )
 
     response.raise_for_status()
 
     html = response.text
 
-    print(f"Downloaded: {len(html)} characters")
+    print(
+        f"Downloaded: {len(html)} characters"
+    )
 
     return html
 
 
 # ============================================================
-# ITEM ID
+# ITEM ID FROM IMAGE
 # ============================================================
 
 def extract_item_id(img):
-    """
-    Extract FUT.GG item ID from the player-card image URL.
-    """
 
-    values = [
-        img.get("src", ""),
-        img.get("data-src", ""),
-        img.get("data-lazy-src", ""),
-        img.get("srcset", ""),
+    attributes = [
+        "src",
+        "data-src",
+        "data-lazy-src",
+        "srcset",
+        "data-original",
     ]
 
-    for value in values:
+    for attr in attributes:
+
+        value = img.get(attr)
+
         if not value:
             continue
 
-        match = ITEM_ID_PATTERN.search(value)
+        match = ITEM_ID_PATTERN.search(
+            str(value)
+        )
 
         if match:
             return match.group(1)
@@ -166,25 +215,48 @@ def extract_item_id(img):
 
 
 # ============================================================
+# ALL ITEM IDS FROM HTML
+# ============================================================
+
+def extract_item_ids_from_html(html):
+
+    found = set()
+
+    # Primary FUT.GG card-image format.
+    for match in ITEM_ID_PATTERN.finditer(html):
+
+        found.add(
+            match.group(1)
+        )
+
+    # Fallback for links / alternate URLs.
+    if not found:
+
+        for match in GENERIC_27_ID_PATTERN.finditer(html):
+
+            item_id = match.group(1)
+
+            # Ignore extremely short / suspicious values.
+            if len(item_id) >= 4:
+                found.add(item_id)
+
+    return found
+
+
+# ============================================================
 # IMAGE TYPE
 # ============================================================
 
 def is_real_player_card(img):
-    """
-    A real FUT.GG player card has:
-        futgg-player-item-card/27-<ID>
-    in one of its image URL attributes.
-    """
 
     return extract_item_id(img) is not None
 
 
 def is_player_placeholder(img):
-    """
-    Empty gallery slot.
-    """
 
-    alt = (img.get("alt") or "").strip().lower()
+    alt = (
+        img.get("alt") or ""
+    ).strip().lower()
 
     return alt == "player card"
 
@@ -194,23 +266,13 @@ def is_player_placeholder(img):
 # ============================================================
 
 def parse_player_alt(alt):
-    """
-    FUT.GG currently exposes player information like:
-
-        Šašić - 89 - Base Hero
-        Vialli - 89 - Base Hero
-        Mora - 87 - Future Stars
-
-    Returns:
-        name
-        overall
-        version
-    """
 
     if not alt:
         return None, None, None
 
-    alt = " ".join(alt.split()).strip()
+    alt = " ".join(
+        alt.split()
+    ).strip()
 
     match = ALT_PATTERN.match(alt)
 
@@ -221,7 +283,7 @@ def parse_player_alt(alt):
     overall = int(match.group(2))
     version = match.group(3).strip()
 
-    # Safety: don't accidentally accept utility images.
+    # Never accept utility images.
     if name.lower() in {
         "fc coin",
         "gallery token",
@@ -230,32 +292,32 @@ def parse_player_alt(alt):
     }:
         return None, None, None
 
-    return name, overall, version
+    return (
+        name,
+        overall,
+        version
+    )
 
 
 # ============================================================
 # FIND CHEAPEST LINEUP
 # ============================================================
 
-def find_cheapest_lineup_images(soup, expected_slots):
-    """
-    Find exactly the images belonging to:
-
-        Cheapest grade X lineup
-
-    and stop before:
-
-        Add players
-
-    This is much safer than selecting a large ancestor container.
-    """
+def find_cheapest_lineup_images(
+    soup,
+    expected_slots
+):
 
     cheapest_heading = None
 
-    # Search headings first.
-    for tag in soup.find_all(["h1", "h2", "h3", "h4", "div"]):
+    # Find the "Cheapest grade X lineup" element.
+    for tag in soup.find_all(
+        ["h1", "h2", "h3", "h4", "div"]
+    ):
 
-        text = " ".join(tag.stripped_strings)
+        text = " ".join(
+            tag.stripped_strings
+        )
 
         if not text:
             continue
@@ -265,31 +327,55 @@ def find_cheapest_lineup_images(soup, expected_slots):
             text,
             re.IGNORECASE
         ):
+
             cheapest_heading = tag
             break
 
     if cheapest_heading is None:
-        print("WARNING: Cheapest grade heading not found.")
+
+        print(
+            "WARNING: Cheapest grade heading not found."
+        )
+
         return []
 
-    print("Cheapest grade heading found.")
+    print(
+        "Cheapest grade heading found."
+    )
 
     lineup_images = []
 
-    # Walk forward through relevant DOM nodes.
-    for tag in cheapest_heading.find_all_next(["img", "h1", "h2", "h3", "h4"]):
+    # Walk forward from the heading.
+    for tag in cheapest_heading.find_all_next(
+        ["img", "h1", "h2", "h3", "h4"]
+    ):
 
-        if tag.name in {"h1", "h2", "h3", "h4"}:
+        # Stop at Add players.
+        if tag.name in {
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+        }:
 
-            text = " ".join(tag.stripped_strings).strip()
+            text = " ".join(
+                tag.stripped_strings
+            ).strip()
 
-            if re.search(r"^Add players$", text, re.IGNORECASE):
+            if re.search(
+                r"^Add players$",
+                text,
+                re.IGNORECASE
+            ):
                 break
 
         elif tag.name == "img":
 
-            # Only accept actual player cards OR Player Card placeholders.
-            if is_real_player_card(tag) or is_player_placeholder(tag):
+            if (
+                is_real_player_card(tag)
+                or is_player_placeholder(tag)
+            ):
+
                 lineup_images.append(tag)
 
                 if len(lineup_images) >= expected_slots:
@@ -304,29 +390,23 @@ def find_cheapest_lineup_images(soup, expected_slots):
 
 
 # ============================================================
-# PARSE ONE LINEUP SLOT
+# PARSE ONE SLOT
 # ============================================================
 
-def parse_lineup_slot(img, database, previous_categories=None):
-    """
-    Parse a single lineup slot.
-
-    Real player:
-        item_id
-        name
-        overall
-        version
-        finish
-
-    Empty Player Card:
-        placeholder=True
-    """
+def parse_lineup_slot(
+    img,
+    database,
+    previous_cards
+):
 
     # --------------------------------------------------------
-    # EMPTY SLOT
+    # PLAYER CARD PLACEHOLDER
     # --------------------------------------------------------
 
-    if is_player_placeholder(img) and not is_real_player_card(img):
+    if (
+        is_player_placeholder(img)
+        and not is_real_player_card(img)
+    ):
 
         return {
             "name": "",
@@ -337,6 +417,7 @@ def parse_lineup_slot(img, database, previous_categories=None):
             "placeholder": True,
         }
 
+
     # --------------------------------------------------------
     # REAL PLAYER
     # --------------------------------------------------------
@@ -346,15 +427,23 @@ def parse_lineup_slot(img, database, previous_categories=None):
     if not item_id:
         return None
 
-    alt = (img.get("alt") or "").strip()
+    alt = (
+        img.get("alt") or ""
+    ).strip()
 
-    name, overall, version = parse_player_alt(alt)
+    name, overall, version = parse_player_alt(
+        alt
+    )
 
     if not name or overall is None:
+
         print(
-            f"WARNING: Could not parse player alt: {alt!r}"
+            f"WARNING: Could not parse player alt: "
+            f"{alt!r}"
         )
+
         return None
+
 
     # --------------------------------------------------------
     # FINISH
@@ -362,30 +451,55 @@ def parse_lineup_slot(img, database, previous_categories=None):
 
     finish = "UNKNOWN"
 
-    # 1. Database has priority.
-    record = database.get(item_id)
+    # Database first.
+    record = database.get(
+        item_id
+    )
 
     if isinstance(record, dict):
-        db_finish = record.get("finish")
 
-        if db_finish and db_finish != "UNKNOWN":
+        db_finish = record.get(
+            "finish"
+        )
+
+        if (
+            db_finish
+            and db_finish != "UNKNOWN"
+        ):
+
             finish = db_finish
 
-    # 2. Known static mapping.
+
+    # Known static mapping.
     if finish == "UNKNOWN":
-        finish = KNOWN_FINISHES.get(item_id, "UNKNOWN")
 
-    # 3. Previous state can preserve a previously known finish.
-    if finish == "UNKNOWN" and previous_categories:
-        for old in previous_categories:
+        finish = KNOWN_FINISHES.get(
+            item_id,
+            "UNKNOWN"
+        )
 
-            if str(old.get("item_id")) == str(item_id):
 
-                old_finish = old.get("finish")
+    # Previous state.
+    if finish == "UNKNOWN":
 
-                if old_finish and old_finish != "UNKNOWN":
+        for old in previous_cards:
+
+            if str(
+                old.get("item_id")
+            ) == str(item_id):
+
+                old_finish = old.get(
+                    "finish"
+                )
+
+                if (
+                    old_finish
+                    and old_finish != "UNKNOWN"
+                ):
+
                     finish = old_finish
                     break
+
 
     return {
         "name": name,
@@ -401,13 +515,10 @@ def parse_lineup_slot(img, database, previous_categories=None):
 # VALIDATE LINEUP
 # ============================================================
 
-def validate_lineup(lineup, expected_slots):
-    """
-    Reject dangerous parses.
-
-    Never allow FC Coin / Gallery Token / missing names
-    to overwrite a valid previous lineup.
-    """
+def validate_lineup(
+    lineup,
+    expected_slots
+):
 
     if not lineup:
         return False
@@ -416,17 +527,20 @@ def validate_lineup(lineup, expected_slots):
         return False
 
     real_cards = [
-        card for card in lineup
+        card
+        for card in lineup
         if not card.get("placeholder")
     ]
 
-    # Must have at least one real player.
+    # At least one real player required.
     if not real_cards:
         return False
 
     for card in real_cards:
 
-        name = (card.get("name") or "").strip()
+        name = (
+            card.get("name") or ""
+        ).strip()
 
         if not name:
             return False
@@ -451,16 +565,32 @@ def validate_lineup(lineup, expected_slots):
 # PARSE CATEGORY
 # ============================================================
 
-def parse_category(category, config, database, previous_state):
+def parse_category(
+    category,
+    config,
+    database,
+    previous_state
+):
+
     print()
     print("=" * 60)
-    print(f"Checking {config['emoji']} {category.upper()} "
-          f"({config['expected_slots']} players)...")
+
+    print(
+        f"Checking {config['emoji']} "
+        f"{category.upper()} "
+        f"({config['expected_slots']} players)..."
+    )
+
     print("=" * 60)
 
-    html = fetch_html(config["url"])
+    html = fetch_html(
+        config["url"]
+    )
 
-    soup = BeautifulSoup(html, "html.parser")
+    soup = BeautifulSoup(
+        html,
+        "html.parser"
+    )
 
     all_real_images = [
         img
@@ -469,7 +599,7 @@ def parse_category(category, config, database, previous_state):
     ]
 
     print(
-        f"Real player-card images found in page: "
+        "Real player-card images found in page: "
         f"{len(all_real_images)}"
     )
 
@@ -479,17 +609,31 @@ def parse_category(category, config, database, previous_state):
     )
 
     if not images:
-        print("WARNING: Could not find lineup images.")
-        print("WARNING: Previous state kept.")
+
+        print(
+            "WARNING: Could not find lineup images."
+        )
+
+        print(
+            "WARNING: Previous state kept."
+        )
+
         return None
 
     print(
-        f"Selected lineup candidate: "
+        "Selected lineup candidate: "
         f"{len(images)} lineup slots"
     )
 
-    old_category = previous_state.get(category, {})
-    old_current = old_category.get("current", [])
+    old_category = previous_state.get(
+        category,
+        {}
+    )
+
+    old_current = old_category.get(
+        "current",
+        []
+    )
 
     lineup = []
 
@@ -498,43 +642,60 @@ def parse_category(category, config, database, previous_state):
         card = parse_lineup_slot(
             img,
             database,
-            previous_categories=old_current
+            old_current
         )
 
         if card is None:
+
             print(
-                "WARNING: Failed to parse one lineup slot."
+                "WARNING: Failed to parse "
+                "one lineup slot."
             )
-            print("WARNING: Previous state kept.")
+
+            print(
+                "WARNING: Previous state kept."
+            )
+
             return None
 
         lineup.append(card)
 
     print(
-        f"Images/cards detected in selected lineup: "
-        f"{len(lineup)}"
+        "Images/cards detected in selected "
+        f"container: {len(lineup)}"
     )
 
     if not validate_lineup(
         lineup,
         config["expected_slots"]
     ):
+
         print(
             "WARNING: Invalid lineup detected."
         )
-        print("WARNING: Previous state kept.")
+
+        print(
+            "WARNING: Previous state kept."
+        )
+
         return None
 
     print(
-        f"Rendered lineup: "
-        f"{len(lineup)}/{config['expected_slots']} slots"
+        "Rendered lineup: "
+        f"{len(lineup)}/"
+        f"{config['expected_slots']} slots"
     )
 
     for card in lineup:
 
-        if card["placeholder"]:
-            print("- Player Card — EMPTY SLOT")
+        if card.get("placeholder"):
+
+            print(
+                "- Player Card — EMPTY SLOT"
+            )
+
         else:
+
             print(
                 f"- {card['name']} "
                 f"{card['overall']} "
@@ -551,9 +712,12 @@ def parse_category(category, config, database, previous_state):
 # ============================================================
 
 def update_holographic_database(database):
+
     print()
     print("=" * 60)
-    print("Updating Holographic database")
+    print(
+        "Updating Holographic database"
+    )
     print("=" * 60)
 
     pages = [
@@ -572,78 +736,134 @@ def update_holographic_database(database):
     for finish, url in pages:
 
         print()
-        print(f"Scanning {finish}...")
+        print(
+            f"Scanning {finish}..."
+        )
 
         try:
-            html = fetch_html(url)
-        except Exception as e:
-            print(
-                f"WARNING: Failed to scan holographic page: {e}"
+
+            html = fetch_html(
+                url
             )
+
+        except Exception as e:
+
+            print(
+                "WARNING: Failed to scan "
+                f"holographic page: {e}"
+            )
+
             continue
 
-        soup = BeautifulSoup(html, "html.parser")
 
-        records = {}
+        # ----------------------------------------------------
+        # METHOD 1: FULL HTML
+        # ----------------------------------------------------
 
-        for img in soup.find_all("img"):
+        ids = extract_item_ids_from_html(
+            html
+        )
 
-            item_id = extract_item_id(img)
 
-            if not item_id:
-                continue
+        # ----------------------------------------------------
+        # METHOD 2: BEAUTIFULSOUP ATTRIBUTES
+        # ----------------------------------------------------
 
-            records[item_id] = {
+        soup = BeautifulSoup(
+            html,
+            "html.parser"
+        )
+
+        for tag in soup.find_all(True):
+
+            for value in tag.attrs.values():
+
+                if isinstance(value, list):
+                    values = value
+                else:
+                    values = [value]
+
+                for raw in values:
+
+                    if not isinstance(
+                        raw,
+                        str
+                    ):
+                        continue
+
+                    match = ITEM_ID_PATTERN.search(
+                        raw
+                    )
+
+                    if match:
+
+                        ids.add(
+                            match.group(1)
+                        )
+
+
+        print(
+            f"  Records found on page: "
+            f"{len(ids)}"
+        )
+
+        for item_id in ids:
+
+            discovered[item_id] = {
                 "item_id": item_id,
                 "finish": finish,
             }
 
-        print(
-            f"  Records found on page: {len(records)}"
-        )
-
-        for item_id, record in records.items():
-            discovered[item_id] = record
 
     print()
     print(
-        f"Holographic records discovered: "
+        "Holographic records discovered: "
         f"{len(discovered)}"
     )
 
-    # Add discovered records.
+
+    # --------------------------------------------------------
+    # UPDATE DATABASE
+    # --------------------------------------------------------
+
     for item_id, record in discovered.items():
 
         database[item_id] = record
 
-    # Add known finishes that aren't discovered on the page.
+
+    # --------------------------------------------------------
+    # ALWAYS KEEP KNOWN FINISHES
+    # --------------------------------------------------------
+
     for item_id, finish in KNOWN_FINISHES.items():
 
-        if item_id not in database:
+        database[item_id] = {
+            "item_id": item_id,
+            "finish": finish,
+        }
 
-            database[item_id] = {
-                "item_id": item_id,
-                "finish": finish,
-            }
 
     print(
         f"Database items: {len(database)}"
     )
 
-    # This database intentionally stores card identity + finish.
+
     players_count = sum(
         1
         for value in database.values()
-        if isinstance(value, dict)
-        and value.get("name")
+        if (
+            isinstance(value, dict)
+            and value.get("name")
+        )
     )
 
     print(
         f"Database players: {players_count}"
     )
 
+
     save_json(
-        HOLO_DB_FILE,
+        "card_database.json",
         database
     )
 
@@ -651,17 +871,23 @@ def update_holographic_database(database):
 
 
 # ============================================================
-# FINISH DATABASE LOAD
+# LOAD DATABASE
 # ============================================================
 
 def load_card_database():
+
     database = load_json(
-        HOLO_DB_FILE,
+        "card_database.json",
         {}
     )
 
-    if not isinstance(database, dict):
+    if not isinstance(
+        database,
+        dict
+    ):
+
         database = {}
+
 
     added = 0
 
@@ -677,7 +903,7 @@ def load_card_database():
             added += 1
 
     print(
-        f"Known card finishes added to database: "
+        "Known card finishes added to database: "
         f"{added}"
     )
 
@@ -685,24 +911,146 @@ def load_card_database():
 
 
 # ============================================================
+# CLEAN PREVIOUS STATE
+# ============================================================
+
+def clean_previous_state(
+    previous_state
+):
+
+    """
+    Removes corrupted old entries such as:
+
+        FC Coin
+        Gallery Token
+
+    These were produced by the old parser and must never
+    generate OUT notifications.
+    """
+
+    if not isinstance(
+        previous_state,
+        dict
+    ):
+
+        return {}
+
+
+    cleaned = {}
+
+
+    for category, data in previous_state.items():
+
+        if not isinstance(
+            data,
+            dict
+        ):
+
+            continue
+
+
+        current = data.get(
+            "current",
+            []
+        )
+
+        if not isinstance(
+            current,
+            list
+        ):
+
+            current = []
+
+
+        valid = []
+
+        for card in current:
+
+            if not isinstance(
+                card,
+                dict
+            ):
+                continue
+
+
+            # Keep legitimate Player Card placeholders.
+            if card.get(
+                "placeholder"
+            ):
+
+                valid.append(
+                    card
+                )
+
+                continue
+
+
+            name = (
+                card.get("name") or ""
+            ).strip().lower()
+
+            item_id = card.get(
+                "item_id"
+            )
+
+
+            # Remove corrupted utility cards.
+            if name in {
+                "fc coin",
+                "gallery token",
+            }:
+
+                continue
+
+
+            # A real card must have Item ID.
+            if not item_id:
+
+                continue
+
+
+            # Must have a player name.
+            if not card.get(
+                "name"
+            ):
+
+                continue
+
+
+            valid.append(
+                card
+            )
+
+
+        cleaned[category] = {
+            "current": valid
+        }
+
+
+    return cleaned
+
+
+# ============================================================
 # CARD IDENTITY
 # ============================================================
 
 def card_identity(card):
-    """
-    Item ID is the primary identity.
 
-    This intentionally allows two cards with the same
-    player/name/rating to coexist when Item IDs differ.
-    """
+    if card.get(
+        "placeholder"
+    ):
 
-    if card.get("placeholder"):
         return "PLACEHOLDER"
 
-    item_id = card.get("item_id")
+    item_id = card.get(
+        "item_id"
+    )
 
     if item_id:
-        return f"ITEM:{item_id}"
+
+        return (
+            f"ITEM:{item_id}"
+        )
 
     return (
         f"UNKNOWN:"
@@ -713,86 +1061,146 @@ def card_identity(card):
 
 
 # ============================================================
-# MULTISET COMPARISON
+# COUNTER
 # ============================================================
 
 def counter_from_cards(cards):
+
     return Counter(
         card_identity(card)
         for card in cards
     )
 
 
-def calculate_changes(old_cards, new_cards):
-    """
-    Returns actual OUT and IN occurrences.
+# ============================================================
+# CHANGES
+# ============================================================
 
-    Order changes are ignored.
+def calculate_changes(
+    old_cards,
+    new_cards
+):
 
-    Duplicate Item IDs are handled as separate occurrences.
-    """
+    old_counter = counter_from_cards(
+        old_cards
+    )
 
-    old_counter = counter_from_cards(old_cards)
-    new_counter = counter_from_cards(new_cards)
+    new_counter = counter_from_cards(
+        new_cards
+    )
 
-    outs = []
-    ins = []
 
     old_by_identity = {}
 
     for card in old_cards:
-        key = card_identity(card)
-        old_by_identity.setdefault(key, []).append(card)
+
+        key = card_identity(
+            card
+        )
+
+        old_by_identity.setdefault(
+            key,
+            []
+        ).append(card)
+
 
     new_by_identity = {}
 
     for card in new_cards:
-        key = card_identity(card)
-        new_by_identity.setdefault(key, []).append(card)
 
+        key = card_identity(
+            card
+        )
+
+        new_by_identity.setdefault(
+            key,
+            []
+        ).append(card)
+
+
+    outs = []
+    ins = []
+
+
+    # --------------------------------------------------------
     # OUT
-    for key, count in (old_counter - new_counter).items():
+    # --------------------------------------------------------
 
-        cards = old_by_identity.get(key, [])
+    for key, count in (
+        old_counter - new_counter
+    ).items():
+
+        cards = old_by_identity.get(
+            key,
+            []
+        )
 
         for card in cards[:count]:
 
-            # Never report placeholders as OUT.
-            if card.get("placeholder"):
+            if card.get(
+                "placeholder"
+            ):
                 continue
 
-            outs.append(card)
+            outs.append(
+                card
+            )
 
+
+    # --------------------------------------------------------
     # IN
-    for key, count in (new_counter - old_counter).items():
+    # --------------------------------------------------------
 
-        cards = new_by_identity.get(key, [])
+    for key, count in (
+        new_counter - old_counter
+    ).items():
+
+        cards = new_by_identity.get(
+            key,
+            []
+        )
 
         for card in cards[:count]:
 
-            # Never report placeholders as IN.
-            if card.get("placeholder"):
+            if card.get(
+                "placeholder"
+            ):
                 continue
 
-            ins.append(card)
+            ins.append(
+                card
+            )
+
 
     return outs, ins
 
 
 # ============================================================
-# FORMAT CARD
+# FORMAT
 # ============================================================
 
 def format_card(card):
-    name = card.get("name") or "?"
-    overall = card.get("overall")
+
+    name = (
+        card.get("name")
+        or "?"
+    )
+
+    overall = card.get(
+        "overall"
+    )
 
     if overall is None:
         overall_text = "?"
     else:
-        overall_text = str(overall)
+        overall_text = str(
+            overall
+        )
 
-    finish = card.get("finish") or "UNKNOWN"
+    finish = (
+        card.get("finish")
+        or "UNKNOWN"
+    )
 
     return (
         f"<b>{escape(str(name))} "
@@ -803,18 +1211,34 @@ def format_card(card):
 
 
 def format_current_card(card):
-    if card.get("placeholder"):
+
+    if card.get(
+        "placeholder"
+    ):
+
         return None
 
-    name = card.get("name") or "?"
-    overall = card.get("overall")
+
+    name = (
+        card.get("name")
+        or "?"
+    )
+
+    overall = card.get(
+        "overall"
+    )
 
     if overall is None:
         overall_text = "?"
     else:
-        overall_text = str(overall)
+        overall_text = str(
+            overall
+        )
 
-    finish = card.get("finish") or "UNKNOWN"
+    finish = (
+        card.get("finish")
+        or "UNKNOWN"
+    )
 
     return (
         f"<b>{escape(str(name))} "
@@ -828,19 +1252,33 @@ def format_current_card(card):
 # TELEGRAM
 # ============================================================
 
-def send_telegram_message(message):
+def send_telegram_message(
+    message
+):
+
     if not TELEGRAM_BOT_TOKEN:
-        print("WARNING: TELEGRAM_BOT_TOKEN missing.")
+
+        print(
+            "WARNING: TELEGRAM_BOT_TOKEN missing."
+        )
+
         return False
+
 
     if not TELEGRAM_CHAT_ID:
-        print("WARNING: TELEGRAM_CHAT_ID missing.")
+
+        print(
+            "WARNING: TELEGRAM_CHAT_ID missing."
+        )
+
         return False
 
+
     url = (
-        f"https://api.telegram.org/bot"
+        "https://api.telegram.org/bot"
         f"{TELEGRAM_BOT_TOKEN}/sendMessage"
     )
+
 
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
@@ -849,30 +1287,47 @@ def send_telegram_message(message):
         "disable_web_page_preview": True,
     }
 
+
     response = requests.post(
         url,
         json=payload,
         timeout=30
     )
 
+
     print(
-        f"Telegram status: {response.status_code}"
+        f"Telegram status: "
+        f"{response.status_code}"
     )
 
+
     if response.status_code != 200:
-        print(response.text)
 
-    return response.status_code == 200
+        print(
+            response.text
+        )
+
+
+    return (
+        response.status_code == 200
+    )
 
 
 # ============================================================
-# BUILD TELEGRAM MESSAGE
+# TELEGRAM MESSAGE
 # ============================================================
 
-def build_telegram_message(previous_state, current_state):
+def build_telegram_message(
+    previous_state,
+    current_state
+):
+
     lines = []
 
-    lines.append("<b>📋 FUT.GG Monitor</b>")
+    lines.append(
+        "<b>📋 FUT.GG Monitor</b>"
+    )
+
 
     categories = [
         "Heroes",
@@ -880,18 +1335,30 @@ def build_telegram_message(previous_state, current_state):
         "Season 1",
     ]
 
-    for category_index, category in enumerate(categories):
 
-        config = CATEGORY_CONFIG[category]
+    for category_index, category in enumerate(
+        categories
+    ):
+
+        config = CATEGORY_CONFIG[
+            category
+        ]
+
 
         if category_index > 0:
+
             lines.append("")
-            lines.append("--------------------")
+            lines.append(
+                "--------------------"
+            )
             lines.append("")
 
+
         lines.append(
-            f"<b>{config['emoji']} {escape(category)}</b>"
+            f"<b>{config['emoji']} "
+            f"{escape(category)}</b>"
         )
+
 
         old_category = previous_state.get(
             category,
@@ -903,6 +1370,7 @@ def build_telegram_message(previous_state, current_state):
             []
         )
 
+
         new_category = current_state.get(
             category,
             {}
@@ -913,28 +1381,36 @@ def build_telegram_message(previous_state, current_state):
             []
         )
 
-        # ----------------------------------------------------
-        # CHANGES
-        # ----------------------------------------------------
 
         outs, ins = calculate_changes(
             old_current,
             new_current
         )
 
-        # OUT first.
+
+        # ----------------------------------------------------
+        # OUT
+        # ----------------------------------------------------
+
         for card in outs:
 
             lines.append(
-                f"🔴 OUT — {format_card(card)}"
+                f"🔴 OUT — "
+                f"{format_card(card)}"
             )
 
-        # IN second.
+
+        # ----------------------------------------------------
+        # IN
+        # ----------------------------------------------------
+
         for card in ins:
 
             lines.append(
-                f"🟢 IN — {format_card(card)}"
+                f"🟢 IN — "
+                f"{format_card(card)}"
             )
+
 
         # ----------------------------------------------------
         # CURRENT LINEUP
@@ -944,30 +1420,52 @@ def build_telegram_message(previous_state, current_state):
             "<b>📋 Current lineup 📋</b>"
         )
 
+
+        # Track newly entered occurrences.
+        remaining_new = Counter(
+            card_identity(card)
+            for card in ins
+        )
+
+
         for card in new_current:
 
-            formatted = format_current_card(card)
+            formatted = format_current_card(
+                card
+            )
 
             if formatted is None:
                 continue
 
-            # Current lineup should only mark newly entered
-            # cards with green.
-            identity = card_identity(card)
 
-            is_new = any(
-                card_identity(x) == identity
-                for x in ins
+            identity = card_identity(
+                card
             )
 
-            if is_new:
+
+            if remaining_new.get(
+                identity,
+                0
+            ) > 0:
+
                 lines.append(
                     f"🟢 {formatted}"
                 )
-            else:
-                lines.append(formatted)
 
-    return "\n".join(lines)
+                remaining_new[
+                    identity
+                ] -= 1
+
+            else:
+
+                lines.append(
+                    formatted
+                )
+
+
+    return "\n".join(
+        lines
+    )
 
 
 # ============================================================
@@ -979,26 +1477,34 @@ def main():
     print()
     print("=" * 60)
     print("FUT.GG MONITOR")
-    print(datetime.utcnow().isoformat())
+    print(
+        datetime.utcnow().isoformat()
+    )
     print("=" * 60)
 
+
     # --------------------------------------------------------
-    # LOAD PREVIOUS STATE
+    # LOAD PREVIOUS
     # --------------------------------------------------------
 
-    previous_state = load_json(
+    raw_previous_state = load_json(
         PLAYERS_FILE,
         {}
     )
 
-    if not isinstance(previous_state, dict):
-        previous_state = {}
+
+    # Remove old FC Coin / Gallery Token corruption.
+    previous_state = clean_previous_state(
+        raw_previous_state
+    )
+
 
     # --------------------------------------------------------
-    # LOAD DATABASE
+    # DATABASE
     # --------------------------------------------------------
 
     database = load_card_database()
+
 
     # --------------------------------------------------------
     # UPDATE HOLOGRAPHIC DATABASE
@@ -1008,11 +1514,13 @@ def main():
         database
     )
 
+
     # --------------------------------------------------------
-    # PARSE CURRENT CATEGORIES
+    # CURRENT STATE
     # --------------------------------------------------------
 
     current_state = {}
+
 
     for category, config in CATEGORY_CONFIG.items():
 
@@ -1023,27 +1531,35 @@ def main():
             previous_state
         )
 
+
         if result is None:
 
-            # Preserve previous state if the page cannot
-            # be safely parsed.
+            # Never overwrite a valid previous state
+            # with an empty/broken scrape.
             if category in previous_state:
 
-                current_state[category] = previous_state[
+                current_state[
+                    category
+                ] = previous_state[
                     category
                 ]
 
             else:
 
-                current_state[category] = {
+                current_state[
+                    category
+                ] = {
                     "current": []
                 }
 
         else:
 
-            current_state[category] = {
+            current_state[
+                category
+            ] = {
                 "current": result
             }
+
 
     # --------------------------------------------------------
     # TELEGRAM
@@ -1054,17 +1570,26 @@ def main():
         current_state
     )
 
+
     print()
     print("=" * 60)
     print("TELEGRAM MESSAGE")
     print("=" * 60)
-    print(message)
+
+    print(
+        message
+    )
+
     print("=" * 60)
 
-    send_telegram_message(message)
+
+    send_telegram_message(
+        message
+    )
+
 
     # --------------------------------------------------------
-    # SAVE STATE
+    # SAVE
     # --------------------------------------------------------
 
     save_json(
@@ -1072,9 +1597,14 @@ def main():
         current_state
     )
 
+
     print()
     print("DONE")
 
+
+# ============================================================
+# START
+# ============================================================
 
 if __name__ == "__main__":
     main()
