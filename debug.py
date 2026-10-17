@@ -2,11 +2,13 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
+
 PAGES = {
     "HEROES": "https://www.fut.gg/fut-gallery/rarities/heroes/",
     "SEASON 1": "https://www.fut.gg/fut-gallery/rarities/season-1/",
     "HOLOGRAPHICS": "https://www.fut.gg/fut-gallery/rarities/holographics/",
 }
+
 
 HEADERS = {
     "User-Agent": (
@@ -23,59 +25,105 @@ HEADERS = {
 }
 
 
-def parse_alt(alt):
-    """
-    Prova a leggere:
-    
-    Nome - Rating - Tipo carta
-    """
+CARD_PATTERN = re.compile(
+    r"^(.*?)\s*-\s*(\d{2,3})\s*-\s*(.+)$"
+)
 
+
+def parse_card_alt(alt):
     if not alt:
         return None
 
-    alt = alt.strip()
-
-    match = re.match(
-        r"^(.*?)\s*-\s*(\d{2,3})\s*-\s*(.+)$",
-        alt
-    )
+    match = CARD_PATTERN.match(alt.strip())
 
     if not match:
         return None
 
-    name = match.group(1).strip()
-    rating = int(match.group(2))
-    card_type = match.group(3).strip()
-
     return {
-        "name": name,
-        "rating": rating,
-        "type": card_type,
+        "name": match.group(1).strip(),
+        "rating": int(match.group(2)),
+        "type": match.group(3).strip(),
     }
 
 
-def debug_page(page_name, url):
+def print_card(img, number):
 
     print()
-    print("=" * 80)
-    print(page_name)
+    print("=" * 100)
+    print(f"CARD {number}")
+    print("=" * 100)
+
+    print("ALT:")
+    print(repr(img.get("alt")))
+
+    print()
+    print("SRC:")
+    print(repr(img.get("src")))
+
+    print()
+    print("IMG ATTRIBUTES:")
+
+    for key, value in img.attrs.items():
+        print(f"  {key} = {value!r}")
+
+    print()
+    print("PARENT:")
+
+    parent = img.parent
+
+    if parent:
+        print(parent.name)
+        print(parent.attrs)
+
+    print()
+    print("ANCESTORS:")
+
+    current = img.parent
+
+    level = 1
+
+    while current and level <= 8:
+
+        print()
+        print(f"--- LEVEL {level}: <{current.name}> ---")
+        print("ATTRIBUTES:")
+        print(current.attrs)
+
+        html = str(current)
+
+        if len(html) > 8000:
+            html = html[:8000] + "\n...[TRUNCATED]..."
+
+        print("HTML:")
+        print(html)
+
+        current = current.parent
+        level += 1
+
+
+def debug_page(name, url):
+
+    print()
+    print("#" * 100)
+    print(name)
     print(url)
-    print("=" * 80)
+    print("#" * 100)
 
     try:
+
         response = requests.get(
             url,
             headers=HEADERS,
             timeout=30
         )
 
-        print("HTTP STATUS:", response.status_code)
-        print("FINAL URL:", response.url)
+        print("STATUS:", response.status_code)
         print("HTML LENGTH:", len(response.text))
 
         response.raise_for_status()
 
     except Exception as e:
+
         print("REQUEST ERROR:", repr(e))
         return
 
@@ -84,172 +132,199 @@ def debug_page(page_name, url):
         "html.parser"
     )
 
-    images = soup.find_all("img")
+    # ------------------------------------------------------------------
+    # 1. Cerchiamo il testo "Cheapest grade"
+    # ------------------------------------------------------------------
 
     print()
-    print("TOTAL IMG TAGS:", len(images))
-    print()
+    print("=" * 100)
+    print("SEARCHING FOR 'CHEAPEST GRADE'")
+    print("=" * 100)
 
-    found = []
+    cheapest_nodes = []
 
-    for index, img in enumerate(images):
+    for element in soup.find_all(string=re.compile(
+        r"Cheapest grade",
+        re.IGNORECASE
+    )):
 
-        alt = img.get("alt")
-
-        parsed = parse_alt(alt)
-
-        if not parsed:
-            continue
-
-        found.append(
-            (
-                index,
-                img,
-                parsed
-            )
-        )
+        cheapest_nodes.append(element)
 
     print(
-        "CARDS RECOGNIZED FROM ALT:",
-        len(found)
+        "Cheapest grade occurrences:",
+        len(cheapest_nodes)
     )
 
-    print()
+    # ------------------------------------------------------------------
+    # 2. Per ogni occorrenza analizziamo i parent
+    # ------------------------------------------------------------------
 
-    for number, (index, img, parsed) in enumerate(
-        found,
+    for i, text_node in enumerate(
+        cheapest_nodes,
         start=1
     ):
 
-        print("-" * 80)
+        print()
+        print("-" * 100)
+        print(
+            f"CHEAPEST GRADE OCCURRENCE #{i}"
+        )
+        print("-" * 100)
+
+        element = text_node.parent
+
+        if not element:
+            continue
 
         print(
-            f"CARD #{number}"
+            "TEXT:",
+            repr(text_node.strip())
         )
 
-        print(
-            "IMG INDEX:",
-            index
-        )
+        current = element
 
-        print()
+        for level in range(1, 8):
 
-        print("PARSED:")
+            if not current:
+                break
 
-        print(parsed)
-
-        print()
-
-        print("ALT:")
-
-        print(
-            repr(
-                img.get("alt")
-            )
-        )
-
-        print()
-
-        print("CLASS:")
-
-        print(
-            repr(
-                img.get("class")
-            )
-        )
-
-        print()
-
-        print("SRC:")
-
-        print(
-            repr(
-                img.get("src")
-            )
-        )
-
-        print()
-
-        print("DATA ATTRIBUTES:")
-
-        for key, value in img.attrs.items():
-
-            if key.startswith("data-"):
-
-                print(
-                    f"  {key} = {value!r}"
-                )
-
-        print()
-
-        print("ALL IMG ATTRIBUTES:")
-
-        for key, value in img.attrs.items():
-
+            print()
             print(
-                f"  {key} = {value!r}"
-            )
-
-        print()
-
-        parent = img.parent
-
-        print("PARENT TAG:")
-
-        if parent:
-
-            print(
-                parent.name
+                f"LEVEL {level}: <{current.name}>"
             )
 
             print(
-                parent.attrs
+                "ATTRS:",
+                current.attrs
             )
 
-        print()
+            html = str(current)
 
-        print("PARENT OUTER HTML:")
-
-        if parent:
-
-            html = str(parent)
-
-            if len(html) > 5000:
-
+            if len(html) > 12000:
                 html = (
-                    html[:5000]
+                    html[:12000]
                     + "\n...[TRUNCATED]..."
                 )
 
             print(html)
 
-        print()
+            current = current.parent
 
-    print("=" * 80)
+    # ------------------------------------------------------------------
+    # 3. Tutte le immagini con ALT da carta
+    # ------------------------------------------------------------------
+
+    print()
+    print("=" * 100)
+    print("ALL CARD-LIKE IMAGES")
+    print("=" * 100)
+
+    cards = []
+
+    for img in soup.find_all("img"):
+
+        alt = img.get("alt")
+
+        parsed = parse_card_alt(alt)
+
+        if parsed:
+
+            cards.append(
+                (
+                    img,
+                    parsed
+                )
+            )
 
     print(
-        f"END {page_name}"
+        "CARD-LIKE IMAGES:",
+        len(cards)
     )
 
-    print("=" * 80)
+    for number, (img, parsed) in enumerate(
+        cards,
+        start=1
+    ):
+
+        print()
+        print(
+            f"{number}.",
+            parsed
+        )
+
+        print(
+            "ALT:",
+            repr(img.get("alt"))
+        )
+
+        print(
+            "SRC:",
+            repr(img.get("src"))
+        )
+
+    # ------------------------------------------------------------------
+    # 4. Cerchiamo nel RAW HTML la parola Holographic
+    # ------------------------------------------------------------------
+
+    print()
+    print("=" * 100)
+    print("HOLOGRAPHIC SEARCH")
+    print("=" * 100)
+
+    raw = response.text
+
+    matches = list(
+        re.finditer(
+            r"holographic",
+            raw,
+            re.IGNORECASE
+        )
+    )
+
+    print(
+        "Occurrences of 'holographic':",
+        len(matches)
+    )
+
+    for i, match in enumerate(
+        matches[:20],
+        start=1
+    ):
+
+        start = max(
+            0,
+            match.start() - 500
+        )
+
+        end = min(
+            len(raw),
+            match.end() + 1000
+        )
+
+        print()
+        print(
+            f"--- Holographic occurrence {i} ---"
+        )
+
+        print(
+            raw[start:end]
+        )
 
 
 def main():
 
     print()
-
     print(
-        "FUT.GG HTML DEBUGGER"
+        "FUT.GG DEEP HTML DEBUGGER"
+    )
+    print(
+        "========================="
     )
 
-    print(
-        "===================="
-    )
-
-    for page_name, url in PAGES.items():
+    for name, url in PAGES.items():
 
         debug_page(
-            page_name,
+            name,
             url
         )
 
