@@ -59,23 +59,34 @@ HEADERS = {
 # ============================================================
 
 def load_json(path, default):
+
     if not os.path.exists(path):
         return default
 
     try:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
+
     except Exception:
         return default
 
 
 def save_json(path, data):
+
     directory = os.path.dirname(path)
 
     if directory:
-        os.makedirs(directory, exist_ok=True)
+        os.makedirs(
+            directory,
+            exist_ok=True
+        )
 
-    with open(path, "w", encoding="utf-8") as f:
+    with open(
+        path,
+        "w",
+        encoding="utf-8"
+    ) as f:
+
         json.dump(
             data,
             f,
@@ -95,7 +106,9 @@ def load_cache():
         {}
     )
 
-    if cache.get("cache_version") != CACHE_VERSION:
+    if cache.get(
+        "cache_version"
+    ) != CACHE_VERSION:
 
         print(
             "Cache version mismatch. "
@@ -114,6 +127,7 @@ def load_cache():
 
 
 def save_cache(cache):
+
     save_json(
         CACHE_FILE,
         cache
@@ -162,7 +176,7 @@ def normalize_text(value):
 
 
 # ============================================================
-# FIND LINEUP
+# LINEUP
 # ============================================================
 
 def get_lineup_html(page_html):
@@ -187,10 +201,6 @@ def get_lineup_html(page_html):
             "Could not find 'Cheapest grade X lineup'"
         )
 
-    # --------------------------------------------------------
-    # Troviamo tutte le occorrenze nel vero HTML
-    # --------------------------------------------------------
-
     positions = [
         m.start()
         for m in re.finditer(
@@ -201,18 +211,14 @@ def get_lineup_html(page_html):
     ]
 
     if not positions:
+
         raise ValueError(
             "Could not locate lineup position"
         )
 
-    # L'ultima è normalmente quella renderizzata
     start = positions[-1]
 
     after = page_html[start:]
-
-    # --------------------------------------------------------
-    # Fine lineup
-    # --------------------------------------------------------
 
     end_candidates = []
 
@@ -235,10 +241,13 @@ def get_lineup_html(page_html):
             )
 
     if end_candidates:
+
         end = min(
             end_candidates
         )
+
     else:
+
         end = min(
             len(after),
             500000
@@ -256,11 +265,9 @@ def get_lineup_html(page_html):
 
 
 # ============================================================
-# CARD PARSER
+# CARD VERSIONS
 # ============================================================
 
-# Versioni conosciute.
-# La regex è volutamente più generica rispetto alla precedente.
 KNOWN_VERSIONS = [
     "Base Hero",
     "Base Icon",
@@ -298,6 +305,10 @@ def clean_card_version(version):
     )
 
 
+# ============================================================
+# PARSE CARD STRING
+# ============================================================
+
 def parse_card_string(value):
 
     value = normalize_text(
@@ -307,15 +318,10 @@ def parse_card_string(value):
     if not value:
         return None
 
-    # --------------------------------------------------------
-    # Formato principale:
-    #
-    # Nome - 89 - Base Hero
-    # Nome – 89 – Future Stars
-    # --------------------------------------------------------
-
     pattern = re.compile(
-        r"^(.*?)\s*[-–—]\s*(\d{2})\s*[-–—]\s*(.+?)$",
+        r"^(.*?)\s*[-–—]\s*"
+        r"(\d{2})\s*[-–—]\s*"
+        r"(.+?)$",
         re.IGNORECASE
     )
 
@@ -336,29 +342,21 @@ def parse_card_string(value):
         match.group(3)
     )
 
-    # --------------------------------------------------------
-    # Scarta roba palesemente non-carta
-    # --------------------------------------------------------
-
     if not name:
         return None
 
     if len(name) > 100:
         return None
 
-    if not overall.isdigit():
-        return None
-
     overall_int = int(
         overall
     )
 
-    if overall_int < 50 or overall_int > 99:
+    if (
+        overall_int < 50
+        or overall_int > 99
+    ):
         return None
-
-    # --------------------------------------------------------
-    # Controllo versione
-    # --------------------------------------------------------
 
     version_lower = version.lower()
 
@@ -397,7 +395,7 @@ def extract_cards_from_section(
     candidates = []
 
     # --------------------------------------------------------
-    # 1. IMG ALT
+    # IMG
     # --------------------------------------------------------
 
     for img in soup.find_all("img"):
@@ -413,12 +411,13 @@ def extract_cards_from_section(
             )
 
             if value:
+
                 candidates.append(
                     normalize_text(value)
                 )
 
     # --------------------------------------------------------
-    # 2. Qualunque elemento con aria-label/title
+    # ATTRIBUTI
     # --------------------------------------------------------
 
     for tag in soup.find_all():
@@ -435,16 +434,22 @@ def extract_cards_from_section(
             )
 
             if value:
+
                 candidates.append(
                     normalize_text(value)
                 )
 
     # --------------------------------------------------------
-    # 3. Testo dei singoli nodi
+    # TESTO DEI NODI
     # --------------------------------------------------------
 
     for tag in soup.find_all(
-        ["div", "span", "p", "a"]
+        [
+            "div",
+            "span",
+            "p",
+            "a"
+        ]
     ):
 
         text = normalize_text(
@@ -455,12 +460,13 @@ def extract_cards_from_section(
         )
 
         if text:
+
             candidates.append(
                 text
             )
 
     # --------------------------------------------------------
-    # 4. HTML / testo completo come ultima possibilità
+    # TESTO COMPLETO
     # --------------------------------------------------------
 
     candidates.append(
@@ -474,15 +480,12 @@ def extract_cards_from_section(
 
     cards = []
 
-    # Conta quante volte abbiamo visto
-    # esattamente la stessa carta.
-    occurrence_counter = Counter()
+    # Questa struttura ci permette di non contare
+    # la stessa carta più volte solo perché compare
+    # in alt + title + aria-label.
+    seen_signatures = Counter()
 
     for value in candidates:
-
-        # ----------------------------------------------------
-        # Prima proviamo l'intera stringa
-        # ----------------------------------------------------
 
         parsed = parse_card_string(
             value
@@ -496,39 +499,32 @@ def extract_cards_from_section(
                 parsed["base_version"].lower()
             )
 
-            occurrence_counter[
+            # Una stessa carta può davvero comparire
+            # due volte nella lineup.
+            #
+            # Consentiamo quindi massimo 2 occorrenze
+            # della stessa signature.
+            if seen_signatures[
+                signature
+            ] >= 2:
+
+                continue
+
+            seen_signatures[
                 signature
             ] += 1
 
-            # Limite: non aggiungiamo la stessa
-            # carta all'infinito se compare in
-            # alt + title + aria-label.
-            #
-            # Le vere duplicate della lineup
-            # vengono gestite separatamente sotto.
-            existing_count = sum(
-                1
-                for c in cards
-                if (
-                    c["name"].lower(),
-                    c["overall"],
-                    c["base_version"].lower()
-                ) == signature
+            cards.append(
+                parsed
             )
 
-            if existing_count < 2:
-                cards.append(
-                    parsed
-                )
-
-                if len(cards) >= expected:
-                    return cards
+            if len(cards) >= expected:
+                return cards
 
             continue
 
         # ----------------------------------------------------
-        # Se la stringa contiene più carte,
-        # cerchiamo pattern multipli.
+        # STRINGHE CON PIÙ CARTE
         # ----------------------------------------------------
 
         generic_pattern = re.compile(
@@ -562,18 +558,15 @@ def extract_cards_from_section(
                 parsed["base_version"].lower()
             )
 
-            existing_count = sum(
-                1
-                for c in cards
-                if (
-                    c["name"].lower(),
-                    c["overall"],
-                    c["base_version"].lower()
-                ) == signature
-            )
+            if seen_signatures[
+                signature
+            ] >= 2:
 
-            if existing_count >= 2:
                 continue
+
+            seen_signatures[
+                signature
+            ] += 1
 
             cards.append(
                 parsed
@@ -583,6 +576,38 @@ def extract_cards_from_section(
                 return cards
 
     return cards
+
+
+# ============================================================
+# DIAGNOSTIC PRINT
+# ============================================================
+
+def print_detected_cards(cards):
+
+    if not cards:
+
+        print(
+            "  No cards detected."
+        )
+
+        return
+
+    print(
+        "Detected cards:"
+    )
+
+    for index, card in enumerate(
+        cards,
+        1
+    ):
+
+        print(
+            f"  [{index}] "
+            f"{card.get('name', '?')} "
+            f"{card.get('overall', '?')} "
+            f"- "
+            f"{card.get('base_version', '?')}"
+        )
 
 
 # ============================================================
@@ -605,9 +630,6 @@ def extract_item_ids(page_html):
 
         r'itemId=(\d+)',
         r'item_id=(\d+)',
-
-        r'itemId%22%3A%22?(\d+)',
-        r'item_id%22%3A%22?(\d+)',
     ]
 
     ids = []
@@ -623,6 +645,7 @@ def extract_item_ids(page_html):
         for item_id in matches:
 
             if item_id not in ids:
+
                 ids.append(
                     item_id
                 )
@@ -647,7 +670,6 @@ def extract_card_urls(page_html):
         r'(?:"|\')',
 
         r'(/fut/player/[^"\'>\s]+)',
-
     ]
 
     for pattern in patterns:
@@ -669,12 +691,14 @@ def extract_card_urls(page_html):
             )
 
             if url.startswith("/"):
+
                 url = (
                     "https://www.fut.gg"
                     + url
                 )
 
             if "/fut/player/" not in url:
+
                 continue
 
             if url not in urls:
@@ -687,86 +711,7 @@ def extract_card_urls(page_html):
 
 
 # ============================================================
-# FIND OLD FINISH
-# ============================================================
-
-def find_cached_finish(
-    card,
-    old_cards,
-    cache
-):
-
-    # --------------------------------------------------------
-    # 1. Item ID cache
-    # --------------------------------------------------------
-
-    item_id = card.get(
-        "item_id"
-    )
-
-    if item_id:
-
-        cached = cache[
-            "finishes"
-        ].get(
-            item_id
-        )
-
-        if cached:
-            return cached
-
-    # --------------------------------------------------------
-    # 2. Cerca stessa carta nello stato precedente
-    # --------------------------------------------------------
-
-    name = card.get(
-        "name",
-        ""
-    ).lower()
-
-    overall = str(
-        card.get(
-            "overall",
-            ""
-        )
-    )
-
-    base_version = card.get(
-        "base_version",
-        ""
-    ).lower()
-
-    for old in old_cards:
-
-        if (
-            old.get(
-                "name",
-                ""
-            ).lower() == name
-            and str(
-                old.get(
-                    "overall",
-                    ""
-                )
-            ) == overall
-            and old.get(
-                "base_version",
-                ""
-            ).lower() == base_version
-        ):
-
-            old_finish = old.get(
-                "version"
-            )
-
-            if old_finish:
-                return old_finish
-
-    return None
-
-
-# ============================================================
-# DETECT FINISH
+# FINISH
 # ============================================================
 
 def detect_finish_from_card_page(
@@ -812,12 +757,14 @@ def detect_finish_from_card_page(
             "PRISTINE HOLOGRAPHIC"
             in upper
         ):
+
             return "PRISTINE HOLO"
 
         if (
             "HOLOGRAPHIC"
             in upper
         ):
+
             return "HOLO"
 
         first_part = page[
@@ -828,9 +775,11 @@ def detect_finish_from_card_page(
             "PRISTINE HOLOGRAPHIC"
             in first_part
         ):
+
             return "PRISTINE HOLO"
 
         if "HOLOGRAPHIC" in first_part:
+
             return "HOLO"
 
         return "BASE"
@@ -845,7 +794,82 @@ def detect_finish_from_card_page(
 
 
 # ============================================================
-# RESOLVE CARDS
+# OLD FINISH
+# ============================================================
+
+def find_old_finish(
+    card,
+    old_cards,
+    cache
+):
+
+    item_id = card.get(
+        "item_id"
+    )
+
+    if item_id:
+
+        cached = cache[
+            "finishes"
+        ].get(
+            item_id
+        )
+
+        if cached:
+
+            return cached
+
+    name = card.get(
+        "name",
+        ""
+    ).lower()
+
+    overall = str(
+        card.get(
+            "overall",
+            ""
+        )
+    )
+
+    base_version = card.get(
+        "base_version",
+        ""
+    ).lower()
+
+    for old in old_cards:
+
+        if (
+            old.get(
+                "name",
+                ""
+            ).lower() == name
+
+            and str(
+                old.get(
+                    "overall",
+                    ""
+                )
+            ) == overall
+
+            and old.get(
+                "base_version",
+                ""
+            ).lower() == base_version
+        ):
+
+            finish = old.get(
+                "version"
+            )
+
+            if finish:
+
+                return finish
+
+    return None
+
+
+# ============================================================
+# RESOLVE
 # ============================================================
 
 def resolve_cards(
@@ -855,10 +879,6 @@ def resolve_cards(
     cache,
     old_cards
 ):
-
-    # --------------------------------------------------------
-    # CARDS
-    # --------------------------------------------------------
 
     cards = extract_cards_from_section(
         section_html,
@@ -871,7 +891,15 @@ def resolve_cards(
     )
 
     # --------------------------------------------------------
-    # ITEM IDS
+    # DIAGNOSTICA
+    # --------------------------------------------------------
+
+    print_detected_cards(
+        cards
+    )
+
+    # --------------------------------------------------------
+    # IDS
     # --------------------------------------------------------
 
     item_ids = extract_item_ids(
@@ -906,7 +934,7 @@ def resolve_cards(
         )
 
     # --------------------------------------------------------
-    # ATTACH IDENTIFIERS
+    # ATTACH IDS
     # --------------------------------------------------------
 
     for index, card in enumerate(
@@ -939,10 +967,7 @@ def resolve_cards(
             "url"
         )
 
-        # ----------------------------------------------------
-        # Cache per ItemID
-        # ----------------------------------------------------
-
+        # Cache
         if (
             item_id
             and item_id in cache["finishes"]
@@ -954,11 +979,8 @@ def resolve_cards(
 
             continue
 
-        # ----------------------------------------------------
-        # Stato precedente
-        # ----------------------------------------------------
-
-        old_finish = find_cached_finish(
+        # Vecchio stato
+        old_finish = find_old_finish(
             card,
             old_cards,
             cache
@@ -966,7 +988,9 @@ def resolve_cards(
 
         if old_finish:
 
-            card["version"] = old_finish
+            card["version"] = (
+                old_finish
+            )
 
             if item_id:
 
@@ -976,10 +1000,7 @@ def resolve_cards(
 
             continue
 
-        # ----------------------------------------------------
-        # URL carta
-        # ----------------------------------------------------
-
+        # URL
         if url:
 
             version = detect_finish_from_card_page(
@@ -1047,10 +1068,7 @@ def compare_lineups(
     out = []
     incoming = []
 
-    # --------------------------------------------------------
     # OUT
-    # --------------------------------------------------------
-
     for key, old_count in old_counter.items():
 
         difference = (
@@ -1074,10 +1092,7 @@ def compare_lineups(
             matching[:difference]
         )
 
-    # --------------------------------------------------------
     # IN
-    # --------------------------------------------------------
-
     for key, new_count in new_counter.items():
 
         difference = (
@@ -1105,7 +1120,7 @@ def compare_lineups(
 
 
 # ============================================================
-# FORMAT CARD
+# FORMAT
 # ============================================================
 
 def format_card(card):
@@ -1165,10 +1180,6 @@ def build_category_section(
         ""
     ]
 
-    # --------------------------------------------------------
-    # NO CHANGE
-    # --------------------------------------------------------
-
     if not incoming and not out:
 
         lines.append(
@@ -1178,10 +1189,6 @@ def build_category_section(
         return "\n".join(
             lines
         )
-
-    # --------------------------------------------------------
-    # OUT
-    # --------------------------------------------------------
 
     if out:
 
@@ -1198,10 +1205,6 @@ def build_category_section(
 
         lines.append("")
 
-    # --------------------------------------------------------
-    # IN
-    # --------------------------------------------------------
-
     if incoming:
 
         lines.extend([
@@ -1216,10 +1219,6 @@ def build_category_section(
             )
 
         lines.append("")
-
-    # --------------------------------------------------------
-    # CURRENT
-    # --------------------------------------------------------
 
     lines.extend([
         "<b>Current lineup</b>",
@@ -1320,9 +1319,7 @@ def send_telegram(message):
 # TRENDING
 # ============================================================
 
-def update_trending(
-    results
-):
+def update_trending(results):
 
     data = load_json(
         TRENDING_FILE,
@@ -1412,34 +1409,18 @@ def main():
 
         try:
 
-            # ------------------------------------------------
-            # DOWNLOAD
-            # ------------------------------------------------
-
             page_html = fetch_page(
                 config["url"]
             )
-
-            # ------------------------------------------------
-            # LINEUP
-            # ------------------------------------------------
 
             section_html = get_lineup_html(
                 page_html
             )
 
-            # ------------------------------------------------
-            # OLD CARDS
-            # ------------------------------------------------
-
             old_cards = old_state.get(
                 category,
                 []
             )
-
-            # ------------------------------------------------
-            # RESOLVE
-            # ------------------------------------------------
 
             new_cards = resolve_cards(
                 section_html,
@@ -1448,10 +1429,6 @@ def main():
                 cache,
                 old_cards
             )
-
-            # ------------------------------------------------
-            # COMPARE
-            # ------------------------------------------------
 
             out, incoming = compare_lineups(
                 old_cards,
@@ -1521,7 +1498,7 @@ def main():
             )
 
     # ========================================================
-    # SAVE STATE
+    # SAVE
     # ========================================================
 
     new_state = dict(
