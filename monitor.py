@@ -326,11 +326,13 @@ def card_label(card):
     overall = card.get("overall", "?")
     finish = card.get("finish")
 
-    # Nome giocatore in grassetto
-    if finish:
-        return f"<b>{name}</b> {overall} — {finish}"
+    # Nome + overall in grassetto
+    player_text = f"<b>{name} {overall}</b>"
 
-    return f"<b>{name}</b> {overall}"
+    if finish:
+        return f"{player_text} — {finish}"
+
+    return player_text
 
 
 # ============================================================
@@ -561,11 +563,7 @@ def send_telegram(message):
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
         "text": message,
-
-        # IMPORTANTE:
-        # abilita il grassetto HTML
         "parse_mode": "HTML",
-
         "disable_web_page_preview": True,
     }
 
@@ -702,11 +700,11 @@ def format_category(
 
                     if finish:
                         lines.append(
-                            f"<b>{name}</b> {overall} — {finish}"
+                            f"<b>{name} {overall}</b> — {finish}"
                         )
                     else:
                         lines.append(
-                            f"<b>{name}</b> {overall}"
+                            f"<b>{name} {overall}</b>"
                         )
 
         # ----------------------------------------------------
@@ -724,11 +722,11 @@ def format_category(
 
                     if finish:
                         lines.append(
-                            f"<b>{name}</b> {overall} — {finish}"
+                            f"<b>{name} {overall}</b> — {finish}"
                         )
                     else:
                         lines.append(
-                            f"<b>{name}</b> {overall}"
+                            f"<b>{name} {overall}</b>"
                         )
 
         if not outs and not ins:
