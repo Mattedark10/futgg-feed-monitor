@@ -633,8 +633,6 @@ def process_category(
         []
     )
 
-    # Backward compatibility:
-    # old players.json could contain only cards.
     if not isinstance(
         previous,
         list
@@ -733,7 +731,7 @@ def process_category(
 
         return {
             "category": category,
-            "slots": slots,
+            "slots": previous,
             "previous": previous,
             "out": [],
             "incoming": [],
@@ -785,7 +783,6 @@ def process_category(
         f"IN: {len(incoming)}"
     )
 
-    # Save exactly 10 slots
     state[
         category
     ] = slots
@@ -847,18 +844,44 @@ def format_category(result):
         ""
     ]
 
-    if not result[
-        "safe"
-    ]:
+    # ========================================================
+    # FINISH UNRESOLVED
+    # ========================================================
 
-        lines.extend([
-            "⚠️ Finish unresolved",
-            "Previous state kept",
-        ])
+    if not result["safe"]:
+
+        lines.append(
+            "⚠️ Finish unresolved"
+        )
+
+        lines.append(
+            "Previous state kept"
+        )
+
+        lines.append("")
+
+        lines.append(
+            "Current lineup"
+        )
+
+        lines.append("")
+
+        for card in result["slots"]:
+
+            if card is None:
+                continue
+
+            lines.append(
+                card_label(card)
+            )
 
         return "\n".join(
             lines
         )
+
+    # ========================================================
+    # FIRST RUN
+    # ========================================================
 
     if result.get(
         "initializing"
@@ -868,9 +891,30 @@ def format_category(result):
             "Initial lineup saved"
         )
 
+        lines.append("")
+
+        lines.append(
+            "Current lineup"
+        )
+
+        lines.append("")
+
+        for card in result["slots"]:
+
+            if card is None:
+                continue
+
+            lines.append(
+                card_label(card)
+            )
+
         return "\n".join(
             lines
         )
+
+    # ========================================================
+    # CHANGES
+    # ========================================================
 
     out = result[
         "out"
@@ -883,10 +927,6 @@ def format_category(result):
     slots = result[
         "slots"
     ]
-
-    # --------------------------------------------------------
-    # OUT
-    # --------------------------------------------------------
 
     if out:
 
@@ -904,10 +944,6 @@ def format_category(result):
 
         lines.append("")
 
-    # --------------------------------------------------------
-    # IN
-    # --------------------------------------------------------
-
     if incoming:
 
         lines.append(
@@ -924,9 +960,9 @@ def format_category(result):
 
         lines.append("")
 
-    # --------------------------------------------------------
+    # ========================================================
     # NO CHANGES
-    # --------------------------------------------------------
+    # ========================================================
 
     if not out and not incoming:
 
@@ -934,13 +970,11 @@ def format_category(result):
             "No feed changes"
         )
 
-        return "\n".join(
-            lines
-        )
+        lines.append("")
 
-    # --------------------------------------------------------
+    # ========================================================
     # CURRENT LINEUP
-    # --------------------------------------------------------
+    # ========================================================
 
     lines.append(
         "Current lineup"
@@ -955,27 +989,21 @@ def format_category(result):
 
     for card in slots:
 
+        # Player Card non viene mostrato su Telegram
         if card is None:
-
-            # Non mostriamo i placeholder
-            # nella lineup Telegram
             continue
 
         key = card_key(
             card
         )
 
-        if incoming_counter[
-            key
-        ] > 0:
+        if incoming_counter[key] > 0:
 
             lines.append(
                 f"🟢 {card_label(card)}"
             )
 
-            incoming_counter[
-                key
-            ] -= 1
+            incoming_counter[key] -= 1
 
         else:
 
