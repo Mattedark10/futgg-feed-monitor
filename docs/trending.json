@@ -1,118 +1,118 @@
 {
-  "updated_at": 1792250468,
+  "updated_at": 1792250802,
   "pages": {
     "Heroes": [
       {
         "ea_id": 67276289,
         "player_ea_id": 167425,
-        "name": "Player 167425",
+        "name": "Abedi Pelé",
         "overall": 89,
         "rarity_id": 72,
-        "version": "BASE",
-        "url": "https://www.fut.gg"
+        "version": "PRISTINE HOLO",
+        "url": "https://www.fut.gg/players/167425-abedi-pele/27-67276289/"
       },
       {
         "ea_id": 67292141,
         "player_ea_id": 183277,
-        "name": "Player 183277",
+        "name": "Eden Hazard",
         "overall": 89,
         "rarity_id": 72,
-        "version": "BASE",
-        "url": "https://www.fut.gg"
+        "version": "PRISTINE HOLO",
+        "url": "https://www.fut.gg/players/183277-eden-hazard/27-67292141/"
       },
       {
         "ea_id": 67300836,
         "player_ea_id": 191972,
-        "name": "Player 191972",
+        "name": "David Ginola",
         "overall": 89,
         "rarity_id": 72,
-        "version": "BASE",
-        "url": "https://www.fut.gg"
+        "version": "PRISTINE HOLO",
+        "url": "https://www.fut.gg/players/191972-david-ginola/27-67300836/"
       },
       {
         "ea_id": 67335170,
         "player_ea_id": 226306,
-        "name": "Player 226306",
+        "name": "Celia Šašić",
         "overall": 89,
         "rarity_id": 72,
-        "version": "BASE",
-        "url": "https://www.fut.gg"
+        "version": "PRISTINE HOLO",
+        "url": "https://www.fut.gg/players/226306-celia-sasic/27-67335170/"
       },
       {
         "ea_id": 67342564,
         "player_ea_id": 233700,
-        "name": "Player 233700",
+        "name": "Gianluca Vialli",
         "overall": 89,
         "rarity_id": 72,
-        "version": "BASE",
-        "url": "https://www.fut.gg"
+        "version": "PRISTINE HOLO",
+        "url": "https://www.fut.gg/players/233700-gianluca-vialli/27-67342564/"
       }
     ],
     "Holographics": [
       {
         "ea_id": 67298906,
         "player_ea_id": 190042,
-        "name": "Player 190042",
+        "name": "Diego Armando Maradona",
         "overall": 95,
         "rarity_id": 12,
-        "version": "BASE",
-        "url": "https://www.fut.gg"
+        "version": "PRISTINE HOLO",
+        "url": "https://www.fut.gg/players/190042-diego-maradona/27-67298906/"
       },
       {
         "ea_id": 67345931,
         "player_ea_id": 237067,
-        "name": "Player 237067",
+        "name": "Pelé",
         "overall": 95,
         "rarity_id": 12,
-        "version": "BASE",
-        "url": "https://www.fut.gg"
+        "version": "PRISTINE HOLO",
+        "url": "https://www.fut.gg/players/237067-pele/27-67345931/"
       },
       {
         "ea_id": 67146440,
         "player_ea_id": 37576,
-        "name": "Player 37576",
+        "name": "Ronaldo",
         "overall": 94,
         "rarity_id": 12,
-        "version": "BASE",
-        "url": "https://www.fut.gg"
+        "version": "PRISTINE HOLO",
+        "url": "https://www.fut.gg/players/37576-ronaldo/27-67146440/"
       },
       {
         "ea_id": 100664693,
         "player_ea_id": 1397,
-        "name": "Player 1397",
+        "name": "Zinedine Zidane",
         "overall": 94,
         "rarity_id": 12,
-        "version": "BASE",
-        "url": "https://www.fut.gg"
+        "version": "PRISTINE HOLO",
+        "url": "https://www.fut.gg/players/1397-zinedine-zidane/27-100664693/"
       },
       {
         "ea_id": 67384107,
         "player_ea_id": 275243,
-        "name": "Player 275243",
+        "name": "Mia Hamm",
         "overall": 93,
         "rarity_id": 12,
-        "version": "BASE",
-        "url": "https://www.fut.gg"
+        "version": "PRISTINE HOLO",
+        "url": "https://www.fut.gg/players/275243-mia-hamm/27-67384107/"
       }
     ],
     "Season 1": [
       {
         "ea_id": 67340611,
         "player_ea_id": 231747,
-        "name": "Player 231747",
+        "name": "Kylian Mbappé",
         "overall": 91,
         "rarity_id": 22,
-        "version": "BASE",
-        "url": "https://www.fut.gg"
+        "version": "PRISTINE HOLO",
+        "url": "https://www.fut.gg/players/231747-kylian-mbappe/27-67340611/"
       },
       {
         "ea_id": 67347949,
         "player_ea_id": 239085,
-        "name": "Player 239085",
+        "name": "Erling Haaland",
         "overall": 91,
         "rarity_id": 22,
-        "version": "BASE",
-        "url": "https://www.fut.gg"
+        "version": "PRISTINE HOLO",
+        "url": "https://www.fut.gg/players/239085-erling-haaland/27-67347949/"
       },
       {
         "ea_id": 67192358,
@@ -120,26 +120,26 @@
         "name": "Player 83494",
         "overall": 90,
         "rarity_id": 71,
-        "version": "BASE",
+        "version": "UNKNOWN",
         "url": "https://www.fut.gg"
       },
       {
         "ea_id": 67380310,
         "player_ea_id": 271446,
-        "name": "Player 271446",
+        "name": "Vicky López",
         "overall": 90,
         "rarity_id": 71,
-        "version": "BASE",
-        "url": "https://www.fut.gg"
+        "version": "PRISTINE HOLO",
+        "url": "https://www.fut.gg/players/271446-vicky-lopez/27-67380310/"
       },
       {
         "ea_id": 67189240,
         "player_ea_id": 80376,
-        "name": "Player 80376",
+        "name": "Rio Ngumoha",
         "overall": 89,
         "rarity_id": 71,
-        "version": "BASE",
-        "url": "https://www.fut.gg"
+        "version": "PRISTINE HOLO",
+        "url": "https://www.fut.gg/players/80376-rio-ngumoha/27-67189240/"
       },
       {
         "ea_id": 67374903,
@@ -147,7 +147,7 @@
         "name": "Player 266039",
         "overall": 89,
         "rarity_id": 71,
-        "version": "BASE",
+        "version": "UNKNOWN",
         "url": "https://www.fut.gg"
       },
       {
@@ -156,26 +156,26 @@
         "name": "Player 269136",
         "overall": 89,
         "rarity_id": 71,
-        "version": "BASE",
+        "version": "UNKNOWN",
         "url": "https://www.fut.gg"
       },
       {
         "ea_id": 50563395,
         "player_ea_id": 231747,
-        "name": "Player 231747",
+        "name": "Kylian Mbappé",
         "overall": 91,
         "rarity_id": 22,
         "version": "BASE",
-        "url": "https://www.fut.gg"
+        "url": "https://www.fut.gg/players/231747-kylian-mbappe/27-50563395/"
       },
       {
         "ea_id": 50570733,
         "player_ea_id": 239085,
-        "name": "Player 239085",
+        "name": "Erling Haaland",
         "overall": 91,
         "rarity_id": 22,
         "version": "BASE",
-        "url": "https://www.fut.gg"
+        "url": "https://www.fut.gg/players/239085-erling-haaland/27-50570733/"
       },
       {
         "ea_id": 50415142,
@@ -183,7 +183,7 @@
         "name": "Player 83494",
         "overall": 90,
         "rarity_id": 71,
-        "version": "BASE",
+        "version": "UNKNOWN",
         "url": "https://www.fut.gg"
       }
     ]
