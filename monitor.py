@@ -99,10 +99,7 @@ def download_page(url):
 
 def get_lineup_html(page_html):
     """
-    Manteniamo una ricerca molto più flessibile.
-
-    FUT.GG può cambiare maiuscole/minuscole,
-    spazi, HTML o testo attorno alla lineup.
+    Cerca la sezione della lineup in modo flessibile.
     """
 
     soup = BeautifulSoup(
@@ -111,7 +108,7 @@ def get_lineup_html(page_html):
     )
 
     # --------------------------------------------------------
-    # 1. Cerca direttamente il testo nella pagina
+    # 1. Cerca il testo "Cheapest grade ... lineup"
     # --------------------------------------------------------
 
     candidates = []
@@ -126,11 +123,10 @@ def get_lineup_html(page_html):
 
     if candidates:
         target = candidates[0]
-
-        # Risali fino a un contenitore abbastanza grande
         parent = target.parent
 
-        for _ in range(8):
+        # Risali nell'albero HTML
+        for _ in range(10):
             if parent is None:
                 break
 
@@ -140,15 +136,12 @@ def get_lineup_html(page_html):
             )
 
             if (
-                "Add players" in text
-                or "add players" in text.lower()
+                "add players" in text.lower()
             ):
                 return str(parent)
 
             parent = parent.parent
 
-        # Se non troviamo Add players,
-        # prendiamo comunque il contenitore
         if target.parent:
             return str(target.parent)
 
@@ -161,7 +154,7 @@ def get_lineup_html(page_html):
     patterns = [
         r"cheapest\s+grade\s+\d+\s+lineup",
         r"cheapest\s+grade\s+lineup",
-        r"cheapest\s+grade.{0,100}lineup",
+        r"cheapest\s+grade.{0,150}lineup",
     ]
 
     start = -1
@@ -178,8 +171,7 @@ def get_lineup_html(page_html):
             break
 
     if start == -1:
-        # Ultimo fallback:
-        # cerca solamente "lineup"
+        # Ultimo fallback
         match = re.search(
             r"lineup",
             lower,
@@ -247,7 +239,7 @@ def find_item_id_from_element(element):
         return None
 
     # --------------------------------------------------------
-    # Cerca nei link
+    # Link
     # --------------------------------------------------------
 
     for a in element.find_all(
@@ -266,7 +258,7 @@ def find_item_id_from_element(element):
             return match.group(1)
 
     # --------------------------------------------------------
-    # Cerca attributi
+    # Attributi
     # --------------------------------------------------------
 
     attributes = [
@@ -279,10 +271,12 @@ def find_item_id_from_element(element):
         "playerId",
     ]
 
-    for node in [
+    nodes = [
         element,
         *element.find_all(True),
-    ]:
+    ]
+
+    for node in nodes:
         for attribute in attributes:
             value = node.get(
                 attribute
@@ -300,7 +294,7 @@ def find_item_id_from_element(element):
                 return match.group(0)
 
     # --------------------------------------------------------
-    # Cerca nell'HTML
+    # HTML
     # --------------------------------------------------------
 
     raw = str(element)
@@ -433,18 +427,14 @@ def detect_finish_from_card_page(
         texts
     ).lower()
 
-    # IMPORTANT:
-    # PRISTINE prima di HOLO
+    # PRISTINE deve essere controllato prima
     if (
         "pristine holographic" in combined
         or "pristine holo" in combined
     ):
         return "PRISTINE HOLO"
 
-    if (
-        "holographic" in combined
-        or " holographic " in f" {combined} "
-    ):
+    if "holographic" in combined:
         return "HOLO"
 
     return "BASE"
@@ -468,6 +458,10 @@ def resolve_card_finish(
 
     item_id = match.group(1)
 
+    # --------------------------------------------------------
+    # CACHE
+    # --------------------------------------------------------
+
     if (
         cache.get("cache_version")
         == CACHE_VERSION
@@ -484,6 +478,10 @@ def resolve_card_finish(
             "PRISTINE HOLO",
         }:
             return cached
+
+    # --------------------------------------------------------
+    # REQUEST CARTA
+    # --------------------------------------------------------
 
     try:
         response = requests.get(
@@ -549,11 +547,10 @@ def extract_cheapest_lineup(
         if not parsed:
             continue
 
-        # Cerca l'ID partendo dal parent
+        item_id = None
         element = img
 
-        item_id = None
-
+        # Risali nell'HTML per trovare l'ID
         for _ in range(8):
             if element is None:
                 break
@@ -575,9 +572,7 @@ def extract_cheapest_lineup(
         )
 
     # --------------------------------------------------------
-    # NON rimuoviamo duplicati reali.
-    #
-    # Le carte duplicate devono rimanere.
+    # Se il numero è corretto, abbiamo finito
     # --------------------------------------------------------
 
     if len(players) == expected_count:
@@ -706,7 +701,10 @@ def compare_cards(
     out_cards = []
     in_cards = []
 
+    # --------------------------------------------------------
     # OUT
+    # --------------------------------------------------------
+
     for key, count in old_counter.items():
         difference = (
             count
@@ -723,7 +721,10 @@ def compare_cards(
                 ]
             )
 
+    # --------------------------------------------------------
     # IN
+    # --------------------------------------------------------
+
     for key, count in new_counter.items():
         difference = (
             count
@@ -751,6 +752,12 @@ def compare_cards(
 # ============================================================
 
 def format_card_vertical(card):
+    """
+    Formato Telegram:
+
+    Nome Overall — Versione
+    """
+
     name = html.escape(
         str(
             card.get(
@@ -779,8 +786,7 @@ def format_card_vertical(card):
     )
 
     return (
-        f"{name} {overall}\n"
-        f"{version}"
+        f"{name} {overall} — {version}"
     )
 
 
@@ -881,7 +887,7 @@ def build_category_section(
     if out_cards:
         parts.append(
             "🔴 <b>OUT</b>\n\n"
-            + "\n\n".join(
+            + "\n".join(
                 "• "
                 + format_card_vertical(card)
                 for card in out_cards
@@ -895,7 +901,7 @@ def build_category_section(
     if in_cards:
         parts.append(
             "🟢 <b>IN</b>\n\n"
-            + "\n\n".join(
+            + "\n".join(
                 "• "
                 + format_card_vertical(card)
                 for card in in_cards
@@ -913,7 +919,7 @@ def build_category_section(
 
         if players:
             parts.append(
-                "\n\n".join(
+                "\n".join(
                     format_card_vertical(
                         card
                     )
@@ -976,7 +982,7 @@ def main():
     )
 
     # --------------------------------------------------------
-    # CACHE
+    # CACHE VERSION
     # --------------------------------------------------------
 
     if (
@@ -1000,7 +1006,7 @@ def main():
     any_real_change = False
 
     # ========================================================
-    # SCAN
+    # SCAN ALL PAGES
     # ========================================================
 
     for page_name, config in PAGES.items():
@@ -1044,11 +1050,11 @@ def main():
 
             print(
                 f"Found {len(players)} "
-                f"unique players."
+                f"players."
             )
 
             # ------------------------------------------------
-            # CHECK COUNT
+            # VALIDATE
             # ------------------------------------------------
 
             if len(players) != config["expected"]:
@@ -1104,7 +1110,7 @@ def main():
                 any_real_change = True
 
             # ------------------------------------------------
-            # SAVE IN MEMORY
+            # SAVE SUCCESS
             # ------------------------------------------------
 
             successful_updates[
@@ -1112,7 +1118,7 @@ def main():
             ] = players
 
             # ------------------------------------------------
-            # TELEGRAM
+            # TELEGRAM SECTION
             # ------------------------------------------------
 
             section = build_category_section(
@@ -1178,8 +1184,8 @@ def main():
                 f"{page_name}: {e}"
             )
 
-            # IMPORTANTE:
-            # manteniamo il vecchio stato.
+            # Non sovrascrivere lo stato
+            # precedente in caso di errore.
 
             section = build_category_section(
                 page_name,
@@ -1216,7 +1222,9 @@ def main():
 
     trending_state[
         "updated_at"
-    ] = int(time.time())
+    ] = int(
+        time.time()
+    )
 
     # ========================================================
     # SAVE
