@@ -309,14 +309,12 @@ def resolve_finish(
 
     item_id = str(item_id)
 
-    # Known database
     if item_id in KNOWN_FINISHES:
 
         return KNOWN_FINISHES[
             item_id
         ]
 
-    # Cache
     cached = cache.get(
         item_id
     )
@@ -335,7 +333,6 @@ def resolve_finish(
 
             return finish
 
-    # Previous state
     for card in previous:
 
         if not isinstance(card, dict):
@@ -389,10 +386,6 @@ def extract_lineup(
             img.get("src")
         )
 
-        # ----------------------------------------------------
-        # EMPTY SLOT
-        # ----------------------------------------------------
-
         if alt.lower() == "player card":
 
             slots.append(
@@ -400,10 +393,6 @@ def extract_lineup(
             )
 
             continue
-
-        # ----------------------------------------------------
-        # CARD
-        # ----------------------------------------------------
 
         parsed = parse_alt(
             alt
@@ -546,7 +535,6 @@ def compare_cards(
     out = []
     incoming = []
 
-    # OUT
     difference = (
         old_counter - new_counter
     )
@@ -565,7 +553,6 @@ def compare_cards(
 
                     break
 
-    # IN
     difference = (
         new_counter - old_counter
     )
@@ -658,10 +645,6 @@ def process_category(
         "slots"
     ]
 
-    # --------------------------------------------------------
-    # VALIDATE SLOT COUNT
-    # --------------------------------------------------------
-
     if len(slots) != expected:
 
         raise RuntimeError(
@@ -712,10 +695,6 @@ def process_category(
                 f"ItemID={card['item_id']}"
             )
 
-    # --------------------------------------------------------
-    # UNKNOWN FINISH PROTECTION
-    # --------------------------------------------------------
-
     if has_unknown_finish(
         slots
     ):
@@ -737,10 +716,6 @@ def process_category(
             "incoming": [],
             "safe": False,
         }
-
-    # --------------------------------------------------------
-    # FIRST RUN
-    # --------------------------------------------------------
 
     if not previous:
 
@@ -765,10 +740,6 @@ def process_category(
             "safe": True,
             "initializing": True,
         }
-
-    # --------------------------------------------------------
-    # COMPARE
-    # --------------------------------------------------------
 
     out, incoming = compare_cards(
         previous,
@@ -861,7 +832,7 @@ def format_category(result):
         lines.append("")
 
         lines.append(
-            "Current lineup"
+            "📋 Current lineup 📋"
         )
 
         lines.append("")
@@ -894,7 +865,7 @@ def format_category(result):
         lines.append("")
 
         lines.append(
-            "Current lineup"
+            "📋 Current lineup 📋"
         )
 
         lines.append("")
@@ -977,7 +948,7 @@ def format_category(result):
     # ========================================================
 
     lines.append(
-        "Current lineup"
+        "📋 Current lineup 📋"
     )
 
     lines.append("")
@@ -989,7 +960,6 @@ def format_category(result):
 
     for card in slots:
 
-        # Player Card non viene mostrato su Telegram
         if card is None:
             continue
 
@@ -1003,7 +973,9 @@ def format_category(result):
                 f"🟢 {card_label(card)}"
             )
 
-            incoming_counter[key] -= 1
+            incoming_counter[
+                key
+            ] -= 1
 
         else:
 
