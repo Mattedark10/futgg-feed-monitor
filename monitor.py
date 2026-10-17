@@ -2,7 +2,6 @@ import os
 import re
 import json
 import time
-import html as html_lib
 from collections import Counter
 from urllib.parse import urljoin
 
@@ -31,6 +30,7 @@ PAGES = {
 
 STATE_FILE = "players.json"
 TRENDING_FILE = "docs/trending.json"
+CACHE_FILE = "card_cache.json"
 
 BASE_URL = "https://www.fut.gg"
 
@@ -239,12 +239,12 @@ def parse_primitive(value):
 def parse_value(value):
     value = value.strip()
 
-    # --------------------------------------------------------
+    # ========================================================
     # INLINE RSC ASSIGNMENT
     #
     # $R[242]={...}
     # $R[241]=[...]
-    # --------------------------------------------------------
+    # ========================================================
 
     inline_assignment = re.match(
         r"^\$R\[(\d+)\]=(.*)$",
@@ -264,9 +264,9 @@ def parse_value(value):
             assigned_value
         )
 
-    # --------------------------------------------------------
+    # ========================================================
     # RSC REFERENCE
-    # --------------------------------------------------------
+    # ========================================================
 
     ref_match = re.fullmatch(
         r"\$R\[(\d+)\]",
@@ -281,9 +281,9 @@ def parse_value(value):
             )
         }
 
-    # --------------------------------------------------------
+    # ========================================================
     # OBJECT
-    # --------------------------------------------------------
+    # ========================================================
 
     if value.startswith("{"):
 
@@ -302,9 +302,9 @@ def parse_value(value):
                 value[1:end]
             )
 
-    # --------------------------------------------------------
+    # ========================================================
     # ARRAY
-    # --------------------------------------------------------
+    # ========================================================
 
     if value.startswith("["):
 
@@ -525,7 +525,7 @@ def resolve_reference(
 
 
 # ============================================================
-# FUT.GG ITEMS
+# ITEMS
 # ============================================================
 
 def parse_items_assignment(
@@ -773,246 +773,93 @@ def find_solution(
 
 
 # ============================================================
-# PLAYER PAGE DISCOVERY
+# CACHE
 # ============================================================
 
-player_page_cache = {}
-card_info_cache = {}
+def load_card_cache():
+    if not os.path.exists(
+        CACHE_FILE
+    ):
+        return {}
+
+    try:
+
+        with open(
+            CACHE_FILE,
+            "r",
+            encoding="utf-8",
+        ) as file:
+
+            data = json.load(
+                file
+            )
+
+        if isinstance(
+            data,
+            dict,
+        ):
+            return data
+
+    except Exception as error:
+
+        print(
+            f"⚠️ Could not load "
+            f"{CACHE_FILE}: {error}"
+        )
+
+    return {}
 
 
-def find_player_page(
-    player_ea_id,
-):
-    """
-    Trova la pagina principale FUT.GG
-    del giocatore usando il playerEaId.
+def save_card_cache(cache):
+    with open(
+        CACHE_FILE,
+        "w",
+        encoding="utf-8",
+    ) as file:
 
-    Esempio:
-    /players/233700-gianluca-vialli/
-    """
+        json.dump(
+            cache,
+            file,
+            ensure_ascii=False,
+            indent=2,
+        )
+
+
+card_info_cache = load_card_cache()
+
+
+# ============================================================
+# VERSION
+# ============================================================
+
+def clean_version(text):
+    upper = text.upper()
 
     if (
-        player_ea_id
-        in player_page_cache
+        "PRISTINE HOLOGRAPHIC"
+        in upper
+        or "PRISTINE HOLO"
+        in upper
     ):
-        return player_page_cache[
-            player_ea_id
-        ]
+        return "PRISTINE HOLO"
 
-    search_url = (
-        f"https://www.fut.gg/players/"
-        f"?search={player_ea_id}"
-    )
+    if (
+        "REGULAR HOLOGRAPHIC"
+        in upper
+        or "HOLOGRAPHIC"
+        in upper
+        or " HOLO " in f" {upper} "
+    ):
+        return "HOLO"
 
-    try:
-
-        response = session.get(
-            search_url,
-            timeout=25,
-        )
-
-        response.raise_for_status()
-
-        soup = BeautifulSoup(
-            response.text,
-            "html.parser",
-        )
-
-        pattern = re.compile(
-            rf"^/players/"
-            rf"{re.escape(str(player_ea_id))}"
-            rf"(?:-[^/]+)?/?$"
-        )
-
-        for link in soup.find_all(
-            "a",
-            href=True,
-        ):
-
-            href = link.get(
-                "href",
-                "",
-            )
-
-            if pattern.match(href):
-
-                full_url = urljoin(
-                    BASE_URL,
-                    href,
-                )
-
-                player_page_cache[
-                    player_ea_id
-                ] = full_url
-
-                return full_url
-
-        # ----------------------------------------------------
-        # FALLBACK:
-        # cerca direttamente nell'HTML
-        # ----------------------------------------------------
-
-        regex = re.compile(
-            rf'["\']('
-            rf'/players/'
-            rf'{re.escape(str(player_ea_id))}'
-            rf'-[^/"\']+/'
-            rf')["\']'
-        )
-
-        match = regex.search(
-            response.text
-        )
-
-        if match:
-
-            full_url = urljoin(
-                BASE_URL,
-                match.group(1),
-            )
-
-            player_page_cache[
-                player_ea_id
-            ] = full_url
-
-            return full_url
-
-    except Exception as error:
-
-        print(
-            f"⚠️ Player page lookup "
-            f"failed for "
-            f"{player_ea_id}: "
-            f"{error}"
-        )
-
-    return None
+    return "BASE"
 
 
 # ============================================================
-# FIND EXACT CARD URL
+# EXTRACT CARD INFO
 # ============================================================
 
-def find_exact_card_url(
-    player_ea_id,
-    ea_id,
-):
-    """
-    Cerca il link della carta specifica
-    usando contemporaneamente:
-
-    playerEaId
-    eaId
-
-    Formato FUT.GG tipico:
-
-    /players/233700-gianluca-vialli/
-    27-67342564/
-    """
-
-    player_page = find_player_page(
-        player_ea_id
-    )
-
-    if not player_page:
-        return None
-
-    try:
-
-        response = session.get(
-            player_page,
-            timeout=25,
-        )
-
-        response.raise_for_status()
-
-        soup = BeautifulSoup(
-            response.text,
-            "html.parser",
-        )
-
-        # ----------------------------------------------------
-        # Cerca link che contenga:
-        #
-        # /27-{eaId}/
-        # ----------------------------------------------------
-
-        target = (
-            f"/27-{ea_id}"
-        )
-
-        for link in soup.find_all(
-            "a",
-            href=True,
-        ):
-
-            href = link.get(
-                "href",
-                "",
-            )
-
-            if target in href:
-
-                return urljoin(
-                    BASE_URL,
-                    href,
-                )
-
-        # ----------------------------------------------------
-        # FALLBACK REGEX
-        # ----------------------------------------------------
-
-        regex = re.compile(
-            rf'["\']([^"\']*'
-            rf'/27-'
-            rf'{re.escape(str(ea_id))}'
-            rf'/?'
-            rf')["\']'
-        )
-
-        match = regex.search(
-            response.text
-        )
-
-        if match:
-
-            return urljoin(
-                player_page,
-                match.group(1),
-            )
-
-        # ----------------------------------------------------
-        # STANDARD CARD
-        #
-        # Spesso eaId == playerEaId
-        # ----------------------------------------------------
-
-        if (
-            str(ea_id)
-            == str(player_ea_id)
-        ):
-
-            return (
-                player_page.rstrip("/")
-                + f"/27-{ea_id}/"
-            )
-
-    except Exception as error:
-
-        print(
-            f"⚠️ Exact card lookup "
-            f"failed for {ea_id}: "
-            f"{error}"
-        )
-
-    return None
-
-
-# ============================================================
-# CARD INFORMATION
-# ============================================================
-
-def extract_name_and_version(
+def extract_card_from_html(
     page_html,
     player_ea_id,
     ea_id,
@@ -1022,109 +869,125 @@ def extract_name_and_version(
         "html.parser",
     )
 
+    sources = []
+
     # --------------------------------------------------------
-    # TITLE SOURCE
+    # H1
     # --------------------------------------------------------
 
-    heading = soup.find("h1")
+    h1 = soup.find("h1")
 
-    heading_text = ""
+    if h1:
 
-    if heading:
-
-        heading_text = (
-            heading.get_text(
-                " ",
-                strip=True,
-            )
+        text = h1.get_text(
+            " ",
+            strip=True,
         )
 
-    # --------------------------------------------------------
-    # FALLBACK TITLE
-    # --------------------------------------------------------
-
-    if not heading_text:
-
-        title = soup.find("title")
-
-        if title:
-
-            heading_text = (
-                title.get_text(
-                    " ",
-                    strip=True,
-                )
-            )
-
-    heading_text = html_lib.unescape(
-        heading_text
-    ).strip()
+        if text:
+            sources.append(text)
 
     # --------------------------------------------------------
-    # VERSION
+    # OG TITLE
     # --------------------------------------------------------
 
-    upper = heading_text.upper()
+    og_title = soup.find(
+        "meta",
+        attrs={
+            "property": "og:title"
+        },
+    )
 
-    if (
-        "PRISTINE HOLOGRAPHIC"
-        in upper
-    ):
-        version = "PRISTINE HOLO"
+    if og_title:
 
-    elif (
-        "HOLOGRAPHIC"
-        in upper
-    ):
-        version = "HOLO"
+        text = og_title.get(
+            "content",
+            "",
+        ).strip()
 
-    else:
-        version = "BASE"
+        if text:
+            sources.append(text)
+
+    # --------------------------------------------------------
+    # TITLE
+    # --------------------------------------------------------
+
+    title = soup.find(
+        "title"
+    )
+
+    if title:
+
+        text = title.get_text(
+            " ",
+            strip=True,
+        )
+
+        if text:
+            sources.append(text)
+
+    combined = " | ".join(
+        sources
+    )
+
+    version = clean_version(
+        combined
+    )
 
     # --------------------------------------------------------
     # NAME
-    #
-    # FUT.GG:
-    #
-    # Gianluca Vialli -
-    # Base Hero Pristine Holographic 89 OVR
     # --------------------------------------------------------
 
     name = None
 
-    if " - " in heading_text:
+    for source in sources:
 
-        name = heading_text.split(
-            " - ",
-            1,
-        )[0].strip()
+        if " - " in source:
+
+            candidate = source.split(
+                " - ",
+                1,
+            )[0].strip()
+
+            if (
+                candidate
+                and "FUT.GG" not in candidate.upper()
+            ):
+
+                name = candidate
+                break
 
     # --------------------------------------------------------
-    # META FALLBACK
+    # JSON / RSC FALLBACKS
     # --------------------------------------------------------
 
     if not name:
 
-        meta = soup.find(
-            "meta",
-            attrs={
-                "property": "og:title"
-            },
-        )
+        patterns = [
+            r'playerName:"([^"]+)"',
+            r'"playerName":"([^"]+)"',
+            r'fullName:"([^"]+)"',
+            r'"fullName":"([^"]+)"',
+        ]
 
-        if meta:
+        for pattern in patterns:
 
-            content = meta.get(
-                "content",
-                "",
+            match = re.search(
+                pattern,
+                page_html,
             )
 
-            if " - " in content:
+            if match:
 
-                name = content.split(
-                    " - ",
-                    1,
-                )[0].strip()
+                candidate = (
+                    match.group(1)
+                    .strip()
+                )
+
+                if candidate:
+
+                    name = candidate
+                    break
 
     if not name:
 
@@ -1132,130 +995,524 @@ def extract_name_and_version(
             f"Player {player_ea_id}"
         )
 
-    return (
-        name,
-        version,
+    return {
+        "name": name,
+        "version": version,
+    }
+
+
+# ============================================================
+# FIND EXACT CARD IN GALLERY
+# ============================================================
+
+def find_card_in_gallery_html(
+    gallery_html,
+    ea_id,
+):
+    if not gallery_html:
+        return None
+
+    escaped_id = re.escape(
+        str(ea_id)
     )
 
+    patterns = [
+        (
+            rf'https://www\.fut\.gg/'
+            rf'players/[^"\'\\\s]+/'
+            rf'27-{escaped_id}/?'
+        ),
+        (
+            rf'/players/[^"\'\\\s]+/'
+            rf'27-{escaped_id}/?'
+        ),
+    ]
 
-def get_card_info(
+    for pattern in patterns:
+
+        match = re.search(
+            pattern,
+            gallery_html,
+            re.IGNORECASE,
+        )
+
+        if not match:
+            continue
+
+        url = match.group(0)
+
+        url = (
+            url
+            .replace("\\u002F", "/")
+            .replace("\\/", "/")
+        )
+
+        if url.startswith("/"):
+
+            url = (
+                BASE_URL
+                + url
+            )
+
+        return url
+
+    return None
+
+
+# ============================================================
+# FUT.GG SEARCH
+# ============================================================
+
+def search_futgg_card(
     player_ea_id,
     ea_id,
 ):
     """
-    Restituisce:
-
-    {
-        name,
-        version,
-        url
-    }
+    Cerca direttamente tramite eaId.
+    Non assumiamo che playerEaId sia lo slug.
     """
 
-    cache_key = (
-        int(player_ea_id),
-        int(ea_id),
+    search_queries = [
+        str(ea_id),
+        str(player_ea_id),
+    ]
+
+    for query in search_queries:
+
+        search_url = (
+            "https://www.fut.gg/players/"
+            f"?search={query}"
+        )
+
+        try:
+
+            response = session.get(
+                search_url,
+                timeout=25,
+            )
+
+            if (
+                response.status_code
+                != 200
+            ):
+                continue
+
+            text = response.text
+
+            escaped_id = re.escape(
+                str(ea_id)
+            )
+
+            patterns = [
+                (
+                    rf'https://www\.fut\.gg/'
+                    rf'players/[^"\'\\\s]+/'
+                    rf'27-{escaped_id}/?'
+                ),
+                (
+                    rf'/players/[^"\'\\\s]+/'
+                    rf'27-{escaped_id}/?'
+                ),
+            ]
+
+            for pattern in patterns:
+
+                match = re.search(
+                    pattern,
+                    text,
+                    re.IGNORECASE,
+                )
+
+                if not match:
+                    continue
+
+                url = match.group(0)
+
+                url = (
+                    url
+                    .replace(
+                        "\\u002F",
+                        "/",
+                    )
+                    .replace(
+                        "\\/",
+                        "/",
+                    )
+                )
+
+                if url.startswith(
+                    "/"
+                ):
+
+                    url = (
+                        BASE_URL
+                        + url
+                    )
+
+                return url
+
+            # ------------------------------------------------
+            # BEAUTIFULSOUP FALLBACK
+            # ------------------------------------------------
+
+            soup = BeautifulSoup(
+                text,
+                "html.parser",
+            )
+
+            for link in soup.find_all(
+                "a",
+                href=True,
+            ):
+
+                href = link.get(
+                    "href",
+                    "",
+                )
+
+                if (
+                    f"27-{ea_id}"
+                    in href
+                ):
+
+                    return urljoin(
+                        BASE_URL,
+                        href,
+                    )
+
+        except Exception as error:
+
+            print(
+                f"  ⚠️ Search failed "
+                f"for {ea_id}: "
+                f"{error}"
+            )
+
+    return None
+
+
+# ============================================================
+# EXTRACT NAME FROM GALLERY
+# ============================================================
+
+def find_name_near_card(
+    gallery_html,
+    player_ea_id,
+    ea_id,
+):
+    """
+    Prova a recuperare il nome direttamente
+    dai dati RSC/HTML della Gallery.
+
+    Non assegna mai una versione da questo metodo.
+    """
+
+    if not gallery_html:
+        return None
+
+    ids = [
+        str(ea_id),
+        str(player_ea_id),
+    ]
+
+    for target_id in ids:
+
+        for match in re.finditer(
+            re.escape(target_id),
+            gallery_html,
+        ):
+
+            start = max(
+                0,
+                match.start() - 2000,
+            )
+
+            end = min(
+                len(gallery_html),
+                match.end() + 2000,
+            )
+
+            chunk = gallery_html[
+                start:end
+            ]
+
+            patterns = [
+                r'playerName:"([^"]+)"',
+                r'"playerName":"([^"]+)"',
+                r'fullName:"([^"]+)"',
+                r'"fullName":"([^"]+)"',
+                r'commonName:"([^"]+)"',
+                r'"commonName":"([^"]+)"',
+            ]
+
+            for pattern in patterns:
+
+                name_match = re.search(
+                    pattern,
+                    chunk,
+                )
+
+                if name_match:
+
+                    name = (
+                        name_match
+                        .group(1)
+                        .strip()
+                    )
+
+                    if name:
+                        return name
+
+    return None
+
+
+# ============================================================
+# CARD INFO
+# ============================================================
+
+def get_card_info(
+    player_ea_id,
+    ea_id,
+    gallery_html=None,
+):
+    player_ea_id = int(
+        player_ea_id
     )
 
-    if cache_key in card_info_cache:
-
-        return card_info_cache[
-            cache_key
-        ]
-
-    # --------------------------------------------------------
-    # FIND EXACT CARD
-    # --------------------------------------------------------
-
-    card_url = find_exact_card_url(
-        player_ea_id,
-        ea_id,
+    ea_id = int(
+        ea_id
     )
 
-    # --------------------------------------------------------
-    # FALLBACK
-    # --------------------------------------------------------
+    cache_key = str(
+        ea_id
+    )
+
+    # ========================================================
+    # CACHE
+    # ========================================================
+
+    cached = card_info_cache.get(
+        cache_key
+    )
+
+    if isinstance(
+        cached,
+        dict,
+    ):
+
+        cached_name = cached.get(
+            "name"
+        )
+
+        cached_version = cached.get(
+            "version"
+        )
+
+        # Non riutilizziamo vecchi fallback sbagliati.
+
+        if (
+            cached_name
+            and not cached_name.startswith(
+                "Player "
+            )
+            and cached_version
+            and cached_version
+            != "UNKNOWN"
+        ):
+
+            print(
+                f"  ✓ Cache: "
+                f"{cached_name} "
+                f"[{cached_version}]"
+            )
+
+            return cached
+
+    print(
+        f"  Resolving Item ID "
+        f"{ea_id}..."
+    )
+
+    # ========================================================
+    # NAME FROM GALLERY
+    # ========================================================
+
+    gallery_name = (
+        find_name_near_card(
+            gallery_html,
+            player_ea_id,
+            ea_id,
+        )
+    )
+
+    # ========================================================
+    # CARD URL FROM GALLERY
+    # ========================================================
+
+    card_url = (
+        find_card_in_gallery_html(
+            gallery_html,
+            ea_id,
+        )
+    )
+
+    if card_url:
+
+        print(
+            "  ✓ Exact URL found "
+            "inside Gallery"
+        )
+
+    # ========================================================
+    # SEARCH FALLBACK
+    # ========================================================
 
     if not card_url:
 
-        player_page = find_player_page(
-            player_ea_id
-        )
-
-        result = {
-            "name": (
-                f"Player "
-                f"{player_ea_id}"
-            ),
-            "version": "BASE",
-            "url": (
-                player_page
-                if player_page
-                else BASE_URL
-            ),
-        }
-
-        card_info_cache[
-            cache_key
-        ] = result
-
-        return result
-
-    # --------------------------------------------------------
-    # DOWNLOAD EXACT CARD PAGE
-    # --------------------------------------------------------
-
-    try:
-
-        response = session.get(
-            card_url,
-            timeout=25,
-        )
-
-        response.raise_for_status()
-
-        name, version = (
-            extract_name_and_version(
-                response.text,
+        card_url = (
+            search_futgg_card(
                 player_ea_id,
                 ea_id,
             )
         )
 
-        result = {
-            "name": name,
-            "version": version,
-            "url": card_url,
-        }
+        if card_url:
 
-        card_info_cache[
-            cache_key
-        ] = result
+            print(
+                "  ✓ Exact URL found "
+                "through FUT.GG search"
+            )
 
-        return result
+    # ========================================================
+    # EXACT PAGE
+    # ========================================================
 
-    except Exception as error:
+    if card_url:
 
         print(
-            f"⚠️ Card info lookup "
-            f"failed for {ea_id}: "
-            f"{error}"
+            f"  → {card_url}"
         )
 
-        result = {
-            "name": (
-                f"Player "
-                f"{player_ea_id}"
-            ),
-            "version": "BASE",
-            "url": card_url,
-        }
+        try:
 
-        card_info_cache[
-            cache_key
-        ] = result
+            response = session.get(
+                card_url,
+                timeout=25,
+            )
 
-        return result
+            response.raise_for_status()
+
+            info = (
+                extract_card_from_html(
+                    response.text,
+                    player_ea_id,
+                    ea_id,
+                )
+            )
+
+            name = info.get(
+                "name"
+            )
+
+            version = info.get(
+                "version"
+            )
+
+            if (
+                not name
+                or name.startswith(
+                    "Player "
+                )
+            ):
+
+                if gallery_name:
+                    name = gallery_name
+
+            if not name:
+
+                name = (
+                    f"Player "
+                    f"{player_ea_id}"
+                )
+
+            if not version:
+
+                version = "UNKNOWN"
+
+            result = {
+                "name": name,
+                "version": version,
+                "url": card_url,
+                "player_ea_id": (
+                    player_ea_id
+                ),
+                "ea_id": ea_id,
+            }
+
+            print(
+                f"  ✓ {name} "
+                f"[{version}]"
+            )
+
+            # -----------------------------------------------
+            # Salva solo risultati utili
+            # -----------------------------------------------
+
+            if (
+                not name.startswith(
+                    "Player "
+                )
+                and version
+                != "UNKNOWN"
+            ):
+
+                card_info_cache[
+                    cache_key
+                ] = result
+
+            return result
+
+        except Exception as error:
+
+            print(
+                f"  ⚠️ Exact card page "
+                f"failed: {error}"
+            )
+
+    # ========================================================
+    # FALLBACK
+    #
+    # IMPORTANTISSIMO:
+    # non inventiamo BASE.
+    # ========================================================
+
+    if gallery_name:
+
+        name = gallery_name
+
+    else:
+
+        name = (
+            f"Player "
+            f"{player_ea_id}"
+        )
+
+    result = {
+        "name": name,
+        "version": "UNKNOWN",
+        "url": card_url or BASE_URL,
+        "player_ea_id": (
+            player_ea_id
+        ),
+        "ea_id": ea_id,
+    }
+
+    print(
+        f"  ⚠️ {name} "
+        f"[UNKNOWN]"
+    )
+
+    return result
 
 
 # ============================================================
@@ -1265,8 +1522,12 @@ def get_card_info(
 def parse_players(
     items,
     page_name,
+    gallery_html,
 ):
     players = []
+
+    print()
+    print("Resolving cards...")
 
     for item in items:
 
@@ -1286,13 +1547,10 @@ def parse_players(
             "rarityEaId"
         )
 
-        # ----------------------------------------------------
-        # GET REAL CARD INFO
-        # ----------------------------------------------------
-
         info = get_card_info(
             player_ea_id,
             ea_id,
+            gallery_html,
         )
 
         card = {
@@ -1300,17 +1558,19 @@ def parse_players(
             "player_ea_id": (
                 player_ea_id
             ),
-            "name": info[
+            "name": info.get(
                 "name"
-            ],
+            ),
             "overall": overall,
             "rarity_id": rarity_id,
-            "version": info[
-                "version"
-            ],
-            "url": info[
-                "url"
-            ],
+            "version": info.get(
+                "version",
+                "UNKNOWN",
+            ),
+            "url": info.get(
+                "url",
+                BASE_URL,
+            ),
         }
 
         players.append(
@@ -1356,6 +1616,7 @@ def load_state():
             data,
             dict,
         ):
+
             raise ValueError(
                 "players.json invalid"
             )
@@ -1486,20 +1747,20 @@ def telegram_send(message):
 
 
 # ============================================================
-# COMPARISON
+# CARD COMPARISON
 # ============================================================
 
 def card_key(card):
     """
-    ea_id identifica la carta specifica.
+    ea_id = carta specifica.
 
-    Questo permette di distinguere:
+    Quindi:
 
-    BASE
-    HOLO
-    PRISTINE HOLO
+    Maradona BASE
+    Maradona HOLO
+    Maradona PRISTINE
 
-    anche dello stesso giocatore.
+    sono carte diverse.
     """
 
     return card.get(
@@ -1533,7 +1794,9 @@ def compare_cards(
         - new_counter
     ).items():
 
-        for _ in range(count):
+        for _ in range(
+            count
+        ):
 
             for index, card in enumerate(
                 remaining_old
@@ -1563,7 +1826,9 @@ def compare_cards(
         - old_counter
     ).items():
 
-        for _ in range(count):
+        for _ in range(
+            count
+        ):
 
             for index, card in enumerate(
                 remaining_new
@@ -1591,13 +1856,26 @@ def compare_cards(
 
 
 # ============================================================
-# FORMAT TELEGRAM
+# TELEGRAM FORMAT
 # ============================================================
 
+def escape_telegram_html(text):
+    text = str(text)
+
+    return (
+        text
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+    )
+
+
 def format_card(card):
-    name = card.get(
-        "name",
-        "Unknown",
+    name = escape_telegram_html(
+        card.get(
+            "name",
+            "Unknown",
+        )
     )
 
     overall = card.get(
@@ -1605,9 +1883,11 @@ def format_card(card):
         "?",
     )
 
-    version = card.get(
-        "version",
-        "BASE",
+    version = escape_telegram_html(
+        card.get(
+            "version",
+            "UNKNOWN",
+        )
     )
 
     return (
@@ -1663,31 +1943,34 @@ def main():
 
         try:
 
-            # ------------------------------------------------
-            # DOWNLOAD
-            # ------------------------------------------------
+            # =================================================
+            # DOWNLOAD GALLERY
+            # =================================================
 
             page_html = download_page(
                 config["url"]
             )
 
-            # ------------------------------------------------
+            # =================================================
             # SOLUTION
-            # ------------------------------------------------
+            # =================================================
 
             items = find_solution(
                 page_html,
                 page_name,
-                config["expected"],
+                config[
+                    "expected"
+                ],
             )
 
-            # ------------------------------------------------
-            # PLAYERS
-            # ------------------------------------------------
+            # =================================================
+            # CARDS
+            # =================================================
 
             players = parse_players(
                 items,
                 page_name,
+                page_html,
             )
 
             old_players = state.get(
@@ -1695,9 +1978,9 @@ def main():
                 [],
             )
 
-            # ------------------------------------------------
-            # FIRST STATE
-            # ------------------------------------------------
+            # =================================================
+            # FIRST RUN
+            # =================================================
 
             if not old_players:
 
@@ -1706,17 +1989,18 @@ def main():
                     f"for {page_name}."
                 )
 
-            # ------------------------------------------------
+            # =================================================
             # COMPARE
-            # ------------------------------------------------
+            # =================================================
 
             else:
 
-                out_cards, in_cards = (
-                    compare_cards(
-                        old_players,
-                        players,
-                    )
+                (
+                    out_cards,
+                    in_cards,
+                ) = compare_cards(
+                    old_players,
+                    players,
                 )
 
                 if (
@@ -1738,9 +2022,11 @@ def main():
                         for card in out_cards:
 
                             message += (
-                                f"• "
-                                f"{format_card(card)}"
-                                f"\n"
+                                "• "
+                                + format_card(
+                                    card
+                                )
+                                + "\n"
                             )
 
                         message += "\n"
@@ -1754,16 +2040,22 @@ def main():
                         for card in in_cards:
 
                             message += (
-                                f"• "
-                                f"{format_card(card)}"
-                                f"\n"
+                                "• "
+                                + format_card(
+                                    card
+                                )
+                                + "\n"
                             )
 
                         message += "\n"
 
+                    page_url = (
+                        config["url"]
+                    )
+
                     message += (
                         f'<a href="'
-                        f'{config["url"]}'
+                        f'{page_url}'
                         f'">'
                         f"Open {page_name}"
                         f"</a>"
@@ -1784,9 +2076,9 @@ def main():
                         "No card changes."
                     )
 
-            # ------------------------------------------------
-            # SAVE SUCCESSFUL PAGE
-            # ------------------------------------------------
+            # =================================================
+            # SAVE ONLY SUCCESSFUL PAGE
+            # =================================================
 
             state[
                 page_name
@@ -1797,24 +2089,28 @@ def main():
         except Exception as error:
 
             print(
-                f"❌ ERROR {page_name}: "
+                f"❌ ERROR "
+                f"{page_name}: "
                 f"{error}"
             )
 
             telegram_send(
-                f"⚠️ <b>FUT.GG Monitor "
-                f"Error</b>\n\n"
-                f"<b>{page_name}</b>\n"
-                f"{str(error)}"
+                f"⚠️ <b>FUT.GG "
+                f"Monitor Error</b>"
+                f"\n\n"
+                f"<b>{page_name}</b>"
+                f"\n"
+                f"{escape_telegram_html(error)}"
             )
 
             print(
                 f"Previous state for "
-                f"{page_name} was preserved."
+                f"{page_name} "
+                f"was preserved."
             )
 
     # ========================================================
-    # NOTHING SUCCEEDED
+    # NO SUCCESS
     # ========================================================
 
     if successful_pages == 0:
@@ -1842,7 +2138,7 @@ def main():
         return
 
     # ========================================================
-    # SAVE
+    # SAVE FILES
     # ========================================================
 
     save_state(
@@ -1851,6 +2147,10 @@ def main():
 
     save_trending(
         state
+    )
+
+    save_card_cache(
+        card_info_cache
     )
 
     print()
@@ -1867,6 +2167,10 @@ def main():
 
     print(
         f"Saved {TRENDING_FILE}"
+    )
+
+    print(
+        f"Saved {CACHE_FILE}"
     )
 
     print()
