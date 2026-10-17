@@ -1,174 +1,109 @@
 {
-  "Heroes": {
-    "current": [
-      {
-        "name": "Šašić",
-        "overall": 89,
-        "version": "Base Hero",
-        "item_id": "67335170",
-        "finish": "PRISTINE HOLO",
-        "placeholder": false
-      },
-      {
-        "name": "Litmanen",
-        "overall": 88,
-        "version": "Base Hero",
-        "item_id": "67114537",
-        "finish": "PRISTINE HOLO",
-        "placeholder": false
-      },
-      {
-        "name": "Keßler",
-        "overall": 88,
-        "version": "Base Hero",
-        "item_id": "67335237",
-        "finish": "PRISTINE HOLO",
-        "placeholder": false
-      },
-      {
-        "name": "Milito",
-        "overall": 88,
-        "version": "Base Hero",
-        "item_id": "67371135",
-        "finish": "PRISTINE HOLO",
-        "placeholder": false
-      },
-      {
-        "name": "Šašić",
-        "overall": 89,
-        "version": "Base Hero",
-        "item_id": "226306",
-        "finish": "BASE",
-        "placeholder": false
-      }
-    ]
-  },
-  "Holographics": {
-    "current": [
-      {
-        "name": "Angerer",
-        "overall": 92,
-        "version": "Base Icon",
-        "item_id": "67335157",
-        "finish": "PRISTINE HOLO",
-        "placeholder": false
-      },
-      {
-        "name": "Prinz",
-        "overall": 92,
-        "version": "Base Icon",
-        "item_id": "67384140",
-        "finish": "PRISTINE HOLO",
-        "placeholder": false
-      },
-      {
-        "name": "Baresi",
-        "overall": 91,
-        "version": "Base Icon",
-        "item_id": "67275770",
-        "finish": "PRISTINE HOLO",
-        "placeholder": false
-      },
-      {
-        "name": "Foudy",
-        "overall": 90,
-        "version": "Base Icon",
-        "item_id": "67180472",
-        "finish": "PRISTINE HOLO",
-        "placeholder": false
-      },
-      {
-        "name": "Moore",
-        "overall": 90,
-        "version": "Base Icon",
-        "item_id": "67298908",
-        "finish": "PRISTINE HOLO",
-        "placeholder": false
-      }
-    ]
-  },
-  "Season 1": {
-    "current": [
-      {
-        "name": "Cucurella",
-        "overall": 88,
-        "version": "Destined for Glory",
-        "item_id": "67348095",
-        "finish": "PRISTINE HOLO",
-        "placeholder": false
-      },
-      {
-        "name": "Harder",
-        "overall": 88,
-        "version": "Destined for Glory",
-        "item_id": "67368151",
-        "finish": "PRISTINE HOLO",
-        "placeholder": false
-      },
-      {
-        "name": "Mora",
-        "overall": 87,
-        "version": "Future Stars",
-        "item_id": "67188263",
-        "finish": "HOLO",
-        "placeholder": false
-      },
-      {
-        "name": "Bonny",
-        "overall": 87,
-        "version": "Future Stars",
-        "item_id": "67368429",
-        "finish": "HOLO",
-        "placeholder": false
-      },
-      {
-        "name": "Player Card",
-        "overall": null,
-        "version": "",
-        "item_id": null,
-        "finish": null,
-        "placeholder": true
-      },
-      {
-        "name": "Harder",
-        "overall": 88,
-        "version": "Destined for Glory",
-        "item_id": "50590935",
-        "finish": "BASE",
-        "placeholder": false
-      },
-      {
-        "name": "Undav",
-        "overall": 87,
-        "version": "Destined for Glory",
-        "item_id": "67353040",
-        "finish": "HOLO",
-        "placeholder": false
-      },
-      {
-        "name": "Player Card",
-        "overall": null,
-        "version": "",
-        "item_id": null,
-        "finish": null,
-        "placeholder": true
-      },
-      {
-        "name": "Player Card",
-        "overall": null,
-        "version": "",
-        "item_id": null,
-        "finish": null,
-        "placeholder": true
-      },
-      {
-        "name": "Yohannes",
-        "overall": 86,
-        "version": "Future Stars",
-        "item_id": "67386815",
-        "finish": "HOLO",
-        "placeholder": false
-      }
-    ]
-  }
+  "HEROES": [],
+  "HOLOGRAPHICS": [
+    {
+      "name": "Angerer",
+      "overall": 92,
+      "version": "Base Icon",
+      "item_id": "67335157",
+      "finish": "PRISTINE HOLO",
+      "placeholder": false
+    },
+    {
+      "name": "Prinz",
+      "overall": 92,
+      "version": "Base Icon",
+      "item_id": "67384140",
+      "finish": "PRISTINE HOLO",
+      "placeholder": false
+    },
+    {
+      "name": "Baresi",
+      "overall": 91,
+      "version": "Base Icon",
+      "item_id": "67275770",
+      "finish": "PRISTINE HOLO",
+      "placeholder": false
+    },
+    {
+      "name": "Foudy",
+      "overall": 90,
+      "version": "Base Icon",
+      "item_id": "67180472",
+      "finish": "PRISTINE HOLO",
+      "placeholder": false
+    },
+    {
+      "name": "Moore",
+      "overall": 90,
+      "version": "Base Icon",
+      "item_id": "67298908",
+      "finish": "PRISTINE HOLO",
+      "placeholder": false
+    }
+  ],
+  "SEASON 1": [
+    {
+      "name": "Cucurella",
+      "overall": 88,
+      "version": "Destined for Glory",
+      "item_id": "67348095",
+      "finish": "PRISTINE HOLO",
+      "placeholder": false
+    },
+    {
+      "name": "Harder",
+      "overall": 88,
+      "version": "Destined for Glory",
+      "item_id": "67368151",
+      "finish": "PRISTINE HOLO",
+      "placeholder": false
+    },
+    {
+      "name": "Mora",
+      "overall": 87,
+      "version": "Future Stars",
+      "item_id": "67188263",
+      "finish": "HOLO",
+      "placeholder": false
+    },
+    {
+      "name": "Bonny",
+      "overall": 87,
+      "version": "Future Stars",
+      "item_id": "67368429",
+      "finish": "HOLO",
+      "placeholder": false
+    },
+    {
+      "name": "Player Card",
+      "overall": null,
+      "version": null,
+      "placeholder": true
+    },
+    {
+      "name": "Harder",
+      "overall": 88,
+      "version": "Destined for Glory",
+      "item_id": "50590935",
+      "finish": "BASE",
+      "placeholder": false
+    },
+    {
+      "name": "Undav",
+      "overall": 87,
+      "version": "Destined for Glory",
+      "item_id": "67353040",
+      "finish": "HOLO",
+      "placeholder": false
+    },
+    {
+      "name": "Yohannes",
+      "overall": 86,
+      "version": "Future Stars",
+      "item_id": "67386815",
+      "finish": "HOLO",
+      "placeholder": false
+    }
+  ]
 }
