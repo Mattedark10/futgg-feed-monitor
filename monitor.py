@@ -16,553 +16,319 @@ HEADERS = {
         "AppleWebKit/537.36 "
         "(KHTML, like Gecko) "
         "Chrome/140.0.0.0 Safari/537.36"
-    ),
-    "Accept": (
-        "text/html,application/xhtml+xml,"
-        "application/xml;q=0.9,image/avif,"
-        "image/webp,image/apng,*/*;q=0.8"
-    ),
-    "Accept-Language": "en-US,en;q=0.9",
+    )
 }
 
 
-session = requests.Session()
-session.headers.update(HEADERS)
+def clean(value):
+    if not value:
+        return ""
 
+    return re.sub(
+        r"\s+",
+        " ",
+        str(value)
+    ).strip()
 
-# ============================================================
-# FETCH
-# ============================================================
 
 def fetch(url):
-    print()
-    print("=" * 80)
-    print("FETCHING")
-    print(url)
-    print("=" * 80)
-
-    r = session.get(
+    response = requests.get(
         url,
+        headers=HEADERS,
         timeout=45
     )
 
-    r.raise_for_status()
+    response.raise_for_status()
 
-    print(
-        f"HTTP {r.status_code}"
-    )
-
-    print(
-        f"HTML length: {len(r.text)}"
-    )
-
-    return r.text
+    return response.text
 
 
-# ============================================================
-# FIND LINEUP
-# ============================================================
+def find_lineup(html):
 
-def get_lineup_section(html):
     soup = BeautifulSoup(
         html,
         "html.parser"
     )
 
-    headings = soup.find_all(
+    heading = soup.find(
         string=re.compile(
             r"Cheapest grade",
             re.I
         )
     )
 
-    print(
-        f"Cheapest grade headings found: "
-        f"{len(headings)}"
-    )
-
-    if not headings:
+    if not heading:
         raise RuntimeError(
-            "Cheapest grade heading not found"
+            "Cheapest grade non trovato"
         )
 
-    heading = headings[-1]
-
-    print(
-        "Heading:",
-        repr(
-            heading.strip()
-        )
-    )
-
-    # Try several parent levels.
     node = heading.parent
 
-    for level in range(1, 12):
+    for _ in range(12):
 
         if node is None:
             break
 
-        text = node.get_text(
-            " ",
-            strip=True
-        )
-
-        html_length = len(
-            str(node)
-        )
-
-        print(
-            f"Parent level {level}: "
-            f"text={len(text)} chars, "
-            f"html={html_length} chars"
+        text = clean(
+            node.get_text(
+                " ",
+                strip=True
+            )
         )
 
         if (
             "Add players" in text
-            and html_length > 1000
+            and len(str(node)) > 1000
         ):
-
-            section = str(node)
-
-            marker = re.search(
-                r"Add players",
-                section,
-                re.I
+            return BeautifulSoup(
+                str(node),
+                "html.parser"
             )
-
-            if marker:
-                section = section[
-                    :marker.start()
-                ]
-
-            print(
-                f"Selected parent level: "
-                f"{level}"
-            )
-
-            return section
 
         node = node.parent
 
     raise RuntimeError(
-        "Could not isolate lineup"
+        "Lineup non trovato"
     )
 
 
-# ============================================================
-# DIAGNOSTIC
-# ============================================================
-
-def diagnostic(section):
-    soup = BeautifulSoup(
-        section,
-        "html.parser"
-    )
+def diagnostic(category, soup):
 
     print()
-    print("=" * 80)
-    print("DIAGNOSTIC")
-    print("=" * 80)
-
-    # --------------------------------------------------------
-    # IMG
-    # --------------------------------------------------------
+    print("=" * 70)
+    print(category)
+    print("=" * 70)
 
     images = soup.find_all("img")
 
-    print()
-    print(
-        f"IMG elements: {len(images)}"
-    )
+    interesting = []
 
-    for index, img in enumerate(
-        images,
-        1
-    ):
+    for img in images:
 
-        print()
-        print(
-            "-" * 80
+        attrs = img.attrs
+
+        alt = clean(
+            attrs.get("alt")
         )
 
-        print(
-            f"IMAGE #{index}"
+        title = clean(
+            attrs.get("title")
         )
 
-        attrs = dict(
-            img.attrs
+        aria = clean(
+            attrs.get("aria-label")
         )
 
-        print(
-            "ATTRIBUTES:"
+        src = clean(
+            attrs.get("src")
         )
 
-        for key, value in attrs.items():
-
-            print(
-                f"  {key}: {value}"
-            )
-
-        print(
-            "PARENT ATTRIBUTES:"
+        srcset = clean(
+            attrs.get("srcset")
         )
 
-        parent = img.parent
-
-        for level in range(1, 5):
-
-            if parent is None:
-                break
-
-            print(
-                f"  PARENT {level}:"
-            )
-
-            for key, value in parent.attrs.items():
-
-                print(
-                    f"    {key}: {value}"
-                )
-
-            parent = parent.parent
-
-        print(
-            "TEXT:"
+        combined = " | ".join(
+            x
+            for x in [
+                alt,
+                title,
+                aria,
+                src,
+                srcset
+            ]
+            if x
         )
 
-        print(
-            " ",
-            img.get_text(
-                " ",
-                strip=True
-            )
-        )
-
-        print(
-            "PARENT TEXT:"
-        )
-
-        parent = img.parent
-
-        for level in range(1, 4):
-
-            if parent is None:
-                break
-
-            text = parent.get_text(
-                " ",
-                strip=True
-            )
-
-            if text:
-                print(
-                    f"  PARENT {level}: "
-                    f"{text[:500]}"
-                )
-
-            parent = parent.parent
-
-        print(
-            "OUTER HTML:"
-        )
-
-        outer = str(img)
-
-        print(
-            outer[:3000]
-        )
-
-    # --------------------------------------------------------
-    # LINKS
-    # --------------------------------------------------------
-
-    print()
-    print("=" * 80)
-    print("LINK DIAGNOSTIC")
-    print("=" * 80)
-
-    links = soup.find_all("a")
-
-    print(
-        f"A elements: {len(links)}"
-    )
-
-    shown = 0
-
-    for index, link in enumerate(
-        links,
-        1
-    ):
-
-        text = link.get_text(
-            " ",
-            strip=True
-        )
-
-        href = link.get(
-            "href"
-        )
-
-        html = str(link)
-
-        interesting = (
-            "Šašić" in html
-            or "Zamorano" in html
-            or "Milito" in html
-            or "Angerer" in html
-            or "Prinz" in html
-            or "Baresi" in html
-            or "Cucurella" in html
-            or "Harder" in html
-            or "Mora" in html
-            or "Bonny" in html
-            or "Undav" in html
-            or "Bischof" in html
-            or "Yohannes" in html
-        )
-
-        if not interesting:
+        # Ignora immagini chiaramente non relative
+        # alle carte
+        if not combined:
             continue
 
-        shown += 1
-
-        print()
-        print(
-            "-" * 80
-        )
-
-        print(
-            f"LINK #{index}"
-        )
-
-        print(
-            "TEXT:",
-            text
-        )
-
-        print(
-            "HREF:",
-            href
-        )
-
-        print(
-            "ATTRIBUTES:"
-        )
-
-        for key, value in link.attrs.items():
-
-            print(
-                f"  {key}: {value}"
+        if (
+            "Player Card" in combined
+            or re.search(
+                r"\b\d{2}\b",
+                alt
+            )
+            or re.search(
+                r"\b\d{2}\b",
+                title
+            )
+            or re.search(
+                r"\b\d{2}\b",
+                aria
+            )
+        ):
+            interesting.append(
+                img
             )
 
-        print(
-            "OUTER HTML:"
-        )
-
-        print(
-            html[:5000]
-        )
-
-    print()
     print(
-        f"Interesting links shown: "
-        f"{shown}"
+        f"IMG interessanti: {len(interesting)}"
     )
 
+    for i, img in enumerate(
+        interesting,
+        1
+    ):
 
-# ============================================================
-# SEARCH FINISH WORDS
-# ============================================================
+        attrs = img.attrs
 
-def search_finish_words(section):
-    print()
-    print("=" * 80)
-    print("FINISH WORD SEARCH")
-    print("=" * 80)
-
-    soup = BeautifulSoup(
-        section,
-        "html.parser"
-    )
-
-    words = [
-        "holo",
-        "holographic",
-        "pristine",
-        "base",
-    ]
-
-    full_html = str(
-        soup
-    )
-
-    for word in words:
-
-        matches = list(
-            re.finditer(
-                word,
-                full_html,
-                re.I
-            )
+        alt = clean(
+            attrs.get("alt")
         )
 
-        print(
-            f"{word}: "
-            f"{len(matches)} matches"
+        title = clean(
+            attrs.get("title")
         )
 
-        for match in matches[:10]:
+        aria = clean(
+            attrs.get("aria-label")
+        )
 
-            start = max(
-                0,
-                match.start() - 250
-            )
-
-            end = min(
-                len(full_html),
-                match.end() + 500
-            )
-
-            snippet = full_html[
-                start:end
-            ]
-
-            print()
-            print(
-                snippet
-            )
-
-
-# ============================================================
-# CARD NAME SEARCH
-# ============================================================
-
-def search_card_names(section):
-
-    print()
-    print("=" * 80)
-    print("CARD NAME SEARCH")
-    print("=" * 80)
-
-    names = [
-        "Šašić",
-        "Zamorano",
-        "Milito",
-        "Angerer",
-        "Prinz",
-        "Baresi",
-        "Cucurella",
-        "Harder",
-        "Mora",
-        "Bonny",
-        "Undav",
-        "Bischof",
-        "Yohannes",
-    ]
-
-    for name in names:
-
-        matches = list(
-            re.finditer(
-                re.escape(name),
-                section,
-                re.I
-            )
+        src = clean(
+            attrs.get("src")
         )
 
         print()
         print(
-            f"{name}: "
-            f"{len(matches)} matches"
+            f"[{i}]"
         )
 
-        for match in matches[:3]:
-
-            start = max(
-                0,
-                match.start() - 500
+        if alt:
+            print(
+                f"ALT: {alt}"
             )
 
-            end = min(
-                len(section),
-                match.end() + 1200
+        if title:
+            print(
+                f"TITLE: {title}"
             )
+
+        if aria:
+            print(
+                f"ARIA: {aria}"
+            )
+
+        if src:
+            print(
+                f"SRC: {src[:500]}"
+            )
+
+        # Cerca eventuale link della carta
+        parent = img.parent
+
+        for level in range(4):
+
+            if parent is None:
+                break
+
+            if parent.name == "a":
+
+                href = clean(
+                    parent.get(
+                        "href"
+                    )
+                )
+
+                if href:
+                    print(
+                        f"LINK: {href}"
+                    )
+
+                break
+
+            parent = parent.parent
+
+        # Cerca SOLO parole di finish
+        # nei parent vicini
+        finish_found = []
+
+        parent = img.parent
+
+        for level in range(4):
+
+            if parent is None:
+                break
+
+            parent_text = clean(
+                parent.get_text(
+                    " ",
+                    strip=True
+                )
+            )
+
+            for word in [
+                "Pristine Holographic",
+                "Holographic",
+                "Holo",
+                "Base Hero",
+                "Base Icon",
+                "Base",
+            ]:
+
+                if re.search(
+                    re.escape(word),
+                    parent_text,
+                    re.I
+                ):
+                    finish_found.append(
+                        word
+                    )
+
+            parent = parent.parent
+
+        if finish_found:
 
             print(
-                section[
-                    start:end
-                ]
+                "FINISH CANDIDATE:",
+                ", ".join(
+                    dict.fromkeys(
+                        finish_found
+                    )
+                )
             )
 
-
-# ============================================================
-# MAIN
-# ============================================================
 
 def main():
 
     print()
-    print("=" * 80)
-    print("FUT.GG CARD DIAGNOSTIC")
-    print("=" * 80)
+    print(
+        "FUT.GG FINISH DIAGNOSTIC"
+    )
 
     for category, url in PAGES.items():
 
+        print()
+        print(
+            f"Scanning {category}..."
+        )
+
         try:
-
-            print()
-            print()
-            print(
-                "#" * 80
-            )
-
-            print(
-                f"# {category}"
-            )
-
-            print(
-                "#" * 80
-            )
 
             html = fetch(
                 url
             )
 
-            section = get_lineup_section(
+            soup = find_lineup(
                 html
             )
 
-            print()
-            print(
-                f"Lineup section length: "
-                f"{len(section)}"
-            )
-
             diagnostic(
-                section
-            )
-
-            search_finish_words(
-                section
-            )
-
-            search_card_names(
-                section
+                category,
+                soup
             )
 
         except Exception as e:
 
-            print()
             print(
-                f"ERROR on {category}: "
-                f"{e}"
+                f"ERROR {category}: {e}"
             )
 
     print()
-    print("=" * 80)
-    print("DIAGNOSTIC FINISHED")
-    print("=" * 80)
+    print(
+        "DIAGNOSTIC COMPLETE"
+    )
 
 
 if __name__ == "__main__":
