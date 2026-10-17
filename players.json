@@ -1,6 +1,6 @@
 {
-  "HEROES": [],
-  "HOLOGRAPHICS": [
+  "Heroes": [],
+  "Holographics": [
     {
       "name": "Angerer",
       "overall": 92,
@@ -42,7 +42,7 @@
       "placeholder": false
     }
   ],
-  "SEASON 1": [
+  "Season 1": [
     {
       "name": "Cucurella",
       "overall": 88,
@@ -96,6 +96,18 @@
       "item_id": "67353040",
       "finish": "HOLO",
       "placeholder": false
+    },
+    {
+      "name": "Player Card",
+      "overall": null,
+      "version": null,
+      "placeholder": true
+    },
+    {
+      "name": "Player Card",
+      "overall": null,
+      "version": null,
+      "placeholder": true
     },
     {
       "name": "Yohannes",
