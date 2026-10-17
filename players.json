@@ -1,151 +1,128 @@
 {
   "Heroes": [
     {
+      "name": "lg:hidden sticky top-13 z",
+      "overall": 20,
+      "version": "mx-[0.7rem] px-[0.7rem] pt-2 pb-2.5 bg-gray-900 border-b border-gray flex flex-col gap-2 tabular-nums",
+      "finish": null
+    },
+    {
+      "name": "lg:hidden sticky top-13 z",
+      "overall": 20,
+      "version": "mx-[0.7rem] px-[0.7rem] pt-2 pb-2.5 bg-gray-900 border-b border-gray flex flex-col gap-2 tabular-nums",
+      "finish": null
+    },
+    {
       "name": "Šašić",
-      "overall": "89",
-      "base_version": "Base Hero",
-      "version": "BASE",
-      "url": "",
-      "item_id": null
+      "overall": 89,
+      "version": "Base Hero",
+      "finish": "BASE"
     },
     {
       "name": "Zamorano",
-      "overall": "88",
-      "base_version": "Base Hero",
-      "version": "BASE",
-      "url": "",
-      "item_id": null
+      "overall": 88,
+      "version": "Base Hero",
+      "finish": "BASE"
     },
     {
       "name": "Milito",
-      "overall": "88",
-      "base_version": "Base Hero",
-      "version": "BASE",
-      "url": "",
-      "item_id": null
-    },
-    {
-      "name": "Šašić",
-      "overall": "89",
-      "base_version": "Base Hero",
-      "version": "BASE",
-      "url": "",
-      "item_id": null
-    },
-    {
-      "name": "Vialli",
-      "overall": "89",
-      "base_version": "Base Hero",
-      "version": "BASE",
-      "url": "",
-      "item_id": null
+      "overall": 88,
+      "version": "Base Hero",
+      "finish": "BASE"
     }
   ],
   "Holographics": [
     {
+      "name": "lg:hidden sticky top-13 z",
+      "overall": 20,
+      "version": "mx-[0.7rem] px-[0.7rem] pt-2 pb-2.5 bg-gray-900 border-b border-gray flex flex-col gap-2 tabular-nums",
+      "finish": null
+    },
+    {
+      "name": "lg:hidden sticky top-13 z",
+      "overall": 20,
+      "version": "mx-[0.7rem] px-[0.7rem] pt-2 pb-2.5 bg-gray-900 border-b border-gray flex flex-col gap-2 tabular-nums",
+      "finish": null
+    },
+    {
       "name": "Angerer",
-      "overall": "92",
-      "base_version": "Base Icon",
-      "version": "BASE",
-      "url": "",
-      "item_id": null
+      "overall": 92,
+      "version": "Base Icon",
+      "finish": "BASE"
     },
     {
       "name": "Prinz",
-      "overall": "92",
-      "base_version": "Base Icon",
-      "version": "BASE",
-      "url": "",
-      "item_id": null
+      "overall": 92,
+      "version": "Base Icon",
+      "finish": "BASE"
     },
     {
       "name": "Baresi",
-      "overall": "91",
-      "base_version": "Base Icon",
-      "version": "BASE",
-      "url": "",
-      "item_id": null
-    },
-    {
-      "name": "Foudy",
-      "overall": "90",
-      "base_version": "Base Icon",
-      "version": "BASE",
-      "url": "",
-      "item_id": null
-    },
-    {
-      "name": "Moore",
-      "overall": "90",
-      "base_version": "Base Icon",
-      "version": "BASE",
-      "url": "",
-      "item_id": null
+      "overall": 91,
+      "version": "Base Icon",
+      "finish": "BASE"
     }
   ],
   "Season 1": [
     {
+      "name": "lg:hidden sticky top-13 z",
+      "overall": 20,
+      "version": "mx-[0.7rem] px-[0.7rem] pt-2 pb-2.5 bg-gray-900 border-b border-gray flex flex-col gap-2 tabular-nums",
+      "finish": null
+    },
+    {
+      "name": "lg:hidden sticky top-13 z",
+      "overall": 20,
+      "version": "mx-[0.7rem] px-[0.7rem] pt-2 pb-2.5 bg-gray-900 border-b border-gray flex flex-col gap-2 tabular-nums",
+      "finish": null
+    },
+    {
       "name": "Cucurella",
       "overall": 88,
-      "rarity": "Destined for Glory",
-      "item_id": "67348095",
-      "version": "PRISTINE HOLO"
+      "version": "Destined for Glory",
+      "finish": null
     },
     {
       "name": "Harder",
       "overall": 88,
-      "rarity": "Destined for Glory",
-      "item_id": "67368151",
-      "version": "PRISTINE HOLO"
-    },
-    {
-      "name": "Jacobo Ramón",
-      "overall": 87,
-      "rarity": "Future Stars",
-      "item_id": "67179830",
-      "version": "HOLO"
+      "version": "Destined for Glory",
+      "finish": null
     },
     {
       "name": "Mora",
       "overall": 87,
-      "rarity": "Future Stars",
-      "item_id": "67188263",
-      "version": "HOLO"
+      "version": "Future Stars",
+      "finish": null
     },
     {
       "name": "Bonny",
       "overall": 87,
-      "rarity": "Future Stars",
-      "item_id": "67368429",
-      "version": "HOLO"
+      "version": "Future Stars",
+      "finish": null
+    },
+    {
+      "name": "Harder",
+      "overall": 88,
+      "version": "Destined for Glory",
+      "finish": null
     },
     {
       "name": "Undav",
       "overall": 87,
-      "rarity": "Destined for Glory",
-      "item_id": "67353040",
-      "version": "HOLO"
+      "version": "Destined for Glory",
+      "finish": null
     },
     {
       "name": "Bischof",
       "overall": 86,
-      "rarity": "Future Stars",
-      "item_id": "67372629",
-      "version": "HOLO"
+      "version": "Future Stars",
+      "finish": null
     },
     {
       "name": "Yohannes",
       "overall": 86,
-      "rarity": "Future Stars",
-      "item_id": "67386815",
-      "version": "HOLO"
-    },
-    {
-      "name": "Kiwior",
-      "overall": 86,
-      "rarity": "Destined for Glory",
-      "item_id": "67374557",
-      "version": "HOLO"
+      "version": "Future Stars",
+      "finish": null
     }
   ]
 }
