@@ -53,18 +53,12 @@ session.headers.update(HEADERS)
 # ============================================================
 
 def download_page(url):
-    response = session.get(
-        url,
-        timeout=30,
-    )
-
+    response = session.get(url, timeout=30)
     response.raise_for_status()
 
     text = response.text
 
-    print(
-        f"Downloaded {len(text):,} characters."
-    )
+    print(f"Downloaded {len(text):,} characters.")
 
     return text
 
@@ -91,9 +85,7 @@ def clean_text(value):
 
 
 def normalize_name(name):
-    return " ".join(
-        clean_text(name).split()
-    )
+    return " ".join(clean_text(name).split())
 
 
 # ============================================================
@@ -116,9 +108,7 @@ def load_card_cache():
             return data
 
     except Exception as error:
-        print(
-            f"⚠️ Could not load card cache: {error}"
-        )
+        print(f"⚠️ Could not load card cache: {error}")
 
     return {}
 
@@ -161,10 +151,7 @@ def find_cheapest_heading(soup):
             "span",
         ]
     ):
-        text = tag.get_text(
-            " ",
-            strip=True,
-        )
+        text = tag.get_text(" ", strip=True)
 
         if pattern.fullmatch(text):
             return tag
@@ -182,10 +169,7 @@ def find_add_players_heading(soup):
             "h5",
         ]
     ):
-        text = tag.get_text(
-            " ",
-            strip=True,
-        )
+        text = tag.get_text(" ", strip=True)
 
         if text.lower() == "add players":
             return tag
@@ -195,15 +179,13 @@ def find_add_players_heading(soup):
 
 def get_lineup_html(page_html):
     """
-    Isola l'HTML compreso tra:
+    Prende solamente la zona:
 
         Cheapest grade X lineup
-
-    e:
-
-        Add players
-
-    Quindi NON usa solution.items.
+                ↓
+             CARTE
+                ↓
+          Add players
     """
 
     soup = BeautifulSoup(
@@ -211,9 +193,7 @@ def get_lineup_html(page_html):
         "html.parser",
     )
 
-    cheapest = find_cheapest_heading(
-        soup
-    )
+    cheapest = find_cheapest_heading(soup)
 
     if cheapest is None:
         raise RuntimeError(
@@ -226,9 +206,7 @@ def get_lineup_html(page_html):
         strip=True,
     )
 
-    print(
-        f"Found section: {heading_text}"
-    )
+    print(f"Found section: {heading_text}")
 
     raw_patterns = [
         re.compile(
@@ -245,9 +223,7 @@ def get_lineup_html(page_html):
     start = None
 
     for pattern in raw_patterns:
-        match = pattern.search(
-            page_html
-        )
+        match = pattern.search(page_html)
 
         if match:
             start = match.start()
@@ -255,8 +231,8 @@ def get_lineup_html(page_html):
 
     if start is None:
         raise RuntimeError(
-            "Could not locate cheapest "
-            "lineup inside raw HTML"
+            "Could not locate cheapest lineup "
+            "inside raw HTML"
         )
 
     add_match = re.search(
@@ -266,14 +242,9 @@ def get_lineup_html(page_html):
     )
 
     if add_match:
-        end = (
-            start
-            + add_match.start()
-        )
+        end = start + add_match.start()
 
-        block = page_html[
-            start:end
-        ]
+        block = page_html[start:end]
 
         print(
             f"Lineup HTML block: "
@@ -282,21 +253,15 @@ def get_lineup_html(page_html):
 
         return block, heading_text
 
-    add_heading = find_add_players_heading(
-        soup
-    )
+    add_heading = find_add_players_heading(soup)
 
     if add_heading is None:
         raise RuntimeError(
             "Could not find 'Add players'"
         )
 
-    add_text = str(
-        add_heading
-    )
-
     add_position = page_html.find(
-        add_text
+        str(add_heading)
     )
 
     if (
@@ -332,9 +297,7 @@ def parse_player_alt(alt):
     Mora - 87 - Future Stars
     """
 
-    alt = clean_text(
-        alt
-    )
+    alt = clean_text(alt)
 
     if not alt:
         return None
@@ -371,7 +334,7 @@ def parse_player_alt(alt):
 
 def find_item_id_from_element(img):
     """
-    Cerca l'Item ID della carta.
+    Trova l'Item ID dello slot.
 
     Esempio:
 
@@ -388,14 +351,10 @@ def find_item_id_from_element(img):
         "data-src",
         "data-original",
     ]:
-        value = img.get(
-            attribute
-        )
+        value = img.get(attribute)
 
         if value:
-            values.append(
-                str(value)
-            )
+            values.append(str(value))
 
     current = img
 
@@ -404,19 +363,13 @@ def find_item_id_from_element(img):
             break
 
         if hasattr(current, "get"):
-            href = current.get(
-                "href"
-            )
+            href = current.get("href")
 
             if href:
-                values.append(
-                    str(href)
-                )
+                values.append(str(href))
 
         try:
-            values.append(
-                str(current)
-            )
+            values.append(str(current))
         except Exception:
             pass
 
@@ -434,9 +387,7 @@ def find_item_id_from_element(img):
     ]
 
     for value in values:
-        value = clean_text(
-            value
-        )
+        value = clean_text(value)
 
         for pattern in patterns:
             match = re.search(
@@ -464,20 +415,10 @@ def find_exact_card_url(
     gallery_html,
     item_id,
 ):
-    """
-    Cerca nella Gallery il link esatto della carta.
-
-    Esempio:
-
-    /players/226306-celia-sasic/27-67335170/
-    """
-
     if not item_id:
         return None
 
-    item_id = str(
-        item_id
-    )
+    item_id = str(item_id)
 
     patterns = [
         (
@@ -520,126 +461,171 @@ def find_exact_card_url(
 
 
 # ============================================================
-# FINISH DETECTION
+# EXACT FINISH DETECTION
 # ============================================================
 
-def detect_finish_from_html(html):
+def detect_finish_from_card_page(html):
     """
-    Riconosce:
+    IMPORTANTE:
 
-    PRISTINE HOLO
-    HOLO
-    BASE
+    Non cerchiamo più "pristine" nell'intera pagina.
 
-    dalla pagina della carta specifica.
+    Leggiamo invece il titolo/H1 della CARTA CORRENTE.
+
+    Esempi reali FUT.GG:
+
+    Celia Šašić - Base Hero Pristine Holographic 89 OVR
+
+    Celia Šašić - Base Hero 89 OVR
     """
 
-    if not html:
-        return "BASE"
+    soup = BeautifulSoup(
+        html,
+        "html.parser",
+    )
 
-    text = clean_text(
-        html
-    ).lower()
+    candidates = []
 
     # ========================================================
-    # PRISTINE
+    # 1. H1
     # ========================================================
 
-    pristine_patterns = [
-        "pristine holographic",
-        "pristine-holographic",
-        "pristine_holographic",
-        "pristine holo",
-        "pristine-holo",
-        "pristine_holo",
-    ]
+    for h1 in soup.find_all("h1"):
+        text = h1.get_text(
+            " ",
+            strip=True,
+        )
 
-    for pattern in pristine_patterns:
-        if pattern in text:
+        if text:
+            candidates.append(text)
+
+    # ========================================================
+    # 2. META OG TITLE
+    # ========================================================
+
+    meta = soup.find(
+        "meta",
+        property="og:title",
+    )
+
+    if meta:
+        content = meta.get(
+            "content",
+            ""
+        )
+
+        if content:
+            candidates.append(content)
+
+    # ========================================================
+    # 3. HTML TITLE
+    # ========================================================
+
+    if soup.title:
+        title_text = soup.title.get_text(
+            " ",
+            strip=True,
+        )
+
+        if title_text:
+            candidates.append(title_text)
+
+    # ========================================================
+    # LOG
+    # ========================================================
+
+    print("      Card title candidates:")
+
+    for candidate in candidates[:5]:
+        print(
+            f"      → {candidate}"
+        )
+
+    # ========================================================
+    # ANALYZE ONLY TITLE CANDIDATES
+    # ========================================================
+
+    for candidate in candidates:
+        text = candidate.casefold()
+
+        if (
+            "pristine holographic"
+            in text
+        ):
             return "PRISTINE HOLO"
 
-    # ========================================================
-    # REGULAR HOLOGRAPHIC
-    # ========================================================
+    for candidate in candidates:
+        text = candidate.casefold()
 
-    regular_patterns = [
-        "regular holographic",
-        "regular-holographic",
-        "regular_holographic",
-    ]
+        if (
+            "regular holographic"
+            in text
+        ):
+            return "HOLO"
 
-    for pattern in regular_patterns:
-        if pattern in text:
+    # Fallback:
+    # se il titolo specifico dice semplicemente
+    # "Holographic", ma non "Pristine".
+    for candidate in candidates:
+        text = candidate.casefold()
+
+        if (
+            "holographic"
+            in text
+            and "pristine" not in text
+        ):
             return "HOLO"
 
     return "BASE"
 
 
+# ============================================================
+# RESOLVE FINISH
+# ============================================================
+
 def resolve_card_finish(
     gallery_html,
     item_id,
 ):
-    """
-    Determina la finitura della carta.
-
-    Prima controlla la cache.
-    Se non presente:
-      Item ID
-        ↓
-      URL carta
-        ↓
-      pagina FUT.GG
-        ↓
-      BASE / HOLO / PRISTINE HOLO
-    """
-
     if not item_id:
         return "BASE"
 
-    cache_key = str(
-        item_id
-    )
+    cache_key = str(item_id)
 
     # ========================================================
-    # CACHE
+    # CACHE V2
+    #
+    # Usiamo cache_version=2 per NON fidarci della
+    # vecchia cache che classificava male le carte.
     # ========================================================
 
     cached = CARD_CACHE.get(
         cache_key
     )
 
-    if isinstance(
-        cached,
-        dict,
-    ):
-        finish = cached.get(
-            "finish"
-        )
-
-        if finish in {
-            "BASE",
-            "HOLO",
-            "PRISTINE HOLO",
-        }:
-            print(
-                f"    ↳ finish cache: {finish}"
+    if isinstance(cached, dict):
+        if (
+            cached.get("cache_version")
+            == 2
+        ):
+            finish = cached.get(
+                "finish"
             )
 
-            return finish
+            if finish in {
+                "BASE",
+                "HOLO",
+                "PRISTINE HOLO",
+            }:
+                print(
+                    f"    ↳ finish cache: "
+                    f"{finish}"
+                )
 
-    elif cached in {
-        "BASE",
-        "HOLO",
-        "PRISTINE HOLO",
-    }:
-        print(
-            f"    ↳ finish cache: {cached}"
-        )
-
-        return cached
+                return finish
 
     # ========================================================
-    # EXACT URL
+    # EXACT CARD URL
     # ========================================================
 
     exact_url = find_exact_card_url(
@@ -656,8 +642,12 @@ def resolve_card_finish(
         return "BASE"
 
     print(
-        f"    ↳ checking finish "
+        f"    ↳ checking exact card "
         f"ItemID={item_id}"
+    )
+
+    print(
+        f"      {exact_url}"
     )
 
     try:
@@ -668,27 +658,60 @@ def resolve_card_finish(
 
         response.raise_for_status()
 
-        finish = detect_finish_from_html(
-            response.text
+        # ====================================================
+        # EXTRA SAFETY
+        #
+        # Verifica che la pagina ottenuta sia davvero
+        # dell'Item ID richiesto.
+        # ====================================================
+
+        final_url = response.url
+
+        expected_part = (
+            f"/27-{item_id}/"
+        )
+
+        if expected_part not in final_url:
+            print(
+                "    ⚠️ FUT.GG redirected "
+                "to another card."
+            )
+
+            print(
+                f"      Final URL: {final_url}"
+            )
+
+            return "BASE"
+
+        finish = (
+            detect_finish_from_card_page(
+                response.text
+            )
         )
 
         print(
-            f"    ✓ finish: {finish}"
+            f"    ✓ ItemID {item_id}: "
+            f"{finish}"
         )
+
+        # ====================================================
+        # SAVE SAFE CACHE
+        # ====================================================
 
         CARD_CACHE[
             cache_key
         ] = {
+            "cache_version": 2,
             "finish": finish,
-            "url": exact_url,
+            "url": final_url,
         }
 
         return finish
 
     except Exception as error:
         print(
-            f"    ⚠️ Finish lookup failed: "
-            f"{error}"
+            f"    ⚠️ Finish lookup failed "
+            f"for {item_id}: {error}"
         )
 
         return "BASE"
@@ -704,11 +727,11 @@ def extract_cheapest_lineup(
     expected,
 ):
     """
-    Legge SOLO le carte visualizzate sotto:
+    Legge SOLO:
 
         Cheapest grade X lineup
 
-    NON legge solution.items.
+    NON solution.items.
     """
 
     block_html, heading = (
@@ -758,16 +781,14 @@ def extract_cheapest_lineup(
             item_id,
         )
 
-        card = {
-            "name": info["name"],
-            "overall": info["overall"],
-            "rarity": info["rarity"],
-            "version": finish,
-            "ea_id": item_id,
-        }
-
         players.append(
-            card
+            {
+                "name": info["name"],
+                "overall": info["overall"],
+                "rarity": info["rarity"],
+                "version": finish,
+                "ea_id": item_id,
+            }
         )
 
     # ========================================================
@@ -843,7 +864,6 @@ def extract_cheapest_lineup(
                     item_id = int(
                         id_match.group(1)
                     )
-
                     break
 
             print(
@@ -867,7 +887,10 @@ def extract_cheapest_lineup(
                 }
             )
 
-        if len(raw_players) > len(players):
+        if (
+            len(raw_players)
+            > len(players)
+        ):
             players = raw_players
 
     # ========================================================
@@ -898,10 +921,6 @@ def extract_cheapest_lineup(
             f"ItemID={item_text}"
         )
 
-    # ========================================================
-    # SAFETY
-    # ========================================================
-
     if len(players) != expected:
         raise RuntimeError(
             f"Wrong displayed lineup count "
@@ -931,9 +950,7 @@ def load_state():
             "r",
             encoding="utf-8",
         ) as file:
-            data = json.load(
-                file
-            )
+            data = json.load(file)
 
         if not isinstance(
             data,
@@ -1015,9 +1032,7 @@ def save_trending(data):
 # ============================================================
 
 def escape_html(value):
-    value = str(
-        value
-    )
+    value = str(value)
 
     return (
         value
@@ -1040,7 +1055,6 @@ def telegram_send(message):
         print(
             "⚠️ TELEGRAM secrets missing"
         )
-
         return False
 
     url = (
@@ -1066,7 +1080,8 @@ def telegram_send(message):
 
     except Exception as error:
         print(
-            f"⚠️ Telegram error: {error}"
+            f"⚠️ Telegram error: "
+            f"{error}"
         )
 
         return False
@@ -1078,8 +1093,12 @@ def telegram_send(message):
 
 def card_key(card):
     """
-    L'Item ID distingue anche due versioni
-    dello stesso giocatore.
+    Item ID = identità principale.
+
+    Questo permette di distinguere:
+
+    Šašić standard
+    Šašić Pristine
     """
 
     ea_id = card.get(
@@ -1173,7 +1192,6 @@ def compare_cards(
                     remaining_old.pop(
                         index
                     )
-
                     break
 
     for key, count in added.items():
@@ -1189,17 +1207,13 @@ def compare_cards(
                     remaining_new.pop(
                         index
                     )
-
                     break
 
-    return (
-        out_cards,
-        in_cards,
-    )
+    return out_cards, in_cards
 
 
 # ============================================================
-# FORMAT CARD
+# FORMAT
 # ============================================================
 
 def format_card(card):
@@ -1249,57 +1263,26 @@ def format_card(card):
 # ============================================================
 
 def main():
-    print(
-        "=" * 60
-    )
-
-    print(
-        "FUT.GG CHEAPEST LINEUP MONITOR"
-    )
-
-    print(
-        "=" * 60
-    )
+    print("=" * 60)
+    print("FUT.GG CHEAPEST LINEUP MONITOR")
+    print("=" * 60)
 
     state = load_state()
 
     successful_pages = 0
 
-    for (
-        page_name,
-        config,
-    ) in PAGES.items():
+    for page_name, config in PAGES.items():
 
         print()
-
-        print(
-            "=" * 60
-        )
-
-        print(
-            f"Scanning {page_name}"
-        )
-
-        print(
-            config["url"]
-        )
-
-        print(
-            "=" * 60
-        )
+        print("=" * 60)
+        print(f"Scanning {page_name}")
+        print(config["url"])
+        print("=" * 60)
 
         try:
-            # =================================================
-            # DOWNLOAD GALLERY
-            # =================================================
-
             page_html = download_page(
                 config["url"]
             )
-
-            # =================================================
-            # CHEAPEST DISPLAYED LINEUP
-            # =================================================
 
             players = (
                 extract_cheapest_lineup(
@@ -1314,10 +1297,6 @@ def main():
                 [],
             )
 
-            # =================================================
-            # FIRST STATE
-            # =================================================
-
             if not old_players:
                 print(
                     f"🆕 First state saved "
@@ -1325,18 +1304,15 @@ def main():
                 )
 
             else:
-                (
-                    out_cards,
-                    in_cards,
-                ) = compare_cards(
-                    old_players,
-                    players,
+                out_cards, in_cards = (
+                    compare_cards(
+                        old_players,
+                        players,
+                    )
                 )
 
-                if (
-                    out_cards
-                    or in_cards
-                ):
+                if out_cards or in_cards:
+
                     message = (
                         f"⚡ <b>"
                         f"{escape_html(page_name)}"
@@ -1353,9 +1329,7 @@ def main():
                         for card in out_cards:
                             message += (
                                 "• "
-                                + format_card(
-                                    card
-                                )
+                                + format_card(card)
                                 + "\n"
                             )
 
@@ -1369,9 +1343,7 @@ def main():
                         for card in in_cards:
                             message += (
                                 "• "
-                                + format_card(
-                                    card
-                                )
+                                + format_card(card)
                                 + "\n"
                             )
 
@@ -1385,9 +1357,7 @@ def main():
                         + "</a>"
                     )
 
-                    if telegram_send(
-                        message
-                    ):
+                    if telegram_send(message):
                         print(
                             "📨 Telegram "
                             "notification sent."
@@ -1398,10 +1368,6 @@ def main():
                         "No lineup changes."
                     )
 
-            # =================================================
-            # UPDATE ONLY SUCCESSFUL PAGE
-            # =================================================
-
             state[
                 page_name
             ] = players
@@ -1409,6 +1375,7 @@ def main():
             successful_pages += 1
 
         except Exception as error:
+
             print(
                 f"❌ ERROR {page_name}: "
                 f"{error}"
@@ -1417,9 +1384,7 @@ def main():
             telegram_send(
                 "⚠️ <b>FUT.GG Monitor Error</b>"
                 "\n\n"
-                f"<b>"
-                f"{escape_html(page_name)}"
-                f"</b>"
+                f"<b>{escape_html(page_name)}</b>"
                 "\n"
                 f"{escape_html(error)}"
             )
@@ -1435,28 +1400,17 @@ def main():
 
     if successful_pages == 0:
         print()
-
         print(
             "❌ 0 pages succeeded."
         )
-
         print(
             "players.json NOT overwritten."
         )
-
         return
 
-    save_state(
-        state
-    )
-
-    save_trending(
-        state
-    )
-
-    save_card_cache(
-        CARD_CACHE
-    )
+    save_state(state)
+    save_trending(state)
+    save_card_cache(CARD_CACHE)
 
     print()
 
@@ -1466,31 +1420,14 @@ def main():
         f"pages succeeded."
     )
 
-    print(
-        f"Saved {STATE_FILE}"
-    )
-
-    print(
-        f"Saved {TRENDING_FILE}"
-    )
-
-    print(
-        f"Saved {CARD_CACHE_FILE}"
-    )
+    print(f"Saved {STATE_FILE}")
+    print(f"Saved {TRENDING_FILE}")
+    print(f"Saved {CARD_CACHE_FILE}")
 
     print()
-
-    print(
-        "=" * 60
-    )
-
-    print(
-        "MONITOR FINISHED"
-    )
-
-    print(
-        "=" * 60
-    )
+    print("=" * 60)
+    print("MONITOR FINISHED")
+    print("=" * 60)
 
 
 # ============================================================
