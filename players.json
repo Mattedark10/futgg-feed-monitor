@@ -75,94 +75,67 @@
   ],
   "Season 1": [
     {
-      "ea_id": 67340611,
-      "player_ea_id": 231747,
-      "name": "Kylian Mbappé",
-      "overall": 91,
-      "rarity_id": 22,
-      "version": "PRISTINE HOLO",
-      "url": "https://www.fut.gg/players/231747-kylian-mbappe/27-67340611/"
-    },
-    {
-      "ea_id": 67347949,
-      "player_ea_id": 239085,
-      "name": "Erling Haaland",
-      "overall": 91,
-      "rarity_id": 22,
-      "version": "PRISTINE HOLO",
-      "url": "https://www.fut.gg/players/239085-erling-haaland/27-67347949/"
-    },
-    {
-      "ea_id": 67192358,
-      "player_ea_id": 83494,
-      "name": "Player 83494",
-      "overall": 90,
-      "rarity_id": 71,
-      "version": "UNKNOWN",
-      "url": "https://www.fut.gg"
-    },
-    {
-      "ea_id": 67380310,
-      "player_ea_id": 271446,
-      "name": "Vicky López",
-      "overall": 90,
-      "rarity_id": 71,
-      "version": "PRISTINE HOLO",
-      "url": "https://www.fut.gg/players/271446-vicky-lopez/27-67380310/"
-    },
-    {
-      "ea_id": 67189240,
-      "player_ea_id": 80376,
-      "name": "Rio Ngumoha",
-      "overall": 89,
-      "rarity_id": 71,
-      "version": "PRISTINE HOLO",
-      "url": "https://www.fut.gg/players/80376-rio-ngumoha/27-67189240/"
-    },
-    {
-      "ea_id": 67374903,
-      "player_ea_id": 266039,
-      "name": "Player 266039",
-      "overall": 89,
-      "rarity_id": 71,
-      "version": "UNKNOWN",
-      "url": "https://www.fut.gg"
-    },
-    {
-      "ea_id": 67378000,
-      "player_ea_id": 269136,
-      "name": "Player 269136",
-      "overall": 89,
-      "rarity_id": 71,
-      "version": "UNKNOWN",
-      "url": "https://www.fut.gg"
-    },
-    {
-      "ea_id": 50563395,
-      "player_ea_id": 231747,
-      "name": "Kylian Mbappé",
-      "overall": 91,
-      "rarity_id": 22,
+      "name": "Cucurella",
+      "overall": 88,
+      "rarity": "Destined for Glory",
       "version": "BASE",
-      "url": "https://www.fut.gg/players/231747-kylian-mbappe/27-50563395/"
+      "ea_id": 67348095
     },
     {
-      "ea_id": 50570733,
-      "player_ea_id": 239085,
-      "name": "Erling Haaland",
-      "overall": 91,
-      "rarity_id": 22,
+      "name": "Harder",
+      "overall": 88,
+      "rarity": "Destined for Glory",
       "version": "BASE",
-      "url": "https://www.fut.gg/players/239085-erling-haaland/27-50570733/"
+      "ea_id": 67368151
     },
     {
-      "ea_id": 50415142,
-      "player_ea_id": 83494,
-      "name": "Player 83494",
-      "overall": 90,
-      "rarity_id": 71,
-      "version": "UNKNOWN",
-      "url": "https://www.fut.gg"
+      "name": "Jacobo Ramón",
+      "overall": 87,
+      "rarity": "Future Stars",
+      "version": "BASE",
+      "ea_id": 67179830
+    },
+    {
+      "name": "Mora",
+      "overall": 87,
+      "rarity": "Future Stars",
+      "version": "BASE",
+      "ea_id": 67188263
+    },
+    {
+      "name": "Bonny",
+      "overall": 87,
+      "rarity": "Future Stars",
+      "version": "BASE",
+      "ea_id": 67368429
+    },
+    {
+      "name": "Undav",
+      "overall": 87,
+      "rarity": "Destined for Glory",
+      "version": "BASE",
+      "ea_id": 67353040
+    },
+    {
+      "name": "Bischof",
+      "overall": 86,
+      "rarity": "Future Stars",
+      "version": "BASE",
+      "ea_id": 67372629
+    },
+    {
+      "name": "Yohannes",
+      "overall": 86,
+      "rarity": "Future Stars",
+      "version": "BASE",
+      "ea_id": 67386815
+    },
+    {
+      "name": "Kiwior",
+      "overall": 86,
+      "rarity": "Destined for Glory",
+      "version": "BASE",
+      "ea_id": 67374557
     }
   ]
 }
