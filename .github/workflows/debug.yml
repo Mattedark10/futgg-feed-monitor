@@ -1,15 +1,13 @@
-name: FUT.GG Monitor
+name: FUT.GG Debug
 
 on:
-  schedule:
-    - cron: "*/10 * * * *"
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  monitor:
+  debug:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,16 +22,5 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run monitor
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python monitor.py
-
-      - name: Save state
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add players.json docs/trending.json
-          git diff --cached --quiet || git commit -m "Update FUT.GG feed"
-          git push
+      - name: Run debug
+        run: python debug.py
