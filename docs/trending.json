@@ -1,5 +1,5 @@
 {
-  "updated_at": 1792249879,
+  "updated_at": 1792250468,
   "pages": {
     "Heroes": [
       {
@@ -9,7 +9,7 @@
         "overall": 89,
         "rarity_id": 72,
         "version": "BASE",
-        "url": "https://www.fut.gg/players/67276289/fc-27-67276289"
+        "url": "https://www.fut.gg"
       },
       {
         "ea_id": 67292141,
@@ -18,7 +18,7 @@
         "overall": 89,
         "rarity_id": 72,
         "version": "BASE",
-        "url": "https://www.fut.gg/players/67292141/fc-27-67292141"
+        "url": "https://www.fut.gg"
       },
       {
         "ea_id": 67300836,
@@ -27,7 +27,7 @@
         "overall": 89,
         "rarity_id": 72,
         "version": "BASE",
-        "url": "https://www.fut.gg/players/67300836/fc-27-67300836"
+        "url": "https://www.fut.gg"
       },
       {
         "ea_id": 67335170,
@@ -36,7 +36,7 @@
         "overall": 89,
         "rarity_id": 72,
         "version": "BASE",
-        "url": "https://www.fut.gg/players/67335170/fc-27-67335170"
+        "url": "https://www.fut.gg"
       },
       {
         "ea_id": 67342564,
@@ -45,7 +45,7 @@
         "overall": 89,
         "rarity_id": 72,
         "version": "BASE",
-        "url": "https://www.fut.gg/players/67342564/fc-27-67342564"
+        "url": "https://www.fut.gg"
       }
     ],
     "Holographics": [
@@ -55,8 +55,8 @@
         "name": "Player 190042",
         "overall": 95,
         "rarity_id": 12,
-        "version": "HOLO",
-        "url": "https://www.fut.gg/players/67298906/fc-27-67298906"
+        "version": "BASE",
+        "url": "https://www.fut.gg"
       },
       {
         "ea_id": 67345931,
@@ -64,8 +64,8 @@
         "name": "Player 237067",
         "overall": 95,
         "rarity_id": 12,
-        "version": "HOLO",
-        "url": "https://www.fut.gg/players/67345931/fc-27-67345931"
+        "version": "BASE",
+        "url": "https://www.fut.gg"
       },
       {
         "ea_id": 67146440,
@@ -73,8 +73,8 @@
         "name": "Player 37576",
         "overall": 94,
         "rarity_id": 12,
-        "version": "HOLO",
-        "url": "https://www.fut.gg/players/67146440/fc-27-67146440"
+        "version": "BASE",
+        "url": "https://www.fut.gg"
       },
       {
         "ea_id": 100664693,
@@ -82,8 +82,8 @@
         "name": "Player 1397",
         "overall": 94,
         "rarity_id": 12,
-        "version": "HOLO",
-        "url": "https://www.fut.gg/players/100664693/fc-27-100664693"
+        "version": "BASE",
+        "url": "https://www.fut.gg"
       },
       {
         "ea_id": 67384107,
@@ -91,8 +91,8 @@
         "name": "Player 275243",
         "overall": 93,
         "rarity_id": 12,
-        "version": "HOLO",
-        "url": "https://www.fut.gg/players/67384107/fc-27-67384107"
+        "version": "BASE",
+        "url": "https://www.fut.gg"
       }
     ],
     "Season 1": [
@@ -103,7 +103,7 @@
         "overall": 91,
         "rarity_id": 22,
         "version": "BASE",
-        "url": "https://www.fut.gg/players/67340611/fc-27-67340611"
+        "url": "https://www.fut.gg"
       },
       {
         "ea_id": 67347949,
@@ -112,7 +112,7 @@
         "overall": 91,
         "rarity_id": 22,
         "version": "BASE",
-        "url": "https://www.fut.gg/players/67347949/fc-27-67347949"
+        "url": "https://www.fut.gg"
       },
       {
         "ea_id": 67192358,
@@ -121,7 +121,7 @@
         "overall": 90,
         "rarity_id": 71,
         "version": "BASE",
-        "url": "https://www.fut.gg/players/67192358/fc-27-67192358"
+        "url": "https://www.fut.gg"
       },
       {
         "ea_id": 67380310,
@@ -130,7 +130,7 @@
         "overall": 90,
         "rarity_id": 71,
         "version": "BASE",
-        "url": "https://www.fut.gg/players/67380310/fc-27-67380310"
+        "url": "https://www.fut.gg"
       },
       {
         "ea_id": 67189240,
@@ -139,7 +139,7 @@
         "overall": 89,
         "rarity_id": 71,
         "version": "BASE",
-        "url": "https://www.fut.gg/players/67189240/fc-27-67189240"
+        "url": "https://www.fut.gg"
       },
       {
         "ea_id": 67374903,
@@ -148,7 +148,7 @@
         "overall": 89,
         "rarity_id": 71,
         "version": "BASE",
-        "url": "https://www.fut.gg/players/67374903/fc-27-67374903"
+        "url": "https://www.fut.gg"
       },
       {
         "ea_id": 67378000,
@@ -157,7 +157,7 @@
         "overall": 89,
         "rarity_id": 71,
         "version": "BASE",
-        "url": "https://www.fut.gg/players/67378000/fc-27-67378000"
+        "url": "https://www.fut.gg"
       },
       {
         "ea_id": 50563395,
@@ -166,7 +166,7 @@
         "overall": 91,
         "rarity_id": 22,
         "version": "BASE",
-        "url": "https://www.fut.gg/players/50563395/fc-27-50563395"
+        "url": "https://www.fut.gg"
       },
       {
         "ea_id": 50570733,
@@ -175,7 +175,7 @@
         "overall": 91,
         "rarity_id": 22,
         "version": "BASE",
-        "url": "https://www.fut.gg/players/50570733/fc-27-50570733"
+        "url": "https://www.fut.gg"
       },
       {
         "ea_id": 50415142,
@@ -184,7 +184,7 @@
         "overall": 90,
         "rarity_id": 71,
         "version": "BASE",
-        "url": "https://www.fut.gg/players/50415142/fc-27-50415142"
+        "url": "https://www.fut.gg"
       }
     ]
   }
