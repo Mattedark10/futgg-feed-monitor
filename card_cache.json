@@ -1,25 +1,4 @@
 {
-  "cache_version": 2,
-  "cards": {
-    "67335170": "PRISTINE HOLO",
-    "67114537": "PRISTINE HOLO",
-    "67335237": "PRISTINE HOLO",
-    "67371135": "PRISTINE HOLO",
-    "226306": "BASE",
-    "67335157": "PRISTINE HOLO",
-    "67384140": "PRISTINE HOLO",
-    "67275770": "PRISTINE HOLO",
-    "67180472": "PRISTINE HOLO",
-    "67298908": "PRISTINE HOLO",
-    "67348095": "PRISTINE HOLO",
-    "67368151": "PRISTINE HOLO",
-    "67179830": "HOLO",
-    "67188263": "HOLO",
-    "67368429": "HOLO",
-    "67353040": "HOLO",
-    "67372629": "HOLO",
-    "67386815": "HOLO",
-    "67374557": "HOLO"
-  },
+  "cache_version": 3,
   "finishes": {}
 }
