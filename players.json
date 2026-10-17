@@ -1,128 +1,134 @@
 {
   "Heroes": [
     {
-      "name": "lg:hidden sticky top-13 z",
-      "overall": 20,
-      "version": "mx-[0.7rem] px-[0.7rem] pt-2 pb-2.5 bg-gray-900 border-b border-gray flex flex-col gap-2 tabular-nums",
-      "finish": null
-    },
-    {
-      "name": "lg:hidden sticky top-13 z",
-      "overall": 20,
-      "version": "mx-[0.7rem] px-[0.7rem] pt-2 pb-2.5 bg-gray-900 border-b border-gray flex flex-col gap-2 tabular-nums",
-      "finish": null
-    },
-    {
       "name": "Šašić",
       "overall": 89,
       "version": "Base Hero",
-      "finish": "BASE"
+      "finish": "PRISTINE HOLO",
+      "item_id": "67335170"
     },
     {
       "name": "Zamorano",
       "overall": 88,
       "version": "Base Hero",
-      "finish": "BASE"
+      "finish": "PRISTINE HOLO",
+      "item_id": "67186651"
     },
     {
       "name": "Milito",
       "overall": 88,
       "version": "Base Hero",
-      "finish": "BASE"
+      "finish": "PRISTINE HOLO",
+      "item_id": "67371135"
+    },
+    {
+      "name": "Šašić",
+      "overall": 89,
+      "version": "Base Hero",
+      "finish": "BASE",
+      "item_id": "226306"
+    },
+    {
+      "name": "Vialli",
+      "overall": 89,
+      "version": "Base Hero",
+      "finish": "BASE",
+      "item_id": "233700"
     }
   ],
   "Holographics": [
     {
-      "name": "lg:hidden sticky top-13 z",
-      "overall": 20,
-      "version": "mx-[0.7rem] px-[0.7rem] pt-2 pb-2.5 bg-gray-900 border-b border-gray flex flex-col gap-2 tabular-nums",
-      "finish": null
-    },
-    {
-      "name": "lg:hidden sticky top-13 z",
-      "overall": 20,
-      "version": "mx-[0.7rem] px-[0.7rem] pt-2 pb-2.5 bg-gray-900 border-b border-gray flex flex-col gap-2 tabular-nums",
-      "finish": null
-    },
-    {
       "name": "Angerer",
       "overall": 92,
       "version": "Base Icon",
-      "finish": "BASE"
+      "finish": "PRISTINE HOLO",
+      "item_id": "67335157"
     },
     {
       "name": "Prinz",
       "overall": 92,
       "version": "Base Icon",
-      "finish": "BASE"
+      "finish": "PRISTINE HOLO",
+      "item_id": "67384140"
     },
     {
       "name": "Baresi",
       "overall": 91,
       "version": "Base Icon",
-      "finish": "BASE"
+      "finish": "PRISTINE HOLO",
+      "item_id": "67275770"
+    },
+    {
+      "name": "Foudy",
+      "overall": 90,
+      "version": "Base Icon",
+      "finish": "PRISTINE HOLO",
+      "item_id": "67180472"
+    },
+    {
+      "name": "Moore",
+      "overall": 90,
+      "version": "Base Icon",
+      "finish": "PRISTINE HOLO",
+      "item_id": "67298908"
     }
   ],
   "Season 1": [
     {
-      "name": "lg:hidden sticky top-13 z",
-      "overall": 20,
-      "version": "mx-[0.7rem] px-[0.7rem] pt-2 pb-2.5 bg-gray-900 border-b border-gray flex flex-col gap-2 tabular-nums",
-      "finish": null
-    },
-    {
-      "name": "lg:hidden sticky top-13 z",
-      "overall": 20,
-      "version": "mx-[0.7rem] px-[0.7rem] pt-2 pb-2.5 bg-gray-900 border-b border-gray flex flex-col gap-2 tabular-nums",
-      "finish": null
-    },
-    {
       "name": "Cucurella",
       "overall": 88,
       "version": "Destined for Glory",
-      "finish": null
+      "finish": "PRISTINE HOLO",
+      "item_id": "67348095"
     },
     {
       "name": "Harder",
       "overall": 88,
       "version": "Destined for Glory",
-      "finish": null
+      "finish": "PRISTINE HOLO",
+      "item_id": "67368151"
     },
     {
       "name": "Mora",
       "overall": 87,
       "version": "Future Stars",
-      "finish": null
+      "finish": "HOLO",
+      "item_id": "67188263"
     },
     {
       "name": "Bonny",
       "overall": 87,
       "version": "Future Stars",
-      "finish": null
+      "finish": "HOLO",
+      "item_id": "67368429"
     },
     {
       "name": "Harder",
       "overall": 88,
       "version": "Destined for Glory",
-      "finish": null
+      "finish": "BASE",
+      "item_id": "50590935"
     },
     {
       "name": "Undav",
       "overall": 87,
       "version": "Destined for Glory",
-      "finish": null
+      "finish": "HOLO",
+      "item_id": "67353040"
     },
     {
       "name": "Bischof",
       "overall": 86,
       "version": "Future Stars",
-      "finish": null
+      "finish": "HOLO",
+      "item_id": "67372629"
     },
     {
       "name": "Yohannes",
       "overall": 86,
       "version": "Future Stars",
-      "finish": null
+      "finish": "HOLO",
+      "item_id": "67386815"
     }
   ]
 }
