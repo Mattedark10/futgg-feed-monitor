@@ -30,10 +30,10 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python monitor.py
 
-      - name: Save state
+      - name: Commit updated data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add players.json docs/trending.json
-          git diff --cached --quiet || git commit -m "Update FUT.GG feed"
+          git add players.json docs/trending.json card_cache.json
+          git diff --cached --quiet || git commit -m "Update FUT.GG data"
           git push
