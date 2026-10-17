@@ -23,7 +23,7 @@ PAGES = {
     },
     "Season 1": {
         "url": "https://www.fut.gg/fut-gallery/rarities/season-1/",
-        "expected": 10,
+        "expected": 9,
     },
 }
 
