@@ -49,7 +49,6 @@ session.headers.update(HEADERS)
 
 
 def download_page(url):
-
     response = session.get(
         url,
         timeout=30
@@ -71,7 +70,6 @@ def download_page(url):
 # ============================================================
 
 def split_top_level(text, separator=","):
-
     parts = []
 
     start = 0
@@ -102,7 +100,6 @@ def split_top_level(text, separator=","):
             continue
 
         if char in ('"', "'", "`"):
-
             in_string = True
             quote = char
             continue
@@ -131,7 +128,6 @@ def split_top_level(text, separator=","):
             and depth_square == 0
             and depth_paren == 0
         ):
-
             parts.append(
                 text[start:i].strip()
             )
@@ -152,7 +148,6 @@ def find_matching(
     opening,
     closing
 ):
-
     depth = 0
 
     in_string = False
@@ -163,7 +158,6 @@ def find_matching(
         start,
         len(text)
     ):
-
         char = text[i]
 
         if in_string:
@@ -182,17 +176,14 @@ def find_matching(
             continue
 
         if char in ('"', "'", "`"):
-
             in_string = True
             quote = char
             continue
 
         if char == opening:
-
             depth += 1
 
         elif char == closing:
-
             depth -= 1
 
             if depth == 0:
@@ -202,7 +193,6 @@ def find_matching(
 
 
 def parse_primitive(value):
-
     value = value.strip()
 
     if value == "true":
@@ -222,11 +212,9 @@ def parse_primitive(value):
         and value[0] in ('"', "'", "`")
         and value[-1] == value[0]
     ):
-
         content = value[1:-1]
 
         try:
-
             return bytes(
                 content,
                 "utf-8"
@@ -235,14 +223,12 @@ def parse_primitive(value):
             )
 
         except Exception:
-
             return content
 
     if re.fullmatch(
         r"-?\d+",
         value
     ):
-
         try:
             return int(value)
 
@@ -253,7 +239,6 @@ def parse_primitive(value):
         r"-?\d+\.\d+",
         value
     ):
-
         try:
             return float(value)
 
@@ -264,8 +249,37 @@ def parse_primitive(value):
 
 
 def parse_value(value):
-
     value = value.strip()
+
+    # ========================================================
+    # INLINE RSC ASSIGNMENT
+    #
+    # FUT.GG può usare:
+    #
+    # $R[242]={eaId:123,...}
+    #
+    # oppure:
+    #
+    # $R[241]=[...]
+    #
+    # In questi casi ci interessa il valore dopo "=".
+    # ========================================================
+
+    inline_assignment = re.match(
+        r"^\$R\[(\d+)\]=(.*)$",
+        value,
+        re.DOTALL
+    )
+
+    if inline_assignment:
+
+        assigned_value = inline_assignment.group(
+            2
+        ).strip()
+
+        return parse_value(
+            assigned_value
+        )
 
     # --------------------------------------------------------
     # RSC reference
@@ -277,7 +291,6 @@ def parse_value(value):
     )
 
     if match:
-
         return {
             "__ref__": int(
                 match.group(1)
@@ -301,7 +314,6 @@ def parse_value(value):
             end != -1
             and end == len(value) - 1
         ):
-
             return parse_object(
                 value[1:end]
             )
@@ -323,7 +335,6 @@ def parse_value(value):
             end != -1
             and end == len(value) - 1
         ):
-
             inside = value[
                 1:end
             ].strip()
@@ -347,7 +358,6 @@ def parse_value(value):
 
 
 def parse_object(text):
-
     result = {}
 
     parts = split_top_level(
@@ -373,7 +383,6 @@ def parse_object(text):
             and key[0] in ('"', "'", "`")
             and key[-1] == key[0]
         ):
-
             key = key[1:-1]
 
         result[key] = parse_value(
@@ -388,11 +397,10 @@ def parse_object(text):
 # ============================================================
 
 def extract_rsc_assignments(text):
-
     assignments = {}
 
     pattern = re.compile(
-        r"\$R\[(\d+)\]="
+        r"\$R(\d+)="
     )
 
     matches = list(
@@ -411,7 +419,6 @@ def extract_rsc_assignments(text):
             start < len(text)
             and text[start].isspace()
         ):
-
             start += 1
 
         if start >= len(text):
@@ -438,7 +445,6 @@ def extract_rsc_assignments(text):
             )
 
         else:
-
             continue
 
         if end == -1:
@@ -449,13 +455,11 @@ def extract_rsc_assignments(text):
         ]
 
         try:
-
             assignments[index] = parse_value(
                 raw_value
             )
 
         except Exception:
-
             continue
 
     print(
@@ -474,7 +478,6 @@ def resolve_reference(
     assignments,
     depth=0
 ):
-
     if depth > 100:
         return value
 
@@ -491,7 +494,6 @@ def resolve_reference(
             "__ref__" in value
             and len(value) == 1
         ):
-
             ref = value[
                 "__ref__"
             ]
@@ -525,7 +527,6 @@ def resolve_reference(
         value,
         list
     ):
-
         return [
             resolve_reference(
                 item,
@@ -546,26 +547,23 @@ def parse_items_assignment(
     raw_items,
     assignments
 ):
-
     """
-    FUT.GG usa una struttura particolare:
+    FUT.GG può usare:
 
-        $R[241]=[
+        items:$R[241]=[
             $R[242]={...},
             $R[243]={...},
             ...
         ]
 
-    In questo caso `items` viene letto come stringa.
-
-    Recuperiamo quindi l'array dopo il primo "=".
+    Il parser deve quindi gestire sia l'assegnazione
+    dell'array sia le assegnazioni inline delle singole carte.
     """
 
     if not isinstance(
         raw_items,
         str
     ):
-
         return resolve_reference(
             raw_items,
             assignments
@@ -574,58 +572,60 @@ def parse_items_assignment(
     raw = raw_items.strip()
 
     # --------------------------------------------------------
-    # Cerca:
-
-    # $R[241]=[
+    # $R[241]=[ ... ]
     # --------------------------------------------------------
 
     match = re.match(
-        r"^\$R\[(\d+)\]=(\[.*\])$",
+        r"^\$R(\d+)=(.*)$",
         raw,
         re.DOTALL
     )
 
-    if not match:
+    if match:
 
-        # Potrebbe essere semplicemente:
-        #
-        # $R[241]
-        #
-        ref_match = re.fullmatch(
-            r"\$R\[(\d+)\]",
-            raw
+        array_text = match.group(
+            2
         )
 
-        if ref_match:
+        parsed = parse_value(
+            array_text
+        )
 
-            ref = int(
-                ref_match.group(1)
-            )
-
-            if ref in assignments:
-
-                return resolve_reference(
-                    assignments[ref],
-                    assignments
-                )
-
-        return raw_items
-
-    array_text = match.group(
-        2
-    )
+        return resolve_reference(
+            parsed,
+            assignments
+        )
 
     # --------------------------------------------------------
-    # Parse array
+    # $R[241]
+    # --------------------------------------------------------
+
+    ref_match = re.fullmatch(
+        r"\$R(\d+)",
+        raw
+    )
+
+    if ref_match:
+
+        ref = int(
+            ref_match.group(1)
+        )
+
+        if ref in assignments:
+
+            return resolve_reference(
+                assignments[ref],
+                assignments
+            )
+
+    # --------------------------------------------------------
+    # Ultimo tentativo:
+    # prova direttamente parse_value()
     # --------------------------------------------------------
 
     parsed = parse_value(
-        array_text
+        raw
     )
-
-    # --------------------------------------------------------
-    # Resolve all $R references
-    # --------------------------------------------------------
 
     return resolve_reference(
         parsed,
@@ -642,18 +642,12 @@ def find_solution(
     page_name,
     expected_count
 ):
-
-    # --------------------------------------------------------
-    # Find solution reference
-    # --------------------------------------------------------
-
     match = re.search(
-        r"solution:\$R\[(\d+)\]=",
+        r"solution:\$R(\d+)=",
         text
     )
 
     if not match:
-
         raise RuntimeError(
             f"Solution reference not found "
             f"for {page_name}"
@@ -697,7 +691,6 @@ def find_solution(
         solution,
         dict
     ):
-
         raise RuntimeError(
             f"Invalid solution "
             f"for {page_name}"
@@ -751,7 +744,7 @@ def find_solution(
     )
 
     # --------------------------------------------------------
-    # SPECIAL FUT.GG PARSING
+    # FUT.GG parsing
     # --------------------------------------------------------
 
     items = parse_items_assignment(
@@ -763,10 +756,6 @@ def find_solution(
         f"Resolved items type: "
         f"{type(items).__name__}"
     )
-
-    # --------------------------------------------------------
-    # Validation
-    # --------------------------------------------------------
 
     if not isinstance(
         items,
@@ -801,6 +790,30 @@ def find_solution(
             f"{len(items)}/{expected_count}"
         )
 
+    # --------------------------------------------------------
+    # Extra validation / debug
+    # --------------------------------------------------------
+
+    for i, item in enumerate(
+        items,
+        start=1
+    ):
+
+        if not isinstance(
+            item,
+            dict
+        ):
+
+            print(
+                f"DEBUG card #{i}: "
+                f"{repr(item)[:500]}"
+            )
+
+            raise RuntimeError(
+                f"Invalid card item #{i} "
+                f"in {page_name}"
+            )
+
     return items
 
 
@@ -811,7 +824,6 @@ def find_solution(
 def get_player_name(
     player_ea_id
 ):
-
     url = (
         f"https://www.fut.gg/players/"
         f"{player_ea_id}/fc-27"
@@ -850,7 +862,6 @@ def get_player_name(
                 return name
 
     except Exception:
-
         pass
 
     return (
@@ -859,665 +870,4 @@ def get_player_name(
 
 
 def get_version(
-    ea_id
-):
-
-    url = (
-        f"https://www.fut.gg/players/"
-        f"{ea_id}/fc-27-{ea_id}"
-    )
-
-    try:
-
-        response = session.get(
-            url,
-            timeout=20
-        )
-
-        if response.status_code != 200:
-
-            return "BASE"
-
-        soup = BeautifulSoup(
-            response.text,
-            "html.parser"
-        )
-
-        h1 = soup.find(
-            "h1"
-        )
-
-        text = ""
-
-        if h1:
-
-            text = h1.get_text(
-                " ",
-                strip=True
-            ).upper()
-
-        if "PRISTINE" in text:
-
-            return "PRISTINE HOLO"
-
-        if "HOLO" in text:
-
-            return "HOLO"
-
-    except Exception:
-
-        pass
-
-    return "BASE"
-
-
-def get_card_link(
-    ea_id
-):
-
-    return (
-        f"https://www.fut.gg/players/"
-        f"{ea_id}/fc-27-{ea_id}"
-    )
-
-
-def parse_players(
-    items,
-    page_name
-):
-
-    players = []
-
-    for item in items:
-
-        if not isinstance(
-            item,
-            dict
-        ):
-
-            raise RuntimeError(
-                f"Invalid card item "
-                f"in {page_name}"
-            )
-
-        ea_id = item.get(
-            "eaId"
-        )
-
-        player_ea_id = item.get(
-            "playerEaId"
-        )
-
-        overall = item.get(
-            "overall"
-        )
-
-        rarity_id = item.get(
-            "rarityEaId"
-        )
-
-        if ea_id is None:
-
-            raise RuntimeError(
-                f"Card without eaId "
-                f"in {page_name}"
-            )
-
-        if player_ea_id is None:
-
-            raise RuntimeError(
-                f"Card without playerEaId "
-                f"in {page_name}"
-            )
-
-        name = get_player_name(
-            player_ea_id
-        )
-
-        if page_name == "Holographics":
-
-            version = "HOLO"
-
-        else:
-
-            version = get_version(
-                ea_id
-            )
-
-        card = {
-            "ea_id": ea_id,
-            "player_ea_id": player_ea_id,
-            "name": name,
-            "overall": overall,
-            "rarity_id": rarity_id,
-            "version": version,
-            "url": get_card_link(
-                ea_id
-            ),
-        }
-
-        players.append(
-            card
-        )
-
-        print(
-            f"- {name} "
-            f"{overall} "
-            f"{version}"
-        )
-
-    return players
-
-
-# ============================================================
-# FILES
-# ============================================================
-
-def load_state():
-
-    if not os.path.exists(
-        STATE_FILE
-    ):
-
-        return {
-            page: []
-            for page in PAGES
-        }
-
-    try:
-
-        with open(
-            STATE_FILE,
-            "r",
-            encoding="utf-8"
-        ) as f:
-
-            data = json.load(
-                f
-            )
-
-        for page in PAGES:
-
-            if page not in data:
-
-                data[page] = []
-
-        return data
-
-    except Exception:
-
-        return {
-            page: []
-            for page in PAGES
-        }
-
-
-def save_state(
-    data
-):
-
-    with open(
-        STATE_FILE,
-        "w",
-        encoding="utf-8"
-    ) as f:
-
-        json.dump(
-            data,
-            f,
-            ensure_ascii=False,
-            indent=2
-        )
-
-
-def save_trending(
-    data
-):
-
-    directory = os.path.dirname(
-        TRENDING_FILE
-    )
-
-    if directory:
-
-        os.makedirs(
-            directory,
-            exist_ok=True
-        )
-
-    output = {
-        "updated_at": int(
-            time.time()
-        ),
-        "pages": data,
-    }
-
-    with open(
-        TRENDING_FILE,
-        "w",
-        encoding="utf-8"
-    ) as f:
-
-        json.dump(
-            output,
-            f,
-            ensure_ascii=False,
-            indent=2
-        )
-
-
-# ============================================================
-# TELEGRAM
-# ============================================================
-
-def telegram_send(
-    message
-):
-
-    token = os.getenv(
-        "TELEGRAM_BOT_TOKEN"
-    )
-
-    chat_id = os.getenv(
-        "TELEGRAM_CHAT_ID"
-    )
-
-    if not token or not chat_id:
-
-        print(
-            "⚠️ TELEGRAM secrets missing"
-        )
-
-        return
-
-    url = (
-        f"https://api.telegram.org/"
-        f"bot{token}/sendMessage"
-    )
-
-    try:
-
-        response = requests.post(
-            url,
-            json={
-                "chat_id": chat_id,
-                "text": message,
-                "parse_mode": "HTML",
-                "disable_web_page_preview": True,
-            },
-            timeout=20
-        )
-
-        response.raise_for_status()
-
-    except Exception as e:
-
-        print(
-            f"⚠️ Telegram error: {e}"
-        )
-
-
-# ============================================================
-# COMPARISON
-# ============================================================
-
-def card_key(
-    card
-):
-
-    return (
-        card.get("ea_id"),
-        card.get(
-            "version",
-            "BASE"
-        ),
-    )
-
-
-def compare_cards(
-    old_cards,
-    new_cards
-):
-
-    old_counter = Counter(
-        card_key(card)
-        for card in old_cards
-    )
-
-    new_counter = Counter(
-        card_key(card)
-        for card in new_cards
-    )
-
-    out_cards = []
-    in_cards = []
-
-    # --------------------------------------------------------
-    # OUT
-    # --------------------------------------------------------
-
-    for key, count in (
-        old_counter - new_counter
-    ).items():
-
-        for _ in range(count):
-
-            for card in old_cards:
-
-                if card_key(card) == key:
-
-                    out_cards.append(
-                        card
-                    )
-
-                    break
-
-    # --------------------------------------------------------
-    # IN
-    # --------------------------------------------------------
-
-    for key, count in (
-        new_counter - old_counter
-    ).items():
-
-        for _ in range(count):
-
-            for card in new_cards:
-
-                if card_key(card) == key:
-
-                    in_cards.append(
-                        card
-                    )
-
-                    break
-
-    return (
-        out_cards,
-        in_cards
-    )
-
-
-def format_card(
-    card
-):
-
-    name = card.get(
-        "name",
-        "Unknown"
-    )
-
-    overall = card.get(
-        "overall",
-        "?"
-    )
-
-    version = card.get(
-        "version",
-        "BASE"
-    )
-
-    return (
-        f"{name} "
-        f"{overall} "
-        f"<b>{version}</b>"
-    )
-
-
-# ============================================================
-# MAIN
-# ============================================================
-
-def main():
-
-    print(
-        "=" * 60
-    )
-
-    print(
-        "FUT.GG MONITOR"
-    )
-
-    print(
-        "=" * 60
-    )
-
-    state = load_state()
-
-    successful_pages = 0
-
-    for page_name, config in PAGES.items():
-
-        print()
-        print(
-            "=" * 60
-        )
-
-        print(
-            f"Scanning {page_name}"
-        )
-
-        print(
-            config["url"]
-        )
-
-        print(
-            "=" * 60
-        )
-
-        try:
-
-            # ------------------------------------------------
-            # Download
-            # ------------------------------------------------
-
-            html = download_page(
-                config["url"]
-            )
-
-            # ------------------------------------------------
-            # Find solution
-            # ------------------------------------------------
-
-            items = find_solution(
-                html,
-                page_name,
-                config["expected"]
-            )
-
-            # ------------------------------------------------
-            # Parse players
-            # ------------------------------------------------
-
-            players = parse_players(
-                items,
-                page_name
-            )
-
-            old_players = state.get(
-                page_name,
-                []
-            )
-
-            # ------------------------------------------------
-            # First run
-            # ------------------------------------------------
-
-            if not old_players:
-
-                print(
-                    f"🆕 First state saved "
-                    f"for {page_name}."
-                )
-
-            # ------------------------------------------------
-            # Compare
-            # ------------------------------------------------
-
-            else:
-
-                out_cards, in_cards = compare_cards(
-                    old_players,
-                    players
-                )
-
-                if (
-                    out_cards
-                    or in_cards
-                ):
-
-                    message = (
-                        f"<b>{page_name}</b>\n\n"
-                    )
-
-                    if out_cards:
-
-                        message += (
-                            "🔴 <b>OUT</b>\n"
-                        )
-
-                        for card in out_cards:
-
-                            message += (
-                                f"• "
-                                f"{format_card(card)}\n"
-                            )
-
-                        message += "\n"
-
-                    if in_cards:
-
-                        message += (
-                            "🟢 <b>IN</b>\n"
-                        )
-
-                        for card in in_cards:
-
-                            message += (
-                                f"• "
-                                f"{format_card(card)}\n"
-                            )
-
-                        message += "\n"
-
-                    message += (
-                        f'<a href="{config["url"]}">'
-                        f"Open {page_name}"
-                        f"</a>"
-                    )
-
-                    telegram_send(
-                        message
-                    )
-
-                    print(
-                        "📨 Telegram notification sent."
-                    )
-
-                else:
-
-                    print(
-                        "No card changes."
-                    )
-
-            # ------------------------------------------------
-            # Save successful page
-            # ------------------------------------------------
-
-            state[page_name] = players
-
-            successful_pages += 1
-
-        except Exception as e:
-
-            print(
-                f"❌ ERROR {page_name}: {e}"
-            )
-
-            telegram_send(
-                f"⚠️ <b>FUT.GG Monitor Error</b>\n\n"
-                f"<b>{page_name}</b>\n"
-                f"{str(e)}"
-            )
-
-            print(
-                f"Previous state for "
-                f"{page_name} was preserved."
-            )
-
-    # ========================================================
-    # NO SUCCESS
-    # ========================================================
-
-    if successful_pages == 0:
-
-        print()
-
-        print(
-            "❌ No pages succeeded."
-        )
-
-        print()
-
-        print(
-            "=" * 60
-        )
-
-        print(
-            "MONITOR FINISHED"
-        )
-
-        print(
-            "=" * 60
-        )
-
-        return
-
-    # ========================================================
-    # SAVE FILES
-    # ========================================================
-
-    save_state(
-        state
-    )
-
-    save_trending(
-        state
-    )
-
-    print()
-
-    print(
-        f"✅ {successful_pages}/"
-        f"{len(PAGES)} pages succeeded."
-    )
-
-    print(
-        f"Saved {STATE_FILE}"
-    )
-
-    print(
-        f"Saved {TRENDING_FILE}"
-    )
-
-    print()
-
-    print(
-        "=" * 60
-    )
-
-    print(
-        "MONITOR FINISHED"
-    )
-
-    print(
-        "=" * 60
-    )
-
-
-# ============================================================
-# START
-# ============================================================
-
-if __name__ == "__main__":
-    main()
+    ea
