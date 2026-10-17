@@ -1,13 +1,38 @@
+import json
+import os
 import re
+import time
+from collections import Counter
+
 import requests
 from bs4 import BeautifulSoup
 
 
+# ============================================================
+# CONFIG
+# ============================================================
+
 PAGES = {
-    "Heroes": "https://www.fut.gg/fut-gallery/rarities/heroes/",
-    "Holographics": "https://www.fut.gg/fut-gallery/rarities/holographics/",
-    "Season 1": "https://www.fut.gg/fut-gallery/rarities/season-1/",
+    "Heroes": {
+        "url": "https://www.fut.gg/fut-gallery/rarities/heroes/",
+        "slots": 5,
+        "emoji": "🦸‍♂️",
+    },
+    "Holographics": {
+        "url": "https://www.fut.gg/fut-gallery/rarities/holographics/",
+        "slots": 5,
+        "emoji": "✨️",
+    },
+    "Season 1": {
+        "url": "https://www.fut.gg/fut-gallery/rarities/season-1/",
+        "slots": 10,
+        "emoji": "1️⃣",
+    },
 }
+
+
+PLAYERS_FILE = "players.json"
+CACHE_FILE = "card_cache.json"
 
 
 HEADERS = {
@@ -16,12 +41,89 @@ HEADERS = {
         "AppleWebKit/537.36 "
         "(KHTML, like Gecko) "
         "Chrome/140.0.0.0 Safari/537.36"
-    )
+    ),
+    "Accept": (
+        "text/html,application/xhtml+xml,"
+        "application/xml;q=0.9,image/avif,"
+        "image/webp,image/apng,*/*;q=0.8"
+    ),
+    "Accept-Language": "en-US,en;q=0.9",
 }
 
 
+session = requests.Session()
+session.headers.update(HEADERS)
+
+
+# ============================================================
+# KNOWN FINISHES
+# ============================================================
+#
+# Questi sono Item ID già verificati.
+#
+# Se un Item ID non è ancora conosciuto e FUT.GG non espone
+# il finish direttamente nella gallery, NON lo inventiamo.
+#
+# In quel caso il monitor conserva lo stato precedente e
+# impedisce falsi OUT/IN.
+#
+# ============================================================
+
+KNOWN_FINISHES = {
+
+    # --------------------------------------------------------
+    # HEROES
+    # --------------------------------------------------------
+
+    "67335170": "PRISTINE HOLO",
+    "67114537": "PRISTINE HOLO",
+    "67335237": "PRISTINE HOLO",
+    "67371135": "PRISTINE HOLO",
+
+    # Šašić / Vialli base
+    "226306": "BASE",
+    "233700": "BASE",
+
+    # Zamorano verificato da FUT.GG
+    "67186651": "PRISTINE HOLO",
+
+    # --------------------------------------------------------
+    # HOLOGRAPHICS
+    # --------------------------------------------------------
+
+    "67335157": "PRISTINE HOLO",
+    "67384140": "PRISTINE HOLO",
+    "67275770": "PRISTINE HOLO",
+    "67180472": "PRISTINE HOLO",
+    "67298908": "PRISTINE HOLO",
+
+    # --------------------------------------------------------
+    # SEASON 1
+    # --------------------------------------------------------
+
+    "67348095": "PRISTINE HOLO",
+    "67368151": "PRISTINE HOLO",
+    "67179830": "HOLO",
+    "67188263": "HOLO",
+    "67368429": "HOLO",
+    "67353040": "HOLO",
+    "67372629": "HOLO",
+    "67386815": "HOLO",
+    "67374557": "HOLO",
+
+    # Harder seconda versione
+    # Il card page non riporta "Holographic" nel titolo,
+    # quindi questa versione è trattata come BASE.
+    "50590935": "BASE",
+}
+
+
+# ============================================================
+# BASIC HELPERS
+# ============================================================
+
 def clean(value):
-    if not value:
+    if value is None:
         return ""
 
     return re.sub(
@@ -31,10 +133,70 @@ def clean(value):
     ).strip()
 
 
+def normalize_name(name):
+    name = clean(name)
+
+    return name.lower()
+
+
+# ============================================================
+# LOAD / SAVE
+# ============================================================
+
+def load_json(path, default):
+
+    if not os.path.exists(path):
+        return default
+
+    try:
+        with open(
+            path,
+            "r",
+            encoding="utf-8"
+        ) as f:
+
+            return json.load(f)
+
+    except Exception:
+
+        print(
+            f"WARNING: impossibile leggere {path}"
+        )
+
+        return default
+
+
+def save_json(path, data):
+
+    temp = path + ".tmp"
+
+    with open(
+        temp,
+        "w",
+        encoding="utf-8"
+    ) as f:
+
+        json.dump(
+            data,
+            f,
+            ensure_ascii=False,
+            indent=2
+        )
+
+    os.replace(
+        temp,
+        path
+    )
+
+
+# ============================================================
+# FETCH
+# ============================================================
+
 def fetch(url):
-    response = requests.get(
+
+    response = session.get(
         url,
-        headers=HEADERS,
         timeout=45
     )
 
@@ -43,6 +205,10 @@ def fetch(url):
     return response.text
 
 
+# ============================================================
+# FIND LINEUP
+# ============================================================
+
 def find_lineup(html):
 
     soup = BeautifulSoup(
@@ -50,17 +216,20 @@ def find_lineup(html):
         "html.parser"
     )
 
-    heading = soup.find(
+    headings = soup.find_all(
         string=re.compile(
             r"Cheapest grade",
             re.I
         )
     )
 
-    if not heading:
+    if not headings:
         raise RuntimeError(
-            "Cheapest grade non trovato"
+            "Cheapest grade lineup non trovato"
         )
+
+    # L'ultimo è quello che ci interessa
+    heading = headings[-1]
 
     node = heading.parent
 
@@ -76,258 +245,958 @@ def find_lineup(html):
             )
         )
 
+        html_text = str(node)
+
         if (
             "Add players" in text
-            and len(str(node)) > 1000
+            and len(html_text) > 1000
         ):
+
+            # Tagliamo eventuale parte successiva
+            marker = re.search(
+                r"Add players",
+                html_text,
+                re.I
+            )
+
+            if marker:
+                html_text = html_text[
+                    :marker.start()
+                ]
+
             return BeautifulSoup(
-                str(node),
+                html_text,
                 "html.parser"
             )
 
         node = node.parent
 
     raise RuntimeError(
-        "Lineup non trovato"
+        "Impossibile isolare il lineup"
     )
 
 
-def diagnostic(category, soup):
+# ============================================================
+# ITEM ID
+# ============================================================
 
-    print()
-    print("=" * 70)
-    print(category)
-    print("=" * 70)
+def extract_item_id(src):
 
-    images = soup.find_all("img")
+    if not src:
+        return None
 
-    interesting = []
+    # Esempio:
+    #
+    # .../27-67335170.7c559...
+    #
+    match = re.search(
+        r"/27-(\d+)(?:\.|/)",
+        src
+    )
+
+    if match:
+        return match.group(1)
+
+    return None
+
+
+# ============================================================
+# CARD VERSION
+# ============================================================
+
+def parse_alt(alt):
+
+    alt = clean(alt)
+
+    if not alt:
+        return None
+
+    # Placeholder
+    if alt.lower() == "player card":
+        return None
+
+    # Nome - 88 - Destined for Glory
+    match = re.match(
+        r"^(.+?)\s*-\s*(\d{2})\s*-\s*(.+?)$",
+        alt
+    )
+
+    if not match:
+        return None
+
+    name = clean(
+        match.group(1)
+    )
+
+    overall = int(
+        match.group(2)
+    )
+
+    version = clean(
+        match.group(3)
+    )
+
+    return {
+        "name": name,
+        "overall": overall,
+        "version": version,
+    }
+
+
+# ============================================================
+# FINISH FROM CACHE
+# ============================================================
+
+def get_cached_finish(
+    item_id,
+    cache
+):
+
+    if not item_id:
+        return None
+
+    value = cache.get(
+        str(item_id)
+    )
+
+    if isinstance(value, dict):
+        value = value.get(
+            "finish"
+        )
+
+    if value in (
+        "BASE",
+        "HOLO",
+        "PRISTINE HOLO"
+    ):
+        return value
+
+    return None
+
+
+# ============================================================
+# FINISH RESOLUTION
+# ============================================================
+
+def resolve_finish(
+    item_id,
+    card,
+    category,
+    cache,
+    previous
+):
+
+    # 1. Item ID già verificato
+    if item_id in KNOWN_FINISHES:
+
+        return KNOWN_FINISHES[
+            item_id
+        ]
+
+    # 2. Cache
+    cached = get_cached_finish(
+        item_id,
+        cache
+    )
+
+    if cached:
+        return cached
+
+    # 3. Cerca lo stesso Item ID nello stato precedente
+    for old_card in previous:
+
+        if str(
+            old_card.get("item_id", "")
+        ) == str(item_id):
+
+            old_finish = old_card.get(
+                "finish"
+            )
+
+            if old_finish in (
+                "BASE",
+                "HOLO",
+                "PRISTINE HOLO"
+            ):
+                return old_finish
+
+    # 4. Se FUT.GG ci ha messo un'indicazione
+    # esplicita negli attributi, la utilizziamo.
+    #
+    # Questo viene gestito dal chiamante quando
+    # abbiamo il metadata.
+    return None
+
+
+# ============================================================
+# EXTRACT CARDS
+# ============================================================
+
+def extract_cards(
+    soup,
+    category,
+    previous,
+    cache
+):
+
+    cards = []
+    placeholder_count = 0
+
+    images = soup.find_all(
+        "img"
+    )
+
+    seen_image_keys = set()
 
     for img in images:
 
-        attrs = img.attrs
-
         alt = clean(
-            attrs.get("alt")
-        )
-
-        title = clean(
-            attrs.get("title")
-        )
-
-        aria = clean(
-            attrs.get("aria-label")
+            img.get("alt")
         )
 
         src = clean(
-            attrs.get("src")
+            img.get("src")
         )
 
-        srcset = clean(
-            attrs.get("srcset")
-        )
+        # ----------------------------------------------------
+        # PLACEHOLDER
+        # ----------------------------------------------------
 
-        combined = " | ".join(
-            x
-            for x in [
-                alt,
-                title,
-                aria,
-                src,
-                srcset
-            ]
-            if x
-        )
+        if alt.lower() == "player card":
 
-        # Ignora immagini chiaramente non relative
-        # alle carte
-        if not combined:
+            placeholder_count += 1
+
             continue
 
-        if (
-            "Player Card" in combined
-            or re.search(
-                r"\b\d{2}\b",
-                alt
-            )
-            or re.search(
-                r"\b\d{2}\b",
-                title
-            )
-            or re.search(
-                r"\b\d{2}\b",
-                aria
-            )
-        ):
-            interesting.append(
-                img
+        # ----------------------------------------------------
+        # REAL CARD
+        # ----------------------------------------------------
+
+        parsed = parse_alt(
+            alt
+        )
+
+        if not parsed:
+            continue
+
+        item_id = extract_item_id(
+            src
+        )
+
+        if not item_id:
+
+            print(
+                f"WARNING: Item ID mancante "
+                f"per {alt}"
             )
 
-    print(
-        f"IMG interessanti: {len(interesting)}"
+            continue
+
+        # Una stessa immagine può apparire
+        # più volte nel DOM.
+        image_key = (
+            item_id,
+            parsed["name"],
+            parsed["overall"],
+            parsed["version"]
+        )
+
+        if image_key in seen_image_keys:
+            continue
+
+        seen_image_keys.add(
+            image_key
+        )
+
+        finish = resolve_finish(
+            item_id,
+            parsed,
+            category,
+            cache,
+            previous
+        )
+
+        card = {
+            "name": parsed["name"],
+            "overall": parsed["overall"],
+            "version": parsed["version"],
+            "finish": finish,
+            "item_id": str(item_id),
+        }
+
+        cards.append(
+            card
+        )
+
+    return cards, placeholder_count
+
+
+# ============================================================
+# CARD KEY
+# ============================================================
+
+def card_key(card):
+
+    return (
+        normalize_name(
+            card.get("name", "")
+        ),
+        int(
+            card.get("overall", 0)
+        ),
+        clean(
+            card.get("version", "")
+        ).lower(),
+        clean(
+            card.get("finish", "")
+        ).upper(),
+        str(
+            card.get("item_id", "")
+        ),
     )
 
-    for i, img in enumerate(
-        interesting,
+
+# ============================================================
+# DISPLAY
+# ============================================================
+
+def card_label(card):
+
+    name = card.get(
+        "name",
+        "Unknown"
+    )
+
+    overall = card.get(
+        "overall",
+        "?"
+    )
+
+    finish = card.get(
+        "finish"
+    )
+
+    if finish:
+        return (
+            f"{name} {overall} — "
+            f"{finish}"
+        )
+
+    return (
+        f"{name} {overall} — UNKNOWN"
+    )
+
+
+# ============================================================
+# COMPARE
+# ============================================================
+
+def compare_cards(
+    old_cards,
+    new_cards
+):
+
+    old_counter = Counter(
+        card_key(card)
+        for card in old_cards
+    )
+
+    new_counter = Counter(
+        card_key(card)
+        for card in new_cards
+    )
+
+    out = []
+    incoming = []
+
+    # OUT
+    for key, count in (
+        old_counter - new_counter
+    ).items():
+
+        for _ in range(count):
+
+            for card in old_cards:
+
+                if card_key(card) == key:
+
+                    out.append(
+                        card
+                    )
+                    break
+
+    # IN
+    for key, count in (
+        new_counter - old_counter
+    ).items():
+
+        for _ in range(count):
+
+            for card in new_cards:
+
+                if card_key(card) == key:
+
+                    incoming.append(
+                        card
+                    )
+                    break
+
+    return out, incoming
+
+
+# ============================================================
+# SAFE STATE CHECK
+# ============================================================
+
+def has_unknown_finish(cards):
+
+    for card in cards:
+
+        if card.get(
+            "finish"
+        ) not in (
+            "BASE",
+            "HOLO",
+            "PRISTINE HOLO"
+        ):
+            return True
+
+    return False
+
+
+# ============================================================
+# PROCESS CATEGORY
+# ============================================================
+
+def process_category(
+    category,
+    config,
+    state,
+    cache
+):
+
+    print()
+    print("=" * 60)
+    print(
+        f"Checking {category}..."
+    )
+    print(
+        config["url"]
+    )
+
+    previous = state.get(
+        category,
+        []
+    )
+
+    html = fetch(
+        config["url"]
+    )
+
+    soup = find_lineup(
+        html
+    )
+
+    cards, placeholders = extract_cards(
+        soup,
+        category,
+        previous,
+        cache
+    )
+
+    expected = config[
+        "slots"
+    ]
+
+    print(
+        f"Rendered lineup: "
+        f"{len(cards)}/{expected} real cards"
+    )
+
+    if category == "Season 1":
+
+        print(
+            f"Unknown slots: "
+            f"{placeholders}"
+        )
+
+    print(
+        "Detected cards:"
+    )
+
+    for index, card in enumerate(
+        cards,
         1
     ):
 
-        attrs = img.attrs
-
-        alt = clean(
-            attrs.get("alt")
+        print(
+            f"  [{index}] "
+            f"{card_label(card)} "
+            f"ItemID={card['item_id']}"
         )
 
-        title = clean(
-            attrs.get("title")
+    # --------------------------------------------------------
+    # VALIDATION
+    # --------------------------------------------------------
+
+    occupied_slots = (
+        len(cards)
+        + placeholders
+    )
+
+    if occupied_slots != expected:
+
+        raise RuntimeError(
+            f"Expected {expected} slots, "
+            f"found {occupied_slots}"
         )
 
-        aria = clean(
-            attrs.get("aria-label")
-        )
+    # --------------------------------------------------------
+    # UNKNOWN FINISH
+    # --------------------------------------------------------
 
-        src = clean(
-            attrs.get("src")
-        )
+    unknown_finish = has_unknown_finish(
+        cards
+    )
+
+    if unknown_finish:
 
         print()
         print(
-            f"[{i}]"
+            "WARNING:"
         )
 
-        if alt:
-            print(
-                f"ALT: {alt}"
+        print(
+            "One or more finishes could "
+            "not be resolved."
+        )
+
+        print(
+            "Previous state will be kept "
+            "to avoid false OUT/IN."
+        )
+
+        return {
+            "category": category,
+            "cards": cards,
+            "previous": previous,
+            "out": [],
+            "incoming": [],
+            "safe": False,
+            "placeholders": placeholders,
+        }
+
+    # --------------------------------------------------------
+    # COMPARE
+    # --------------------------------------------------------
+
+    out, incoming = compare_cards(
+        previous,
+        cards
+    )
+
+    print(
+        f"OUT: {len(out)}"
+    )
+
+    print(
+        f"IN: {len(incoming)}"
+    )
+
+    # --------------------------------------------------------
+    # UPDATE STATE
+    # --------------------------------------------------------
+
+    state[
+        category
+    ] = cards
+
+    return {
+        "category": category,
+        "cards": cards,
+        "previous": previous,
+        "out": out,
+        "incoming": incoming,
+        "safe": True,
+        "placeholders": placeholders,
+    }
+
+
+# ============================================================
+# TELEGRAM
+# ============================================================
+
+def telegram_send(
+    token,
+    chat_id,
+    message
+):
+
+    url = (
+        f"https://api.telegram.org/bot"
+        f"{token}/sendMessage"
+    )
+
+    response = session.post(
+        url,
+        json={
+            "chat_id": chat_id,
+            "text": message,
+        },
+        timeout=30
+    )
+
+    response.raise_for_status()
+
+
+# ============================================================
+# FORMAT TELEGRAM
+# ============================================================
+
+def format_category(result):
+
+    category = result[
+        "category"
+    ]
+
+    emoji = PAGES[
+        category
+    ]["emoji"]
+
+    lines = [
+        f"{emoji} {category}",
+        ""
+    ]
+
+    out = result[
+        "out"
+    ]
+
+    incoming = result[
+        "incoming"
+    ]
+
+    cards = result[
+        "cards"
+    ]
+
+    safe = result[
+        "safe"
+    ]
+
+    placeholders = result[
+        "placeholders"
+    ]
+
+    # --------------------------------------------------------
+    # UNKNOWN FINISH
+    # --------------------------------------------------------
+
+    if not safe:
+
+        lines.append(
+            "⚠️ Finish unresolved"
+        )
+
+        lines.append(
+            "Previous state kept"
+        )
+
+        lines.append("")
+
+        if category == "Season 1":
+
+            lines.append(
+                f"Empty/unknown slots: "
+                f"{placeholders}"
             )
 
-        if title:
-            print(
-                f"TITLE: {title}"
+            lines.append("")
+
+        return "\n".join(
+            lines
+        )
+
+    # --------------------------------------------------------
+    # OUT
+    # --------------------------------------------------------
+
+    if out:
+
+        lines.append(
+            "🔴 OUT"
+        )
+
+        lines.append("")
+
+        for card in out:
+
+            lines.append(
+                f"• {card_label(card)}"
             )
 
-        if aria:
-            print(
-                f"ARIA: {aria}"
+        lines.append("")
+
+    # --------------------------------------------------------
+    # IN
+    # --------------------------------------------------------
+
+    if incoming:
+
+        lines.append(
+            "🟢 IN"
+        )
+
+        lines.append("")
+
+        for card in incoming:
+
+            lines.append(
+                f"• {card_label(card)}"
             )
 
-        if src:
-            print(
-                f"SRC: {src[:500]}"
+        lines.append("")
+
+    # --------------------------------------------------------
+    # NO CHANGES
+    # --------------------------------------------------------
+
+    if not out and not incoming:
+
+        lines.append(
+            "No feed changes"
+        )
+
+        return "\n".join(
+            lines
+        )
+
+    # --------------------------------------------------------
+    # CURRENT LINEUP
+    # --------------------------------------------------------
+
+    lines.append(
+        "Current lineup"
+    )
+
+    lines.append("")
+
+    incoming_keys = Counter(
+        card_key(card)
+        for card in incoming
+    )
+
+    for card in cards:
+
+        key = card_key(
+            card
+        )
+
+        if incoming_keys[
+            key
+        ] > 0:
+
+            lines.append(
+                f"🟢 {card_label(card)}"
             )
 
-        # Cerca eventuale link della carta
-        parent = img.parent
+            incoming_keys[
+                key
+            ] -= 1
 
-        for level in range(4):
+        else:
 
-            if parent is None:
-                break
-
-            if parent.name == "a":
-
-                href = clean(
-                    parent.get(
-                        "href"
-                    )
-                )
-
-                if href:
-                    print(
-                        f"LINK: {href}"
-                    )
-
-                break
-
-            parent = parent.parent
-
-        # Cerca SOLO parole di finish
-        # nei parent vicini
-        finish_found = []
-
-        parent = img.parent
-
-        for level in range(4):
-
-            if parent is None:
-                break
-
-            parent_text = clean(
-                parent.get_text(
-                    " ",
-                    strip=True
-                )
+            lines.append(
+                card_label(card)
             )
 
-            for word in [
-                "Pristine Holographic",
-                "Holographic",
-                "Holo",
-                "Base Hero",
-                "Base Icon",
-                "Base",
-            ]:
+    return "\n".join(
+        lines
+    )
 
-                if re.search(
-                    re.escape(word),
-                    parent_text,
-                    re.I
-                ):
-                    finish_found.append(
-                        word
-                    )
 
-            parent = parent.parent
-
-        if finish_found:
-
-            print(
-                "FINISH CANDIDATE:",
-                ", ".join(
-                    dict.fromkeys(
-                        finish_found
-                    )
-                )
-            )
-
+# ============================================================
+# MAIN
+# ============================================================
 
 def main():
 
     print()
     print(
-        "FUT.GG FINISH DIAGNOSTIC"
+        "FUT.GG MONITOR"
+    )
+    print(
+        "=" * 60
     )
 
-    for category, url in PAGES.items():
+    telegram_token = os.getenv(
+        "TELEGRAM_BOT_TOKEN"
+    )
 
-        print()
-        print(
-            f"Scanning {category}..."
-        )
+    telegram_chat_id = os.getenv(
+        "TELEGRAM_CHAT_ID"
+    )
+
+    state = load_json(
+        PLAYERS_FILE,
+        {
+            "Heroes": [],
+            "Holographics": [],
+            "Season 1": [],
+        }
+    )
+
+    cache = load_json(
+        CACHE_FILE,
+        {}
+    )
+
+    results = []
+
+    errors = []
+
+    for category, config in PAGES.items():
 
         try:
 
-            html = fetch(
-                url
-            )
-
-            soup = find_lineup(
-                html
-            )
-
-            diagnostic(
+            result = process_category(
                 category,
-                soup
+                config,
+                state,
+                cache
+            )
+
+            results.append(
+                result
             )
 
         except Exception as e:
 
+            print()
             print(
-                f"ERROR {category}: {e}"
+                f"ERROR on {category}: "
+                f"{e}"
+            )
+
+            errors.append(
+                (
+                    category,
+                    str(e)
+                )
+            )
+
+    # --------------------------------------------------------
+    # SAVE STATE
+    # --------------------------------------------------------
+
+    if not errors:
+
+        save_json(
+            PLAYERS_FILE,
+            state
+        )
+
+    # --------------------------------------------------------
+    # TELEGRAM MESSAGE
+    # --------------------------------------------------------
+
+    message_parts = []
+
+    for result in results:
+
+        message_parts.append(
+            format_category(
+                result
+            )
+        )
+
+    # Errors
+    for category, error in errors:
+
+        emoji = PAGES[
+            category
+        ]["emoji"]
+
+        message_parts.append(
+            "\n".join([
+                f"{emoji} {category}",
+                "",
+                "⚠️ Monitor error",
+                "",
+                error,
+            ])
+        )
+
+    message = (
+        "\n\n"
+        + "\n\n".join(
+            message_parts
+        )
+    )
+
+    if telegram_token and telegram_chat_id:
+
+        try:
+
+            telegram_send(
+                telegram_token,
+                telegram_chat_id,
+                message
+            )
+
+            print()
+            print(
+                "Telegram message sent."
+            )
+
+        except Exception as e:
+
+            print()
+            print(
+                f"Telegram error: {e}"
+            )
+
+    else:
+
+        print()
+        print(
+            "Telegram secrets not configured."
+        )
+
+    # --------------------------------------------------------
+    # FINAL STATE
+    # --------------------------------------------------------
+
+    print()
+    print("=" * 60)
+    print(
+        "FINAL STATE"
+    )
+    print("=" * 60)
+
+    for category in PAGES:
+
+        cards = state.get(
+            category,
+            []
+        )
+
+        print(
+            f"{category}: "
+            f"{len(cards)} cards"
+        )
+
+        for card in cards:
+
+            print(
+                f"  - "
+                f"{card_label(card)} "
+                f"[{card.get('item_id')}]"
             )
 
     print()
     print(
-        "DIAGNOSTIC COMPLETE"
+        "Done."
     )
 
 
