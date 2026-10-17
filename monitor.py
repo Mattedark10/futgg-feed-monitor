@@ -3,7 +3,6 @@ import re
 import json
 import time
 from collections import Counter
-from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
@@ -30,15 +29,16 @@ PAGES = {
 
 STATE_FILE = "players.json"
 TRENDING_FILE = "docs/trending.json"
-CACHE_FILE = "card_cache.json"
-
-BASE_URL = "https://www.fut.gg"
 
 HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
         "Chrome/140.0 Safari/537.36"
+    ),
+    "Accept": (
+        "text/html,application/xhtml+xml,application/xml;"
+        "q=0.9,image/avif,image/webp,*/*;q=0.8"
     ),
     "Accept-Language": "en-US,en;q=0.9",
 }
@@ -69,1518 +69,746 @@ def download_page(url):
 
 
 # ============================================================
-# GENERIC RSC PARSER
+# TEXT HELPERS
 # ============================================================
 
-def split_top_level(text, separator=","):
-    parts = []
+def clean_text(value):
+    if value is None:
+        return ""
 
-    start = 0
+    value = str(value)
 
-    depth_curly = 0
-    depth_square = 0
-    depth_paren = 0
-
-    in_string = False
-    quote = None
-    escape = False
-
-    for i, char in enumerate(text):
-
-        if in_string:
-
-            if escape:
-                escape = False
-                continue
-
-            if char == "\\":
-                escape = True
-                continue
-
-            if char == quote:
-                in_string = False
-
-            continue
-
-        if char in ('"', "'", "`"):
-            in_string = True
-            quote = char
-            continue
-
-        if char == "{":
-            depth_curly += 1
-
-        elif char == "}":
-            depth_curly -= 1
-
-        elif char == "[":
-            depth_square += 1
-
-        elif char == "]":
-            depth_square -= 1
-
-        elif char == "(":
-            depth_paren += 1
-
-        elif char == ")":
-            depth_paren -= 1
-
-        elif (
-            char == separator
-            and depth_curly == 0
-            and depth_square == 0
-            and depth_paren == 0
-        ):
-            parts.append(
-                text[start:i].strip()
-            )
-
-            start = i + 1
-
-    final = text[start:].strip()
-
-    if final:
-        parts.append(final)
-
-    return parts
-
-
-def find_matching(
-    text,
-    start,
-    opening,
-    closing,
-):
-    depth = 0
-
-    in_string = False
-    quote = None
-    escape = False
-
-    for i in range(start, len(text)):
-
-        char = text[i]
-
-        if in_string:
-
-            if escape:
-                escape = False
-                continue
-
-            if char == "\\":
-                escape = True
-                continue
-
-            if char == quote:
-                in_string = False
-
-            continue
-
-        if char in ('"', "'", "`"):
-            in_string = True
-            quote = char
-            continue
-
-        if char == opening:
-            depth += 1
-
-        elif char == closing:
-            depth -= 1
-
-            if depth == 0:
-                return i
-
-    return -1
-
-
-def parse_primitive(value):
-    value = value.strip()
-
-    if value == "true":
-        return True
-
-    if value == "false":
-        return False
-
-    if value in (
-        "null",
-        "undefined",
-    ):
-        return None
-
-    if (
-        len(value) >= 2
-        and value[0] in ('"', "'", "`")
-        and value[-1] == value[0]
-    ):
-        return value[1:-1]
-
-    if re.fullmatch(
-        r"-?\d+",
-        value,
-    ):
-        try:
-            return int(value)
-        except Exception:
-            pass
-
-    if re.fullmatch(
-        r"-?\d+\.\d+",
-        value,
-    ):
-        try:
-            return float(value)
-        except Exception:
-            pass
-
-    return value
-
-
-def parse_value(value):
-    value = value.strip()
-
-    # ========================================================
-    # INLINE RSC ASSIGNMENT
-    #
-    # $R[242]={...}
-    # $R[241]=[...]
-    # ========================================================
-
-    inline_assignment = re.match(
-        r"^\$R\[(\d+)\]=(.*)$",
-        value,
-        re.DOTALL,
-    )
-
-    if inline_assignment:
-
-        assigned_value = (
-            inline_assignment
-            .group(2)
-            .strip()
-        )
-
-        return parse_value(
-            assigned_value
-        )
-
-    # ========================================================
-    # RSC REFERENCE
-    # ========================================================
-
-    ref_match = re.fullmatch(
-        r"\$R\[(\d+)\]",
-        value,
-    )
-
-    if ref_match:
-
-        return {
-            "__ref__": int(
-                ref_match.group(1)
-            )
-        }
-
-    # ========================================================
-    # OBJECT
-    # ========================================================
-
-    if value.startswith("{"):
-
-        end = find_matching(
-            value,
-            0,
-            "{",
-            "}",
-        )
-
-        if (
-            end != -1
-            and end == len(value) - 1
-        ):
-            return parse_object(
-                value[1:end]
-            )
-
-    # ========================================================
-    # ARRAY
-    # ========================================================
-
-    if value.startswith("["):
-
-        end = find_matching(
-            value,
-            0,
-            "[",
-            "]",
-        )
-
-        if (
-            end != -1
-            and end == len(value) - 1
-        ):
-
-            inside = value[
-                1:end
-            ].strip()
-
-            if not inside:
-                return []
-
-            parts = split_top_level(
-                inside,
-                ",",
-            )
-
-            return [
-                parse_value(part)
-                for part in parts
-            ]
-
-    return parse_primitive(
+    value = (
         value
+        .replace("\\u0026", "&")
+        .replace("\\u002F", "/")
+        .replace("\\/", "/")
+        .replace("&amp;", "&")
+    )
+
+    return value.strip()
+
+
+def normalize_name(name):
+    return " ".join(
+        clean_text(name).split()
     )
 
 
-def parse_object(text):
-    result = {}
-
-    parts = split_top_level(
-        text,
-        ",",
-    )
-
-    for part in parts:
-
-        if ":" not in part:
-            continue
-
-        key, value = part.split(
-            ":",
-            1,
-        )
-
-        key = key.strip()
-        value = value.strip()
-
-        if (
-            len(key) >= 2
-            and key[0] in ('"', "'", "`")
-            and key[-1] == key[0]
-        ):
-            key = key[1:-1]
-
-        result[key] = parse_value(
-            value
-        )
-
-    return result
-
-
 # ============================================================
-# RSC ASSIGNMENTS
+# FIND CHEAPEST LINEUP CONTAINER
 # ============================================================
 
-def extract_rsc_assignments(text):
-    assignments = {}
+def find_cheapest_heading(soup):
+    """
+    Cerca:
+
+    Cheapest grade A lineup
+    Cheapest grade S lineup
+    ecc.
+    """
 
     pattern = re.compile(
-        r"\$R\[(\d+)\]="
+        r"Cheapest\s+grade\s+.+?\s+lineup",
+        re.IGNORECASE,
     )
 
-    matches = list(
-        pattern.finditer(text)
-    )
-
-    for match in matches:
-
-        index = int(
-            match.group(1)
-        )
-
-        start = match.end()
-
-        while (
-            start < len(text)
-            and text[start].isspace()
-        ):
-            start += 1
-
-        if start >= len(text):
-            continue
-
-        first = text[start]
-
-        if first == "{":
-
-            end = find_matching(
-                text,
-                start,
-                "{",
-                "}",
-            )
-
-        elif first == "[":
-
-            end = find_matching(
-                text,
-                start,
-                "[",
-                "]",
-            )
-
-        else:
-            continue
-
-        if end == -1:
-            continue
-
-        raw_value = text[
-            start:end + 1
-        ]
-
-        try:
-
-            assignments[index] = (
-                parse_value(
-                    raw_value
-                )
-            )
-
-        except Exception:
-            continue
-
-    print(
-        f"Found {len(assignments)} "
-        f"RSC assignments."
-    )
-
-    return assignments
-
-
-# ============================================================
-# RESOLVE REFERENCES
-# ============================================================
-
-def resolve_reference(
-    value,
-    assignments,
-    depth=0,
-):
-    if depth > 100:
-        return value
-
-    if isinstance(
-        value,
-        dict,
+    for tag in soup.find_all(
+        ["h1", "h2", "h3", "h4", "h5", "div", "span"]
     ):
 
-        if (
-            "__ref__" in value
-            and len(value) == 1
-        ):
+        text = tag.get_text(
+            " ",
+            strip=True,
+        )
 
-            ref = value[
-                "__ref__"
-            ]
+        if pattern.fullmatch(text):
+            return tag
 
-            if ref not in assignments:
-                return None
+    return None
 
-            return resolve_reference(
-                assignments[ref],
-                assignments,
-                depth + 1,
-            )
 
-        result = {}
-
-        for key, val in value.items():
-
-            result[key] = (
-                resolve_reference(
-                    val,
-                    assignments,
-                    depth + 1,
-                )
-            )
-
-        return result
-
-    if isinstance(
-        value,
-        list,
+def find_add_players_heading(soup):
+    for tag in soup.find_all(
+        ["h1", "h2", "h3", "h4", "h5"]
     ):
 
-        return [
-            resolve_reference(
-                item,
-                assignments,
-                depth + 1,
-            )
-            for item in value
-        ]
+        text = tag.get_text(
+            " ",
+            strip=True,
+        )
 
-    return value
+        if text.lower() == "add players":
+            return tag
+
+    return None
 
 
 # ============================================================
-# ITEMS
+# GET HTML BETWEEN HEADINGS
 # ============================================================
 
-def parse_items_assignment(
-    raw_items,
-    assignments,
-):
-    if not isinstance(
-        raw_items,
-        str,
-    ):
+def get_lineup_html(page_html):
+    """
+    Isola la parte HTML compresa tra:
 
-        return resolve_reference(
-            raw_items,
-            assignments,
-        )
+        Cheapest grade X lineup
 
-    raw = raw_items.strip()
+    e:
 
-    match = re.match(
-        r"^\$R\[(\d+)\]=(\[.*\])$",
-        raw,
-        re.DOTALL,
-    )
+        Add players
 
-    if match:
+    È questa la lineup che FUT.GG mostra realmente.
+    """
 
-        array_text = match.group(
-            2
-        )
-
-        parsed = parse_value(
-            array_text
-        )
-
-        return resolve_reference(
-            parsed,
-            assignments,
-        )
-
-    ref_match = re.fullmatch(
-        r"\$R\[(\d+)\]",
-        raw,
-    )
-
-    if ref_match:
-
-        ref = int(
-            ref_match.group(1)
-        )
-
-        if ref in assignments:
-
-            return resolve_reference(
-                assignments[ref],
-                assignments,
-            )
-
-    parsed = parse_value(
-        raw
-    )
-
-    return resolve_reference(
-        parsed,
-        assignments,
-    )
-
-
-# ============================================================
-# FIND SOLUTION
-# ============================================================
-
-def find_solution(
-    text,
-    page_name,
-    expected_count,
-):
-    match = re.search(
-        r"solution:\$R\[(\d+)\]=",
-        text,
-    )
-
-    if not match:
-
-        raise RuntimeError(
-            f"Solution reference not "
-            f"found for {page_name}"
-        )
-
-    solution_index = int(
-        match.group(1)
-    )
-
-    print(
-        f"Solution RSC reference: "
-        f"{solution_index}"
-    )
-
-    assignments = (
-        extract_rsc_assignments(
-            text
-        )
-    )
-
-    if solution_index not in assignments:
-
-        raise RuntimeError(
-            f"Solution assignment "
-            f"${solution_index} not found "
-            f"for {page_name}"
-        )
-
-    solution = resolve_reference(
-        assignments[
-            solution_index
-        ],
-        assignments,
-    )
-
-    if not isinstance(
-        solution,
-        dict,
-    ):
-
-        raise RuntimeError(
-            f"Invalid solution "
-            f"for {page_name}"
-        )
-
-    solution_name = (
-        solution.get("name")
-    )
-
-    required_cards = (
-        solution.get(
-            "requiredCards"
-        )
-    )
-
-    status = (
-        solution.get("status")
-    )
-
-    print(
-        f"Solution: {solution_name} | "
-        f"requiredCards={required_cards} | "
-        f"status={status}"
-    )
-
-    if required_cards != expected_count:
-
-        raise RuntimeError(
-            f"Unexpected requiredCards="
-            f"{required_cards} for "
-            f"{page_name}, expected "
-            f"{expected_count}"
-        )
-
-    raw_items = solution.get(
-        "items"
-    )
-
-    if raw_items is None:
-
-        raise RuntimeError(
-            f"No solution items found "
-            f"for {page_name}"
-        )
-
-    print(
-        f"Raw items type: "
-        f"{type(raw_items).__name__}"
-    )
-
-    items = parse_items_assignment(
-        raw_items,
-        assignments,
-    )
-
-    print(
-        f"Resolved items type: "
-        f"{type(items).__name__}"
-    )
-
-    if not isinstance(
-        items,
-        list,
-    ):
-
-        raise RuntimeError(
-            f"Solution items are not "
-            f"a list for {page_name}"
-        )
-
-    print(
-        f"Solution contains "
-        f"{len(items)}/"
-        f"{expected_count} cards."
-    )
-
-    if len(items) != expected_count:
-
-        raise RuntimeError(
-            f"Wrong card count for "
-            f"{page_name}: "
-            f"{len(items)}/"
-            f"{expected_count}"
-        )
-
-    for number, item in enumerate(
-        items,
-        start=1,
-    ):
-
-        if not isinstance(
-            item,
-            dict,
-        ):
-
-            raise RuntimeError(
-                f"Invalid card item "
-                f"#{number} in {page_name}"
-            )
-
-        if item.get("eaId") is None:
-
-            raise RuntimeError(
-                f"Card #{number} without "
-                f"eaId in {page_name}"
-            )
-
-        if (
-            item.get(
-                "playerEaId"
-            )
-            is None
-        ):
-
-            raise RuntimeError(
-                f"Card #{number} without "
-                f"playerEaId in "
-                f"{page_name}"
-            )
-
-    return items
-
-
-# ============================================================
-# CACHE
-# ============================================================
-
-def load_card_cache():
-    if not os.path.exists(
-        CACHE_FILE
-    ):
-        return {}
-
-    try:
-
-        with open(
-            CACHE_FILE,
-            "r",
-            encoding="utf-8",
-        ) as file:
-
-            data = json.load(
-                file
-            )
-
-        if isinstance(
-            data,
-            dict,
-        ):
-            return data
-
-    except Exception as error:
-
-        print(
-            f"⚠️ Could not load "
-            f"{CACHE_FILE}: {error}"
-        )
-
-    return {}
-
-
-def save_card_cache(cache):
-    with open(
-        CACHE_FILE,
-        "w",
-        encoding="utf-8",
-    ) as file:
-
-        json.dump(
-            cache,
-            file,
-            ensure_ascii=False,
-            indent=2,
-        )
-
-
-card_info_cache = load_card_cache()
-
-
-# ============================================================
-# VERSION
-# ============================================================
-
-def clean_version(text):
-    upper = text.upper()
-
-    if (
-        "PRISTINE HOLOGRAPHIC"
-        in upper
-        or "PRISTINE HOLO"
-        in upper
-    ):
-        return "PRISTINE HOLO"
-
-    if (
-        "REGULAR HOLOGRAPHIC"
-        in upper
-        or "HOLOGRAPHIC"
-        in upper
-        or " HOLO " in f" {upper} "
-    ):
-        return "HOLO"
-
-    return "BASE"
-
-
-# ============================================================
-# EXTRACT CARD INFO
-# ============================================================
-
-def extract_card_from_html(
-    page_html,
-    player_ea_id,
-    ea_id,
-):
     soup = BeautifulSoup(
         page_html,
         "html.parser",
     )
 
-    sources = []
+    cheapest = find_cheapest_heading(
+        soup
+    )
 
-    # --------------------------------------------------------
-    # H1
-    # --------------------------------------------------------
-
-    h1 = soup.find("h1")
-
-    if h1:
-
-        text = h1.get_text(
-            " ",
-            strip=True,
+    if cheapest is None:
+        raise RuntimeError(
+            "Could not find 'Cheapest grade ... lineup'"
         )
 
-        if text:
-            sources.append(text)
-
-    # --------------------------------------------------------
-    # OG TITLE
-    # --------------------------------------------------------
-
-    og_title = soup.find(
-        "meta",
-        attrs={
-            "property": "og:title"
-        },
+    heading_text = cheapest.get_text(
+        " ",
+        strip=True,
     )
 
-    if og_title:
-
-        text = og_title.get(
-            "content",
-            "",
-        ).strip()
-
-        if text:
-            sources.append(text)
-
-    # --------------------------------------------------------
-    # TITLE
-    # --------------------------------------------------------
-
-    title = soup.find(
-        "title"
+    print(
+        f"Found section: {heading_text}"
     )
 
-    if title:
+    # --------------------------------------------------------
+    # Prima proviamo con la posizione nell'HTML originale.
+    # --------------------------------------------------------
 
-        text = title.get_text(
-            " ",
-            strip=True,
+    raw_patterns = [
+        re.compile(
+            r"Cheapest\s+grade\s+[^<]{1,30}\s+lineup",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            re.escape(heading_text),
+            re.IGNORECASE,
+        ),
+    ]
+
+    start = None
+
+    for pattern in raw_patterns:
+
+        match = pattern.search(
+            page_html
         )
 
-        if text:
-            sources.append(text)
+        if match:
+            start = match.start()
+            break
 
-    combined = " | ".join(
-        sources
+    if start is None:
+        raise RuntimeError(
+            "Could not locate cheapest lineup "
+            "inside raw HTML"
+        )
+
+    add_match = re.search(
+        r">\s*Add players\s*<",
+        page_html[start:],
+        re.IGNORECASE,
     )
 
-    version = clean_version(
-        combined
-    )
+    if add_match:
 
-    # --------------------------------------------------------
-    # NAME
-    # --------------------------------------------------------
+        end = (
+            start
+            + add_match.start()
+        )
 
-    name = None
-
-    for source in sources:
-
-        if " - " in source:
-
-            candidate = source.split(
-                " - ",
-                1,
-            )[0].strip()
-
-            if (
-                candidate
-                and "FUT.GG" not in candidate.upper()
-            ):
-
-                name = candidate
-                break
-
-    # --------------------------------------------------------
-    # JSON / RSC FALLBACKS
-    # --------------------------------------------------------
-
-    if not name:
-
-        patterns = [
-            r'playerName:"([^"]+)"',
-            r'"playerName":"([^"]+)"',
-            r'fullName:"([^"]+)"',
-            r'"fullName":"([^"]+)"',
+        block = page_html[
+            start:end
         ]
+
+        print(
+            f"Lineup HTML block: "
+            f"{len(block):,} characters."
+        )
+
+        return block, heading_text
+
+    # --------------------------------------------------------
+    # Fallback: usa il secondo heading.
+    # --------------------------------------------------------
+
+    add_heading = find_add_players_heading(
+        soup
+    )
+
+    if add_heading is None:
+        raise RuntimeError(
+            "Could not find 'Add players'"
+        )
+
+    add_text = str(
+        add_heading
+    )
+
+    add_position = page_html.find(
+        add_text
+    )
+
+    if (
+        add_position != -1
+        and add_position > start
+    ):
+
+        block = page_html[
+            start:add_position
+        ]
+
+        print(
+            f"Lineup HTML block: "
+            f"{len(block):,} characters."
+        )
+
+        return block, heading_text
+
+    raise RuntimeError(
+        "Could not isolate cheapest lineup HTML"
+    )
+
+
+# ============================================================
+# PLAYER ALT
+# ============================================================
+
+def parse_player_alt(alt):
+    """
+    FUT.GG usa alt del tipo:
+
+    Šašić - 89 - Base Hero
+    Angerer - 92 - Base Icon
+
+    Restituisce:
+
+    name
+    overall
+    rarity
+    """
+
+    alt = clean_text(
+        alt
+    )
+
+    if not alt:
+        return None
+
+    if alt.lower() == "player card":
+        return None
+
+    match = re.match(
+        r"^(.+?)\s+-\s+(\d{2})\s+-\s+(.+?)$",
+        alt,
+    )
+
+    if not match:
+        return None
+
+    name = normalize_name(
+        match.group(1)
+    )
+
+    overall = int(
+        match.group(2)
+    )
+
+    rarity = clean_text(
+        match.group(3)
+    )
+
+    return {
+        "name": name,
+        "overall": overall,
+        "rarity": rarity,
+    }
+
+
+# ============================================================
+# FIND ITEM ID
+# ============================================================
+
+def find_item_id_from_element(img):
+    """
+    Cerca l'Item ID in:
+
+    src
+    srcset
+    data-src
+    data-nimg
+    parent href
+    HTML del parent
+
+    Gli URL FUT.GG possono contenere per esempio:
+
+    /27-67335170/
+    """
+
+    values = []
+
+    for attribute in [
+        "src",
+        "srcset",
+        "data-src",
+        "data-original",
+    ]:
+
+        value = img.get(
+            attribute
+        )
+
+        if value:
+            values.append(
+                str(value)
+            )
+
+    # --------------------------------------------------------
+    # Cerca anche nei parent
+    # --------------------------------------------------------
+
+    current = img
+
+    for _ in range(6):
+
+        if current is None:
+            break
+
+        if hasattr(
+            current,
+            "get"
+        ):
+
+            href = current.get(
+                "href"
+            )
+
+            if href:
+                values.append(
+                    str(href)
+                )
+
+        try:
+
+            values.append(
+                str(current)
+            )
+
+        except Exception:
+            pass
+
+        current = getattr(
+            current,
+            "parent",
+            None,
+        )
+
+    patterns = [
+        r"/27-(\d{5,12})/?",
+        r"27-(\d{5,12})",
+        r"item[_-]?id[=:\"']+(\d{5,12})",
+        r"eaId[=:\"']+(\d{5,12})",
+    ]
+
+    for value in values:
+
+        value = clean_text(
+            value
+        )
 
         for pattern in patterns:
 
             match = re.search(
                 pattern,
-                page_html,
+                value,
+                re.IGNORECASE,
             )
 
             if match:
 
-                candidate = (
-                    match.group(1)
-                    .strip()
-                )
-
-                if candidate:
-
-                    name = candidate
-                    break
-
-    if not name:
-
-        name = (
-            f"Player {player_ea_id}"
-        )
-
-    return {
-        "name": name,
-        "version": version,
-    }
-
-
-# ============================================================
-# FIND EXACT CARD IN GALLERY
-# ============================================================
-
-def find_card_in_gallery_html(
-    gallery_html,
-    ea_id,
-):
-    if not gallery_html:
-        return None
-
-    escaped_id = re.escape(
-        str(ea_id)
-    )
-
-    patterns = [
-        (
-            rf'https://www\.fut\.gg/'
-            rf'players/[^"\'\\\s]+/'
-            rf'27-{escaped_id}/?'
-        ),
-        (
-            rf'/players/[^"\'\\\s]+/'
-            rf'27-{escaped_id}/?'
-        ),
-    ]
-
-    for pattern in patterns:
-
-        match = re.search(
-            pattern,
-            gallery_html,
-            re.IGNORECASE,
-        )
-
-        if not match:
-            continue
-
-        url = match.group(0)
-
-        url = (
-            url
-            .replace("\\u002F", "/")
-            .replace("\\/", "/")
-        )
-
-        if url.startswith("/"):
-
-            url = (
-                BASE_URL
-                + url
-            )
-
-        return url
+                try:
+                    return int(
+                        match.group(1)
+                    )
+                except Exception:
+                    pass
 
     return None
 
 
 # ============================================================
-# FUT.GG SEARCH
+# DETECT HOLOGRAPHIC FINISH
 # ============================================================
 
-def search_futgg_card(
-    player_ea_id,
-    ea_id,
-):
+def get_context_html(img):
     """
-    Cerca direttamente tramite eaId.
-    Non assumiamo che playerEaId sia lo slug.
+    Recupera un piccolo blocco HTML attorno alla carta.
+    Serve per cercare eventuali informazioni sulla finitura.
     """
 
-    search_queries = [
-        str(ea_id),
-        str(player_ea_id),
-    ]
+    current = img
 
-    for query in search_queries:
+    candidates = []
 
-        search_url = (
-            "https://www.fut.gg/players/"
-            f"?search={query}"
-        )
+    for _ in range(7):
+
+        if current is None:
+            break
 
         try:
 
-            response = session.get(
-                search_url,
-                timeout=25,
+            html = str(
+                current
             )
 
+            candidates.append(
+                html
+            )
+
+            # Evitiamo container enormi.
             if (
-                response.status_code
-                != 200
+                len(html) >= 500
+                and len(html) <= 20000
             ):
-                continue
+                return html
 
-            text = response.text
+        except Exception:
+            pass
 
-            escaped_id = re.escape(
-                str(ea_id)
-            )
+        current = getattr(
+            current,
+            "parent",
+            None,
+        )
 
-            patterns = [
-                (
-                    rf'https://www\.fut\.gg/'
-                    rf'players/[^"\'\\\s]+/'
-                    rf'27-{escaped_id}/?'
-                ),
-                (
-                    rf'/players/[^"\'\\\s]+/'
-                    rf'27-{escaped_id}/?'
-                ),
-            ]
+    if candidates:
+        return candidates[-1]
 
-            for pattern in patterns:
-
-                match = re.search(
-                    pattern,
-                    text,
-                    re.IGNORECASE,
-                )
-
-                if not match:
-                    continue
-
-                url = match.group(0)
-
-                url = (
-                    url
-                    .replace(
-                        "\\u002F",
-                        "/",
-                    )
-                    .replace(
-                        "\\/",
-                        "/",
-                    )
-                )
-
-                if url.startswith(
-                    "/"
-                ):
-
-                    url = (
-                        BASE_URL
-                        + url
-                    )
-
-                return url
-
-            # ------------------------------------------------
-            # BEAUTIFULSOUP FALLBACK
-            # ------------------------------------------------
-
-            soup = BeautifulSoup(
-                text,
-                "html.parser",
-            )
-
-            for link in soup.find_all(
-                "a",
-                href=True,
-            ):
-
-                href = link.get(
-                    "href",
-                    "",
-                )
-
-                if (
-                    f"27-{ea_id}"
-                    in href
-                ):
-
-                    return urljoin(
-                        BASE_URL,
-                        href,
-                    )
-
-        except Exception as error:
-
-            print(
-                f"  ⚠️ Search failed "
-                f"for {ea_id}: "
-                f"{error}"
-            )
-
-    return None
+    return ""
 
 
-# ============================================================
-# EXTRACT NAME FROM GALLERY
-# ============================================================
-
-def find_name_near_card(
-    gallery_html,
-    player_ea_id,
-    ea_id,
-):
+def detect_finish(img, page_name):
     """
-    Prova a recuperare il nome direttamente
-    dai dati RSC/HTML della Gallery.
+    Cerca di distinguere:
 
-    Non assegna mai una versione da questo metodo.
+    BASE
+    HOLO
+    PRISTINE HOLO
+
+    senza assumere che tutte le carte della pagina
+    abbiano la stessa finitura.
     """
 
-    if not gallery_html:
-        return None
+    context = get_context_html(
+        img
+    )
 
-    ids = [
-        str(ea_id),
-        str(player_ea_id),
+    text = clean_text(
+        context
+    ).upper()
+
+    # --------------------------------------------------------
+    # PRISTINE
+    # --------------------------------------------------------
+
+    pristine_markers = [
+        "PRISTINE HOLOGRAPHIC",
+        "PRISTINE_HOLOGRAPHIC",
+        "PRISTINE-HOLOGRAPHIC",
+        "PRISTINE HOLO",
+        "PRISTINE_HOLO",
+        "PRISTINE-HOLO",
+        "PRISTINE",
     ]
 
-    for target_id in ids:
+    for marker in pristine_markers:
 
-        for match in re.finditer(
-            re.escape(target_id),
-            gallery_html,
-        ):
+        if marker in text:
+            return "PRISTINE HOLO"
 
-            start = max(
-                0,
-                match.start() - 2000,
-            )
+    # --------------------------------------------------------
+    # REGULAR HOLOGRAPHIC
+    # --------------------------------------------------------
 
-            end = min(
-                len(gallery_html),
-                match.end() + 2000,
-            )
+    holo_markers = [
+        "REGULAR HOLOGRAPHIC",
+        "REGULAR_HOLOGRAPHIC",
+        "REGULAR-HOLOGRAPHIC",
+        "HOLOGRAPHIC",
+        "HOLOGRAPHIC-CARD",
+        "HOLOGRAPHIC_CARD",
+        "HOLOGRAPHIC CARD",
+    ]
 
-            chunk = gallery_html[
-                start:end
-            ]
+    for marker in holo_markers:
 
-            patterns = [
-                r'playerName:"([^"]+)"',
-                r'"playerName":"([^"]+)"',
-                r'fullName:"([^"]+)"',
-                r'"fullName":"([^"]+)"',
-                r'commonName:"([^"]+)"',
-                r'"commonName":"([^"]+)"',
-            ]
+        if marker in text:
+            return "HOLO"
 
-            for pattern in patterns:
-
-                name_match = re.search(
-                    pattern,
-                    chunk,
-                )
-
-                if name_match:
-
-                    name = (
-                        name_match
-                        .group(1)
-                        .strip()
-                    )
-
-                    if name:
-                        return name
-
-    return None
-
-
-# ============================================================
-# CARD INFO
-# ============================================================
-
-def get_card_info(
-    player_ea_id,
-    ea_id,
-    gallery_html=None,
-):
-    player_ea_id = int(
-        player_ea_id
-    )
-
-    ea_id = int(
-        ea_id
-    )
-
-    cache_key = str(
-        ea_id
-    )
-
-    # ========================================================
-    # CACHE
-    # ========================================================
-
-    cached = card_info_cache.get(
-        cache_key
-    )
-
-    if isinstance(
-        cached,
-        dict,
-    ):
-
-        cached_name = cached.get(
-            "name"
-        )
-
-        cached_version = cached.get(
-            "version"
-        )
-
-        # Non riutilizziamo vecchi fallback sbagliati.
-
-        if (
-            cached_name
-            and not cached_name.startswith(
-                "Player "
-            )
-            and cached_version
-            and cached_version
-            != "UNKNOWN"
-        ):
-
-            print(
-                f"  ✓ Cache: "
-                f"{cached_name} "
-                f"[{cached_version}]"
-            )
-
-            return cached
-
-    print(
-        f"  Resolving Item ID "
-        f"{ea_id}..."
-    )
-
-    # ========================================================
-    # NAME FROM GALLERY
-    # ========================================================
-
-    gallery_name = (
-        find_name_near_card(
-            gallery_html,
-            player_ea_id,
-            ea_id,
-        )
-    )
-
-    # ========================================================
-    # CARD URL FROM GALLERY
-    # ========================================================
-
-    card_url = (
-        find_card_in_gallery_html(
-            gallery_html,
-            ea_id,
-        )
-    )
-
-    if card_url:
-
-        print(
-            "  ✓ Exact URL found "
-            "inside Gallery"
-        )
-
-    # ========================================================
-    # SEARCH FALLBACK
-    # ========================================================
-
-    if not card_url:
-
-        card_url = (
-            search_futgg_card(
-                player_ea_id,
-                ea_id,
-            )
-        )
-
-        if card_url:
-
-            print(
-                "  ✓ Exact URL found "
-                "through FUT.GG search"
-            )
-
-    # ========================================================
-    # EXACT PAGE
-    # ========================================================
-
-    if card_url:
-
-        print(
-            f"  → {card_url}"
-        )
-
-        try:
-
-            response = session.get(
-                card_url,
-                timeout=25,
-            )
-
-            response.raise_for_status()
-
-            info = (
-                extract_card_from_html(
-                    response.text,
-                    player_ea_id,
-                    ea_id,
-                )
-            )
-
-            name = info.get(
-                "name"
-            )
-
-            version = info.get(
-                "version"
-            )
-
-            if (
-                not name
-                or name.startswith(
-                    "Player "
-                )
-            ):
-
-                if gallery_name:
-                    name = gallery_name
-
-            if not name:
-
-                name = (
-                    f"Player "
-                    f"{player_ea_id}"
-                )
-
-            if not version:
-
-                version = "UNKNOWN"
-
-            result = {
-                "name": name,
-                "version": version,
-                "url": card_url,
-                "player_ea_id": (
-                    player_ea_id
-                ),
-                "ea_id": ea_id,
-            }
-
-            print(
-                f"  ✓ {name} "
-                f"[{version}]"
-            )
-
-            # -----------------------------------------------
-            # Salva solo risultati utili
-            # -----------------------------------------------
-
-            if (
-                not name.startswith(
-                    "Player "
-                )
-                and version
-                != "UNKNOWN"
-            ):
-
-                card_info_cache[
-                    cache_key
-                ] = result
-
-            return result
-
-        except Exception as error:
-
-            print(
-                f"  ⚠️ Exact card page "
-                f"failed: {error}"
-            )
-
-    # ========================================================
-    # FALLBACK
+    # --------------------------------------------------------
+    # Non inventiamo la finitura.
     #
-    # IMPORTANTISSIMO:
-    # non inventiamo BASE.
-    # ========================================================
+    # L'alt "Base Hero"/"Base Icon" descrive la rarità
+    # della carta, non necessariamente la finitura.
+    # --------------------------------------------------------
 
-    if gallery_name:
+    return "BASE"
 
-        name = gallery_name
 
-    else:
+# ============================================================
+# EXTRACT EXACT DISPLAYED LINEUP
+# ============================================================
 
-        name = (
-            f"Player "
-            f"{player_ea_id}"
+def extract_cheapest_lineup(
+    page_html,
+    page_name,
+    expected,
+):
+    """
+    Estrae ESCLUSIVAMENTE le card visualizzate nella:
+
+        Cheapest grade X lineup
+
+    Non usa solution.items.
+    """
+
+    block_html, heading = (
+        get_lineup_html(
+            page_html
         )
-
-    result = {
-        "name": name,
-        "version": "UNKNOWN",
-        "url": card_url or BASE_URL,
-        "player_ea_id": (
-            player_ea_id
-        ),
-        "ea_id": ea_id,
-    }
-
-    print(
-        f"  ⚠️ {name} "
-        f"[UNKNOWN]"
     )
 
-    return result
+    soup = BeautifulSoup(
+        block_html,
+        "html.parser",
+    )
 
-
-# ============================================================
-# PARSE PLAYERS
-# ============================================================
-
-def parse_players(
-    items,
-    page_name,
-    gallery_html,
-):
     players = []
 
-    print()
-    print("Resolving cards...")
+    # --------------------------------------------------------
+    # Cerchiamo tutte le immagini con alt giocatore.
+    # --------------------------------------------------------
 
-    for item in items:
+    for img in soup.find_all(
+        "img"
+    ):
 
-        ea_id = item.get(
-            "eaId"
+        alt = img.get(
+            "alt",
+            "",
         )
 
-        player_ea_id = item.get(
-            "playerEaId"
+        info = parse_player_alt(
+            alt
         )
 
-        overall = item.get(
-            "overall"
+        if not info:
+            continue
+
+        item_id = (
+            find_item_id_from_element(
+                img
+            )
         )
 
-        rarity_id = item.get(
-            "rarityEaId"
-        )
-
-        info = get_card_info(
-            player_ea_id,
-            ea_id,
-            gallery_html,
+        finish = detect_finish(
+            img,
+            page_name,
         )
 
         card = {
-            "ea_id": ea_id,
-            "player_ea_id": (
-                player_ea_id
-            ),
-            "name": info.get(
+            "name": info[
                 "name"
-            ),
-            "overall": overall,
-            "rarity_id": rarity_id,
-            "version": info.get(
-                "version",
-                "UNKNOWN",
-            ),
-            "url": info.get(
-                "url",
-                BASE_URL,
-            ),
+            ],
+            "overall": info[
+                "overall"
+            ],
+            "rarity": info[
+                "rarity"
+            ],
+            "version": finish,
+            "ea_id": item_id,
         }
 
         players.append(
             card
         )
 
+    # --------------------------------------------------------
+    # FALLBACK:
+    #
+    # alcuni HTML Next.js possono avere gli alt escaped
+    # nei dati RSC ma non come <img> normale.
+    # --------------------------------------------------------
+
+    if len(players) < expected:
+
         print(
-            f"- {card['name']} "
-            f"{overall} "
-            f"{card['version']}"
+            "Normal IMG extraction returned "
+            f"{len(players)}/{expected} cards."
+        )
+
+        print(
+            "Trying raw HTML fallback..."
+        )
+
+        raw_pattern = re.compile(
+            r'alt=["\']'
+            r'([^"\']+?)\s+-\s+'
+            r'(\d{2})\s+-\s+'
+            r'([^"\']+?)'
+            r'["\']',
+            re.IGNORECASE,
+        )
+
+        raw_players = []
+
+        for match in raw_pattern.finditer(
+            block_html
+        ):
+
+            name = normalize_name(
+                match.group(1)
+            )
+
+            overall = int(
+                match.group(2)
+            )
+
+            rarity = clean_text(
+                match.group(3)
+            )
+
+            # Piccolo contesto attorno all'alt.
+            start = max(
+                0,
+                match.start() - 2500,
+            )
+
+            end = min(
+                len(block_html),
+                match.end() + 2500,
+            )
+
+            context = block_html[
+                start:end
+            ]
+
+            item_id = None
+
+            id_patterns = [
+                r"/27-(\d{5,12})/?",
+                r"27-(\d{5,12})",
+                r"eaId[=:\"']+(\d{5,12})",
+            ]
+
+            for id_pattern in id_patterns:
+
+                id_match = re.search(
+                    id_pattern,
+                    context,
+                    re.IGNORECASE,
+                )
+
+                if id_match:
+
+                    item_id = int(
+                        id_match.group(1)
+                    )
+
+                    break
+
+            upper_context = (
+                clean_text(
+                    context
+                ).upper()
+            )
+
+            if "PRISTINE" in upper_context:
+                version = (
+                    "PRISTINE HOLO"
+                )
+
+            elif "HOLOGRAPHIC" in upper_context:
+                version = "HOLO"
+
+            else:
+                version = "BASE"
+
+            raw_players.append(
+                {
+                    "name": name,
+                    "overall": overall,
+                    "rarity": rarity,
+                    "version": version,
+                    "ea_id": item_id,
+                }
+            )
+
+        # Usa fallback soltanto se migliora il risultato.
+        if len(raw_players) > len(
+            players
+        ):
+
+            players = raw_players
+
+    # --------------------------------------------------------
+    # IMPORTANTISSIMO:
+    #
+    # NON deduplichiamo.
+    #
+    # Se Šašić appare 2 volte, devono restare 2 slot.
+    # --------------------------------------------------------
+
+    print(
+        f"{heading}: "
+        f"{len(players)}/{expected} cards."
+    )
+
+    for index, card in enumerate(
+        players,
+        start=1,
+    ):
+
+        item_text = (
+            str(card["ea_id"])
+            if card["ea_id"]
+            is not None
+            else "?"
+        )
+
+        print(
+            f"{index}. "
+            f"{card['name']} "
+            f"{card['overall']} "
+            f"{card['rarity']} "
+            f"[{card['version']}] "
+            f"ItemID={item_text}"
+        )
+
+    # --------------------------------------------------------
+    # SAFETY
+    # --------------------------------------------------------
+
+    if len(players) != expected:
+
+        raise RuntimeError(
+            f"Wrong displayed lineup count "
+            f"for {page_name}: "
+            f"{len(players)}/{expected}"
         )
 
     return players
@@ -1616,9 +844,8 @@ def load_state():
             data,
             dict,
         ):
-
             raise ValueError(
-                "players.json invalid"
+                "players.json is invalid"
             )
 
         for page in PAGES:
@@ -1697,6 +924,19 @@ def save_trending(data):
 # TELEGRAM
 # ============================================================
 
+def escape_html(value):
+    value = str(
+        value
+    )
+
+    return (
+        value
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+    )
+
+
 def telegram_send(message):
     token = os.getenv(
         "TELEGRAM_BOT_TOKEN"
@@ -1715,7 +955,7 @@ def telegram_send(message):
         return False
 
     url = (
-        f"https://api.telegram.org/"
+        "https://api.telegram.org/"
         f"bot{token}/sendMessage"
     )
 
@@ -1747,26 +987,64 @@ def telegram_send(message):
 
 
 # ============================================================
-# CARD COMPARISON
+# CARD IDENTITY
 # ============================================================
 
 def card_key(card):
     """
-    ea_id = carta specifica.
+    Identità della singola occorrenza.
 
-    Quindi:
+    Preferiamo ea_id quando disponibile.
 
-    Maradona BASE
-    Maradona HOLO
-    Maradona PRISTINE
+    Se FUT.GG non lo espone nel DOM, usiamo:
+    nome + overall + rarity + version.
 
-    sono carte diverse.
+    Counter permette comunque i duplicati.
     """
 
-    return card.get(
+    ea_id = card.get(
         "ea_id"
     )
 
+    if ea_id is not None:
+
+        return (
+            "EA",
+            str(ea_id),
+        )
+
+    return (
+        "CARD",
+        normalize_name(
+            card.get(
+                "name",
+                ""
+            )
+        ).casefold(),
+        str(
+            card.get(
+                "overall",
+                ""
+            )
+        ),
+        str(
+            card.get(
+                "rarity",
+                ""
+            )
+        ).casefold(),
+        str(
+            card.get(
+                "version",
+                ""
+            )
+        ).casefold(),
+    )
+
+
+# ============================================================
+# COMPARE
+# ============================================================
 
 def compare_cards(
     old_cards,
@@ -1789,10 +1067,23 @@ def compare_cards(
         old_cards
     )
 
-    for key, count in (
+    remaining_new = list(
+        new_cards
+    )
+
+    removed = (
         old_counter
         - new_counter
-    ).items():
+    )
+
+    added = (
+        new_counter
+        - old_counter
+    )
+
+    for key, count in (
+        removed.items()
+    ):
 
         for _ in range(
             count
@@ -1802,10 +1093,9 @@ def compare_cards(
                 remaining_old
             ):
 
-                if (
-                    card_key(card)
-                    == key
-                ):
+                if card_key(
+                    card
+                ) == key:
 
                     out_cards.append(
                         card
@@ -1817,14 +1107,9 @@ def compare_cards(
 
                     break
 
-    remaining_new = list(
-        new_cards
-    )
-
     for key, count in (
-        new_counter
-        - old_counter
-    ).items():
+        added.items()
+    ):
 
         for _ in range(
             count
@@ -1834,10 +1119,9 @@ def compare_cards(
                 remaining_new
             ):
 
-                if (
-                    card_key(card)
-                    == key
-                ):
+                if card_key(
+                    card
+                ) == key:
 
                     in_cards.append(
                         card
@@ -1856,22 +1140,11 @@ def compare_cards(
 
 
 # ============================================================
-# TELEGRAM FORMAT
+# FORMAT
 # ============================================================
 
-def escape_telegram_html(text):
-    text = str(text)
-
-    return (
-        text
-        .replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-    )
-
-
 def format_card(card):
-    name = escape_telegram_html(
+    name = escape_html(
         card.get(
             "name",
             "Unknown",
@@ -1883,17 +1156,32 @@ def format_card(card):
         "?",
     )
 
-    version = escape_telegram_html(
+    rarity = escape_html(
         card.get(
-            "version",
-            "UNKNOWN",
+            "rarity",
+            "",
         )
     )
+
+    version = card.get(
+        "version",
+        "BASE",
+    )
+
+    # Non scriviamo due volte BASE.
+    if version == "BASE":
+
+        return (
+            f"{name} "
+            f"{overall} "
+            f"<b>{rarity}</b>"
+        )
 
     return (
         f"{name} "
         f"{overall} "
-        f"<b>{version}</b>"
+        f"<b>{rarity}</b> "
+        f"— {escape_html(version)}"
     )
 
 
@@ -1907,7 +1195,7 @@ def main():
     )
 
     print(
-        "FUT.GG MONITOR"
+        "FUT.GG CHEAPEST LINEUP MONITOR"
     )
 
     print(
@@ -1944,7 +1232,7 @@ def main():
         try:
 
             # =================================================
-            # DOWNLOAD GALLERY
+            # DOWNLOAD
             # =================================================
 
             page_html = download_page(
@@ -1952,25 +1240,23 @@ def main():
             )
 
             # =================================================
-            # SOLUTION
+            # IMPORTANT:
+            #
+            # Legge SOLO la lineup visualizzata sotto:
+            #
+            # Cheapest grade X lineup
+            #
+            # e NON solution.items.
             # =================================================
 
-            items = find_solution(
-                page_html,
-                page_name,
-                config[
-                    "expected"
-                ],
-            )
-
-            # =================================================
-            # CARDS
-            # =================================================
-
-            players = parse_players(
-                items,
-                page_name,
-                page_html,
+            players = (
+                extract_cheapest_lineup(
+                    page_html,
+                    page_name,
+                    config[
+                        "expected"
+                    ],
+                )
             )
 
             old_players = state.get(
@@ -1979,7 +1265,7 @@ def main():
             )
 
             # =================================================
-            # FIRST RUN
+            # FIRST STATE
             # =================================================
 
             if not old_players:
@@ -1988,10 +1274,6 @@ def main():
                     f"🆕 First state saved "
                     f"for {page_name}."
                 )
-
-            # =================================================
-            # COMPARE
-            # =================================================
 
             else:
 
@@ -2009,7 +1291,9 @@ def main():
                 ):
 
                     message = (
-                        f"<b>{page_name}</b>"
+                        f"⚡ <b>{escape_html(page_name)}</b>"
+                        f"\n"
+                        f"Cheapest lineup changed"
                         f"\n\n"
                     )
 
@@ -2019,7 +1303,9 @@ def main():
                             "🔴 <b>OUT</b>\n"
                         )
 
-                        for card in out_cards:
+                        for card in (
+                            out_cards
+                        ):
 
                             message += (
                                 "• "
@@ -2037,7 +1323,9 @@ def main():
                             "🟢 <b>IN</b>\n"
                         )
 
-                        for card in in_cards:
+                        for card in (
+                            in_cards
+                        ):
 
                             message += (
                                 "• "
@@ -2049,16 +1337,12 @@ def main():
 
                         message += "\n"
 
-                    page_url = (
-                        config["url"]
-                    )
-
                     message += (
-                        f'<a href="'
-                        f'{page_url}'
-                        f'">'
-                        f"Open {page_name}"
-                        f"</a>"
+                        '<a href="'
+                        + config["url"]
+                        + '">'
+                        + "Open FUT.GG lineup"
+                        + "</a>"
                     )
 
                     if telegram_send(
@@ -2073,11 +1357,11 @@ def main():
                 else:
 
                     print(
-                        "No card changes."
+                        "No lineup changes."
                     )
 
             # =================================================
-            # SAVE ONLY SUCCESSFUL PAGE
+            # ONLY UPDATE A SUCCESSFUL PAGE
             # =================================================
 
             state[
@@ -2089,28 +1373,25 @@ def main():
         except Exception as error:
 
             print(
-                f"❌ ERROR "
-                f"{page_name}: "
+                f"❌ ERROR {page_name}: "
                 f"{error}"
             )
 
             telegram_send(
-                f"⚠️ <b>FUT.GG "
-                f"Monitor Error</b>"
-                f"\n\n"
-                f"<b>{page_name}</b>"
-                f"\n"
-                f"{escape_telegram_html(error)}"
+                "⚠️ <b>FUT.GG Monitor Error</b>"
+                "\n\n"
+                f"<b>{escape_html(page_name)}</b>"
+                "\n"
+                f"{escape_html(error)}"
             )
 
             print(
                 f"Previous state for "
-                f"{page_name} "
-                f"was preserved."
+                f"{page_name} preserved."
             )
 
     # ========================================================
-    # NO SUCCESS
+    # SAVE
     # ========================================================
 
     if successful_pages == 0:
@@ -2118,28 +1399,14 @@ def main():
         print()
 
         print(
-            "❌ No pages succeeded."
-        )
-
-        print()
-
-        print(
-            "=" * 60
+            "❌ 0 pages succeeded."
         )
 
         print(
-            "MONITOR FINISHED"
-        )
-
-        print(
-            "=" * 60
+            "players.json NOT overwritten."
         )
 
         return
-
-    # ========================================================
-    # SAVE FILES
-    # ========================================================
 
     save_state(
         state
@@ -2147,10 +1414,6 @@ def main():
 
     save_trending(
         state
-    )
-
-    save_card_cache(
-        card_info_cache
     )
 
     print()
@@ -2167,10 +1430,6 @@ def main():
 
     print(
         f"Saved {TRENDING_FILE}"
-    )
-
-    print(
-        f"Saved {CACHE_FILE}"
     )
 
     print()
