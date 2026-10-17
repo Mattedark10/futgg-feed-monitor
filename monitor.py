@@ -49,6 +49,7 @@ session.headers.update(HEADERS)
 
 
 def download_page(url):
+
     response = session.get(
         url,
         timeout=30
@@ -66,24 +67,10 @@ def download_page(url):
 
 
 # ============================================================
-# RSC PARSER
+# GENERIC PARSER
 # ============================================================
 
 def split_top_level(text, separator=","):
-    """
-    Divide un'espressione JS/RSC usando il separatore
-    solo quando siamo al livello principale.
-
-    Esempio:
-
-        a:1,b:{x:2},c:[3,4]
-
-    diventa:
-
-        a:1
-        b:{x:2}
-        c:[3,4]
-    """
 
     parts = []
 
@@ -121,27 +108,21 @@ def split_top_level(text, separator=","):
             continue
 
         if char == "{":
-
             depth_curly += 1
 
         elif char == "}":
-
             depth_curly -= 1
 
         elif char == "[":
-
             depth_square += 1
 
         elif char == "]":
-
             depth_square -= 1
 
         elif char == "(":
-
             depth_paren += 1
 
         elif char == ")":
-
             depth_paren -= 1
 
         elif (
@@ -171,9 +152,6 @@ def find_matching(
     opening,
     closing
 ):
-    """
-    Trova la parentesi di chiusura corrispondente.
-    """
 
     depth = 0
 
@@ -227,21 +205,18 @@ def parse_primitive(value):
 
     value = value.strip()
 
-    # Boolean
     if value == "true":
         return True
 
     if value == "false":
         return False
 
-    # Null
     if value == "null":
         return None
 
     if value == "undefined":
         return None
 
-    # String
     if (
         len(value) >= 2
         and value[0] in ('"', "'", "`")
@@ -263,7 +238,6 @@ def parse_primitive(value):
 
             return content
 
-    # Integer
     if re.fullmatch(
         r"-?\d+",
         value
@@ -275,7 +249,6 @@ def parse_primitive(value):
         except Exception:
             pass
 
-    # Float
     if re.fullmatch(
         r"-?\d+\.\d+",
         value
@@ -291,30 +264,11 @@ def parse_primitive(value):
 
 
 def parse_value(value):
-    """
-    Parser per valori RSC/JavaScript semplificati.
-
-    Supporta:
-
-        $R[123]
-
-        {...}
-
-        [...]
-
-        stringhe
-
-        numeri
-
-        booleani
-
-        null
-    """
 
     value = value.strip()
 
     # --------------------------------------------------------
-    # Reference
+    # RSC reference
     # --------------------------------------------------------
 
     match = re.fullmatch(
@@ -387,10 +341,6 @@ def parse_value(value):
                 for part in parts
             ]
 
-    # --------------------------------------------------------
-    # Primitive
-    # --------------------------------------------------------
-
     return parse_primitive(
         value
     )
@@ -418,8 +368,6 @@ def parse_object(text):
         key = key.strip()
         value = value.strip()
 
-        # Rimuove eventuali virgolette dal nome
-        # della proprietà.
         if (
             len(key) >= 2
             and key[0] in ('"', "'", "`")
@@ -436,20 +384,10 @@ def parse_object(text):
 
 
 # ============================================================
-# EXTRACT RSC ASSIGNMENTS
+# RSC ASSIGNMENTS
 # ============================================================
 
 def extract_rsc_assignments(text):
-    """
-    Estrae entrambe le forme:
-
-        $R[123]={...}
-
-    e:
-
-        $R[123]=[...]
-
-    """
 
     assignments = {}
 
@@ -481,10 +419,6 @@ def extract_rsc_assignments(text):
 
         first = text[start]
 
-        # ----------------------------------------------------
-        # Object
-        # ----------------------------------------------------
-
         if first == "{":
 
             end = find_matching(
@@ -493,10 +427,6 @@ def extract_rsc_assignments(text):
                 "{",
                 "}"
             )
-
-        # ----------------------------------------------------
-        # Array
-        # ----------------------------------------------------
 
         elif first == "[":
 
@@ -544,21 +474,6 @@ def resolve_reference(
     assignments,
     depth=0
 ):
-    """
-    Risolve ricorsivamente i riferimenti RSC.
-
-    FUT.GG usa riferimenti come:
-
-        $R[240]
-        $R[241]
-
-    Un riferimento può puntare a:
-
-        object
-        array
-        primitive
-        altro riferimento
-    """
 
     if depth > 100:
         return value
@@ -572,7 +487,6 @@ def resolve_reference(
         dict
     ):
 
-        # Reference puro
         if (
             "__ref__" in value
             and len(value) == 1
@@ -591,7 +505,6 @@ def resolve_reference(
                 depth + 1
             )
 
-        # Normal object
         result = {}
 
         for key, val in value.items():
@@ -613,27 +526,111 @@ def resolve_reference(
         list
     ):
 
-        result = []
-
-        for item in value:
-
-            resolved = resolve_reference(
+        return [
+            resolve_reference(
                 item,
                 assignments,
                 depth + 1
             )
-
-            result.append(
-                resolved
-            )
-
-        return result
-
-    # --------------------------------------------------------
-    # Primitive
-    # --------------------------------------------------------
+            for item in value
+        ]
 
     return value
+
+
+# ============================================================
+# SPECIAL FUT.GG ITEMS PARSER
+# ============================================================
+
+def parse_items_assignment(
+    raw_items,
+    assignments
+):
+
+    """
+    FUT.GG usa una struttura particolare:
+
+        $R[241]=[
+            $R[242]={...},
+            $R[243]={...},
+            ...
+        ]
+
+    In questo caso `items` viene letto come stringa.
+
+    Recuperiamo quindi l'array dopo il primo "=".
+    """
+
+    if not isinstance(
+        raw_items,
+        str
+    ):
+
+        return resolve_reference(
+            raw_items,
+            assignments
+        )
+
+    raw = raw_items.strip()
+
+    # --------------------------------------------------------
+    # Cerca:
+
+    # $R[241]=[
+    # --------------------------------------------------------
+
+    match = re.match(
+        r"^\$R\[(\d+)\]=(\[.*\])$",
+        raw,
+        re.DOTALL
+    )
+
+    if not match:
+
+        # Potrebbe essere semplicemente:
+        #
+        # $R[241]
+        #
+        ref_match = re.fullmatch(
+            r"\$R\[(\d+)\]",
+            raw
+        )
+
+        if ref_match:
+
+            ref = int(
+                ref_match.group(1)
+            )
+
+            if ref in assignments:
+
+                return resolve_reference(
+                    assignments[ref],
+                    assignments
+                )
+
+        return raw_items
+
+    array_text = match.group(
+        2
+    )
+
+    # --------------------------------------------------------
+    # Parse array
+    # --------------------------------------------------------
+
+    parsed = parse_value(
+        array_text
+    )
+
+    # --------------------------------------------------------
+    # Resolve all $R references
+    # --------------------------------------------------------
+
+    return resolve_reference(
+        parsed,
+        assignments
+    )
 
 
 # ============================================================
@@ -645,13 +642,9 @@ def find_solution(
     page_name,
     expected_count
 ):
-    """
-    Trova la solution di FUT.GG e recupera
-    l'array items associato.
-    """
 
     # --------------------------------------------------------
-    # 1. Trova la reference della solution
+    # Find solution reference
     # --------------------------------------------------------
 
     match = re.search(
@@ -676,7 +669,7 @@ def find_solution(
     )
 
     # --------------------------------------------------------
-    # 2. Estrai tutte le assegnazioni
+    # Extract assignments
     # --------------------------------------------------------
 
     assignments = extract_rsc_assignments(
@@ -692,7 +685,7 @@ def find_solution(
         )
 
     # --------------------------------------------------------
-    # 3. Risolvi la solution
+    # Resolve solution
     # --------------------------------------------------------
 
     solution = resolve_reference(
@@ -738,7 +731,7 @@ def find_solution(
         )
 
     # --------------------------------------------------------
-    # 4. Recupera items
+    # Raw items
     # --------------------------------------------------------
 
     raw_items = solution.get(
@@ -758,10 +751,10 @@ def find_solution(
     )
 
     # --------------------------------------------------------
-    # 5. Risolvi eventuale reference
+    # SPECIAL FUT.GG PARSING
     # --------------------------------------------------------
 
-    items = resolve_reference(
+    items = parse_items_assignment(
         raw_items,
         assignments
     )
@@ -772,7 +765,7 @@ def find_solution(
     )
 
     # --------------------------------------------------------
-    # 6. Validazione
+    # Validation
     # --------------------------------------------------------
 
     if not isinstance(
@@ -782,12 +775,12 @@ def find_solution(
 
         print(
             "DEBUG raw_items:",
-            repr(raw_items)[:500]
+            repr(raw_items)[:1000]
         )
 
         print(
             "DEBUG resolved_items:",
-            repr(items)[:500]
+            repr(items)[:1000]
         )
 
         raise RuntimeError(
@@ -973,15 +966,14 @@ def parse_players(
         if player_ea_id is None:
 
             raise RuntimeError(
-                f"Card without "
-                f"playerEaId in {page_name}"
+                f"Card without playerEaId "
+                f"in {page_name}"
             )
 
         name = get_player_name(
             player_ea_id
         )
 
-        # Holographics sono sempre HOLO
         if page_name == "Holographics":
 
             version = "HOLO"
@@ -1294,10 +1286,6 @@ def main():
 
     successful_pages = 0
 
-    # --------------------------------------------------------
-    # SCAN PAGES
-    # --------------------------------------------------------
-
     for page_name, config in PAGES.items():
 
         print()
@@ -1328,7 +1316,7 @@ def main():
             )
 
             # ------------------------------------------------
-            # Parse solution
+            # Find solution
             # ------------------------------------------------
 
             items = find_solution(
@@ -1352,7 +1340,7 @@ def main():
             )
 
             # ------------------------------------------------
-            # FIRST RUN
+            # First run
             # ------------------------------------------------
 
             if not old_players:
@@ -1363,7 +1351,7 @@ def main():
                 )
 
             # ------------------------------------------------
-            # EXISTING STATE
+            # Compare
             # ------------------------------------------------
 
             else:
@@ -1372,10 +1360,6 @@ def main():
                     old_players,
                     players
                 )
-
-                # ------------------------------------------------
-                # CHANGES
-                # ------------------------------------------------
 
                 if (
                     out_cards
@@ -1386,7 +1370,6 @@ def main():
                         f"<b>{page_name}</b>\n\n"
                     )
 
-                    # OUT
                     if out_cards:
 
                         message += (
@@ -1402,7 +1385,6 @@ def main():
 
                         message += "\n"
 
-                    # IN
                     if in_cards:
 
                         message += (
@@ -1439,7 +1421,7 @@ def main():
                     )
 
             # ------------------------------------------------
-            # SAVE ONLY AFTER SUCCESS
+            # Save successful page
             # ------------------------------------------------
 
             state[page_name] = players
@@ -1464,7 +1446,7 @@ def main():
             )
 
     # ========================================================
-    # NOTHING WORKED
+    # NO SUCCESS
     # ========================================================
 
     if successful_pages == 0:
@@ -1492,7 +1474,7 @@ def main():
         return
 
     # ========================================================
-    # SAVE
+    # SAVE FILES
     # ========================================================
 
     save_state(
