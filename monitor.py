@@ -106,10 +106,6 @@ def save_json(filename, data):
 # ============================================================
 
 def find_lineup(soup):
-    """
-    Finds the 'Cheapest grade X lineup' section.
-    """
-
     text = soup.get_text(" ", strip=True)
 
     patterns = [
@@ -119,6 +115,7 @@ def find_lineup(soup):
 
     for pattern in patterns:
         match = re.search(pattern, text, re.I)
+
         if match:
             return match.group(0)
 
@@ -149,13 +146,6 @@ def extract_item_id(src):
 # ============================================================
 
 def parse_alt(alt):
-    """
-    Examples:
-        Harder - 88 - Destined for Glory
-        Mora - 87 - Future Stars
-        Šašić - 89 - Base Hero
-    """
-
     if not alt:
         return None
 
@@ -201,17 +191,14 @@ def resolve_finish(item_id, cache, previous_cards):
 
     item_id = str(item_id)
 
-    # Known mapping first
     if item_id in KNOWN_FINISHES:
         finish = KNOWN_FINISHES[item_id]
         cache[item_id] = finish
         return finish
 
-    # Cache
     if item_id in cache:
         return cache[item_id]
 
-    # Previous state
     for card in previous_cards:
         if not card:
             continue
@@ -236,17 +223,7 @@ def extract_lineup(
     cache,
     previous_cards
 ):
-    """
-    Returns exactly expected_slots entries.
-
-    None = Player Card / empty slot.
-    """
-
     lineup = []
-
-    # --------------------------------------------------------
-    # Find all images containing FUT card assets
-    # --------------------------------------------------------
 
     images = soup.find_all("img")
 
@@ -276,17 +253,7 @@ def extract_lineup(
             "item_id": item_id,
         })
 
-    # --------------------------------------------------------
-    # Try to detect the actual lineup cards
-    # --------------------------------------------------------
-
-    # Remove accidental duplicates only when they are literally
-    # the same occurrence/item.
-    #
-    # Different Item IDs are intentionally preserved.
-
     unique_cards = []
-
     seen_occurrences = set()
 
     for card in cards:
@@ -305,23 +272,12 @@ def extract_lineup(
 
     cards = unique_cards
 
-    # --------------------------------------------------------
-    # Keep the first expected_slots cards.
-    #
-    # The Season 1 page can contain "Player Card" placeholders.
-    # Those placeholders are reconstructed below when necessary.
-    # --------------------------------------------------------
-
     real_count = min(
         len(cards),
         expected_slots
     )
 
     cards = cards[:real_count]
-
-    # --------------------------------------------------------
-    # Build result
-    # --------------------------------------------------------
 
     for card in cards:
         item_id = card["item_id"]
@@ -335,12 +291,6 @@ def extract_lineup(
         card["finish"] = finish
 
         lineup.append(card)
-
-    # --------------------------------------------------------
-    # Pad to exact slot count.
-    #
-    # For Season 1 this represents Player Card placeholders.
-    # --------------------------------------------------------
 
     while len(lineup) < expected_slots:
         lineup.append(None)
@@ -376,10 +326,11 @@ def card_label(card):
     overall = card.get("overall", "?")
     finish = card.get("finish")
 
+    # Nome giocatore in grassetto
     if finish:
-        return f"{name} {overall} — {finish}"
+        return f"<b>{name}</b> {overall} — {finish}"
 
-    return f"{name} {overall}"
+    return f"<b>{name}</b> {overall}"
 
 
 # ============================================================
@@ -399,19 +350,6 @@ def real_cards(lineup):
 # ============================================================
 
 def compare_cards(previous, current):
-    """
-    Compare cards as occurrences.
-
-    Counter is important because legitimate duplicates
-    must remain separate.
-
-    Example:
-        Harder 88 BASE
-        Harder 88 BASE
-
-    is counted twice if there are two different Item IDs.
-    """
-
     previous_counter = Counter(
         card_key(card)
         for card in real_cards(previous)
@@ -475,14 +413,13 @@ def process_category(
     if not previous:
         previous = []
 
-    # Make sure previous has the right slot count
     while len(previous) < expected_slots:
         previous.append(None)
 
     previous = previous[:expected_slots]
 
     # --------------------------------------------------------
-    # Request
+    # REQUEST
     # --------------------------------------------------------
 
     try:
@@ -506,7 +443,7 @@ def process_category(
         }
 
     # --------------------------------------------------------
-    # Parse HTML
+    # PARSE
     # --------------------------------------------------------
 
     soup = BeautifulSoup(
@@ -529,7 +466,7 @@ def process_category(
     )
 
     # --------------------------------------------------------
-    # Validate exact lineup
+    # VALIDATION
     # --------------------------------------------------------
 
     if len(current) != expected_slots:
@@ -547,7 +484,7 @@ def process_category(
         }
 
     # --------------------------------------------------------
-    # If any finish is unknown, DO NOT overwrite state.
+    # UNKNOWN FINISH
     # --------------------------------------------------------
 
     if has_unknown_finish(current):
@@ -563,7 +500,7 @@ def process_category(
         }
 
     # --------------------------------------------------------
-    # First run
+    # INITIAL RUN
     # --------------------------------------------------------
 
     if not previous:
@@ -579,7 +516,7 @@ def process_category(
         }
 
     # --------------------------------------------------------
-    # Compare
+    # COMPARE
     # --------------------------------------------------------
 
     outs, ins = compare_cards(
@@ -590,10 +527,6 @@ def process_category(
     changed = bool(
         outs or ins
     )
-
-    # --------------------------------------------------------
-    # Save new state
-    # --------------------------------------------------------
 
     players[category] = current
 
@@ -628,6 +561,11 @@ def send_telegram(message):
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
         "text": message,
+
+        # IMPORTANTE:
+        # abilita il grassetto HTML
+        "parse_mode": "HTML",
+
         "disable_web_page_preview": True,
     }
 
@@ -666,7 +604,7 @@ def format_category(
     lines.append("")
 
     # --------------------------------------------------------
-    # Error / unresolved
+    # UNRESOLVED
     # --------------------------------------------------------
 
     if result.get("unresolved"):
@@ -696,7 +634,7 @@ def format_category(
         return "\n".join(lines)
 
     # --------------------------------------------------------
-    # Request error
+    # ERROR
     # --------------------------------------------------------
 
     if result.get("error"):
@@ -726,7 +664,7 @@ def format_category(
         return "\n".join(lines)
 
     # --------------------------------------------------------
-    # Initial
+    # INITIAL
     # --------------------------------------------------------
 
     if result.get("initial"):
@@ -735,7 +673,7 @@ def format_category(
         )
 
     # --------------------------------------------------------
-    # Normal run
+    # NORMAL
     # --------------------------------------------------------
 
     else:
@@ -749,6 +687,10 @@ def format_category(
             []
         )
 
+        # ----------------------------------------------------
+        # OUT
+        # ----------------------------------------------------
+
         if outs:
             lines.append(
                 "🔴 OUT"
@@ -760,12 +702,16 @@ def format_category(
 
                     if finish:
                         lines.append(
-                            f"{name} {overall} — {finish}"
+                            f"<b>{name}</b> {overall} — {finish}"
                         )
                     else:
                         lines.append(
-                            f"{name} {overall}"
+                            f"<b>{name}</b> {overall}"
                         )
+
+        # ----------------------------------------------------
+        # IN
+        # ----------------------------------------------------
 
         if ins:
             lines.append(
@@ -778,11 +724,11 @@ def format_category(
 
                     if finish:
                         lines.append(
-                            f"{name} {overall} — {finish}"
+                            f"<b>{name}</b> {overall} — {finish}"
                         )
                     else:
                         lines.append(
-                            f"{name} {overall}"
+                            f"<b>{name}</b> {overall}"
                         )
 
         if not outs and not ins:
@@ -791,7 +737,7 @@ def format_category(
             )
 
     # --------------------------------------------------------
-    # ALWAYS SHOW CURRENT LINEUP
+    # CURRENT LINEUP
     # --------------------------------------------------------
 
     lines.append("")
@@ -852,7 +798,7 @@ def main():
         )
 
     # --------------------------------------------------------
-    # Save state
+    # SAVE
     # --------------------------------------------------------
 
     save_json(
@@ -866,7 +812,7 @@ def main():
     )
 
     # --------------------------------------------------------
-    # Build Telegram message
+    # TELEGRAM MESSAGE
     # --------------------------------------------------------
 
     parts = []
