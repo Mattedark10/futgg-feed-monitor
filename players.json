@@ -10,10 +10,18 @@
         "placeholder": false
       },
       {
-        "name": "Zamorano",
+        "name": "Litmanen",
         "overall": 88,
         "version": "Base Hero",
-        "item_id": "67186651",
+        "item_id": "67114537",
+        "finish": "PRISTINE HOLO",
+        "placeholder": false
+      },
+      {
+        "name": "Keßler",
+        "overall": 88,
+        "version": "Base Hero",
+        "item_id": "67335237",
         "finish": "PRISTINE HOLO",
         "placeholder": false
       },
@@ -30,14 +38,6 @@
         "overall": 89,
         "version": "Base Hero",
         "item_id": "226306",
-        "finish": "BASE",
-        "placeholder": false
-      },
-      {
-        "name": "Vialli",
-        "overall": 89,
-        "version": "Base Hero",
-        "item_id": "233700",
         "finish": "BASE",
         "placeholder": false
       }
