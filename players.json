@@ -2,48 +2,6 @@
   "Heroes": {
     "previous": [
       {
-        "name": "Šašić",
-        "overall": 89,
-        "version": "Base Hero",
-        "placeholder": false,
-        "item_id": null,
-        "finish": "UNKNOWN"
-      },
-      {
-        "name": "Vialli",
-        "overall": 89,
-        "version": "Base Hero",
-        "placeholder": false,
-        "item_id": null,
-        "finish": "UNKNOWN"
-      },
-      {
-        "name": "Šašić",
-        "overall": 89,
-        "version": "Base Hero",
-        "placeholder": false,
-        "item_id": null,
-        "finish": "UNKNOWN"
-      },
-      {
-        "name": "Vialli",
-        "overall": 89,
-        "version": "Base Hero",
-        "placeholder": false,
-        "item_id": null,
-        "finish": "UNKNOWN"
-      },
-      {
-        "name": "Litmanen",
-        "overall": 88,
-        "version": "Base Hero",
-        "placeholder": false,
-        "item_id": null,
-        "finish": "UNKNOWN"
-      }
-    ],
-    "current": [
-      {
         "name": "FC Coin",
         "overall": null,
         "version": null,
@@ -80,6 +38,48 @@
         "overall": null,
         "version": null,
         "item_id": null,
+        "finish": "UNKNOWN",
+        "placeholder": false
+      }
+    ],
+    "current": [
+      {
+        "name": null,
+        "overall": null,
+        "version": null,
+        "item_id": "67335170",
+        "finish": "PRISTINE HOLO",
+        "placeholder": false
+      },
+      {
+        "name": null,
+        "overall": null,
+        "version": null,
+        "item_id": "67342564",
+        "finish": "UNKNOWN",
+        "placeholder": false
+      },
+      {
+        "name": null,
+        "overall": null,
+        "version": null,
+        "item_id": "226306",
+        "finish": "BASE",
+        "placeholder": false
+      },
+      {
+        "name": null,
+        "overall": null,
+        "version": null,
+        "item_id": "233700",
+        "finish": "BASE",
+        "placeholder": false
+      },
+      {
+        "name": null,
+        "overall": null,
+        "version": null,
+        "item_id": "5673",
         "finish": "UNKNOWN",
         "placeholder": false
       }
@@ -88,48 +88,6 @@
   "Holographics": {
     "previous": [
       {
-        "name": "Angerer",
-        "overall": 92,
-        "version": "Base Icon",
-        "placeholder": false,
-        "item_id": null,
-        "finish": "PRISTINE HOLO"
-      },
-      {
-        "name": "Prinz",
-        "overall": 92,
-        "version": "Base Icon",
-        "placeholder": false,
-        "item_id": null,
-        "finish": "PRISTINE HOLO"
-      },
-      {
-        "name": "Baresi",
-        "overall": 91,
-        "version": "Base Icon",
-        "placeholder": false,
-        "item_id": null,
-        "finish": "PRISTINE HOLO"
-      },
-      {
-        "name": "Foudy",
-        "overall": 90,
-        "version": "Base Icon",
-        "placeholder": false,
-        "item_id": null,
-        "finish": "PRISTINE HOLO"
-      },
-      {
-        "name": "Moore",
-        "overall": 90,
-        "version": "Base Icon",
-        "placeholder": false,
-        "item_id": null,
-        "finish": "PRISTINE HOLO"
-      }
-    ],
-    "current": [
-      {
         "name": "FC Coin",
         "overall": null,
         "version": null,
@@ -169,74 +127,131 @@
         "finish": "UNKNOWN",
         "placeholder": false
       }
+    ],
+    "current": [
+      {
+        "name": null,
+        "overall": null,
+        "version": null,
+        "item_id": "67335157",
+        "finish": "PRISTINE HOLO",
+        "placeholder": false
+      },
+      {
+        "name": null,
+        "overall": null,
+        "version": null,
+        "item_id": "67384140",
+        "finish": "PRISTINE HOLO",
+        "placeholder": false
+      },
+      {
+        "name": null,
+        "overall": null,
+        "version": null,
+        "item_id": "67275770",
+        "finish": "PRISTINE HOLO",
+        "placeholder": false
+      },
+      {
+        "name": null,
+        "overall": null,
+        "version": null,
+        "item_id": "67180472",
+        "finish": "PRISTINE HOLO",
+        "placeholder": false
+      },
+      {
+        "name": null,
+        "overall": null,
+        "version": null,
+        "item_id": "67298908",
+        "finish": "PRISTINE HOLO",
+        "placeholder": false
+      }
     ]
   },
   "Season 1": {
     "previous": [
       {
-        "name": "Cucurella",
-        "overall": 88,
-        "version": "Destined for Glory",
-        "placeholder": false,
+        "name": "FC Coin",
+        "overall": null,
+        "version": null,
         "item_id": null,
-        "finish": "PRISTINE HOLO"
+        "finish": "UNKNOWN",
+        "placeholder": false
       },
       {
-        "name": "Harder",
-        "overall": 88,
-        "version": "Destined for Glory",
-        "placeholder": false,
+        "name": "FC Coin",
+        "overall": null,
+        "version": null,
         "item_id": null,
-        "finish": "PRISTINE HOLO"
+        "finish": "UNKNOWN",
+        "placeholder": false
       },
       {
-        "name": "Mora",
-        "overall": 87,
-        "version": "Future Stars",
-        "placeholder": false,
+        "name": "Gallery Token",
+        "overall": null,
+        "version": null,
         "item_id": null,
-        "finish": "HOLO"
+        "finish": "UNKNOWN",
+        "placeholder": false
       },
       {
-        "name": "Bonny",
-        "overall": 87,
-        "version": "Future Stars",
-        "placeholder": false,
+        "name": "FC Coin",
+        "overall": null,
+        "version": null,
         "item_id": null,
-        "finish": "HOLO"
+        "finish": "UNKNOWN",
+        "placeholder": false
       },
       {
-        "placeholder": true
-      },
-      {
-        "name": "Harder",
-        "overall": 88,
-        "version": "Destined for Glory",
-        "placeholder": false,
+        "name": "FC Coin",
+        "overall": null,
+        "version": null,
         "item_id": null,
-        "finish": "PRISTINE HOLO"
+        "finish": "UNKNOWN",
+        "placeholder": false
       },
       {
-        "name": "Undav",
-        "overall": 87,
-        "version": "Destined for Glory",
-        "placeholder": false,
+        "name": "Gallery Token",
+        "overall": null,
+        "version": null,
         "item_id": null,
-        "finish": "HOLO"
+        "finish": "UNKNOWN",
+        "placeholder": false
       },
       {
-        "placeholder": true
-      },
-      {
-        "placeholder": true
-      },
-      {
-        "name": "Yohannes",
-        "overall": 86,
-        "version": "Future Stars",
-        "placeholder": false,
+        "name": "FC Coin",
+        "overall": null,
+        "version": null,
         "item_id": null,
-        "finish": "HOLO"
+        "finish": "UNKNOWN",
+        "placeholder": false
+      },
+      {
+        "name": "FC Coin",
+        "overall": null,
+        "version": null,
+        "item_id": null,
+        "finish": "UNKNOWN",
+        "placeholder": false
+      },
+      {
+        "name": "Gallery Token",
+        "overall": null,
+        "version": null,
+        "item_id": null,
+        "finish": "UNKNOWN",
+        "placeholder": false
+      },
+      {
+        "name": "FC Coin",
+        "overall": null,
+        "version": null,
+        "item_id": null,
+        "finish": "UNKNOWN",
+        "placeholder": false
       }
     ],
     "current": [
