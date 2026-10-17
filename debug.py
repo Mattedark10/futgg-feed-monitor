@@ -1,12 +1,29 @@
+import re
 import requests
 from bs4 import BeautifulSoup
-import re
 
 
 PAGES = {
-    "HEROES": "https://www.fut.gg/fut-gallery/rarities/heroes/",
-    "SEASON 1": "https://www.fut.gg/fut-gallery/rarities/season-1/",
-    "HOLOGRAPHICS": "https://www.fut.gg/fut-gallery/rarities/holographics/",
+    "🦸 HEROES": {
+        "url": "https://www.fut.gg/fut-gallery/rarities/heroes/",
+        "name": "Heroes",
+        "expected": 5,
+        "grade": "A",
+    },
+
+    "🌈 HOLOGRAPHICS": {
+        "url": "https://www.fut.gg/fut-gallery/rarities/holographics/",
+        "name": "Holographics",
+        "expected": 5,
+        "grade": "S",
+    },
+
+    "🏆 SEASON 1": {
+        "url": "https://www.fut.gg/fut-gallery/rarities/season-1/",
+        "name": "Season 1",
+        "expected": 10,
+        "grade": "S",
+    },
 }
 
 
@@ -15,391 +32,403 @@ HEADERS = {
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
         "Chrome/140.0.0.0 Safari/537.36"
-    ),
-    "Accept": (
-        "text/html,application/xhtml+xml,"
-        "application/xml;q=0.9,image/avif,image/webp,"
-        "image/apng,*/*;q=0.8"
-    ),
-    "Accept-Language": "en-US,en;q=0.9",
+    )
 }
 
 
-CARD_PATTERN = re.compile(
-    r"^(.*?)\s*-\s*(\d{2,3})\s*-\s*(.+)$"
-)
+GRADE_ORDER = {
+    "D": 1,
+    "C": 2,
+    "B": 3,
+    "A": 4,
+    "S": 5,
+}
 
 
-def parse_card_alt(alt):
+def extract_object(text, start):
 
-    if not alt:
+    if start >= len(text) or text[start] != "{":
         return None
 
-    match = CARD_PATTERN.match(alt.strip())
+    depth = 0
+    string = False
+    escaped = False
+
+    for i in range(start, len(text)):
+
+        c = text[i]
+
+        if string:
+
+            if escaped:
+                escaped = False
+
+            elif c == "\\":
+                escaped = True
+
+            elif c == '"':
+                string = False
+
+            continue
+
+        if c == '"':
+            string = True
+
+        elif c == "{":
+            depth += 1
+
+        elif c == "}":
+
+            depth -= 1
+
+            if depth == 0:
+                return text[start:i + 1]
+
+    return None
+
+
+def extract_array(text, start):
+
+    if start >= len(text) or text[start] != "[":
+        return None
+
+    depth = 0
+    string = False
+    escaped = False
+
+    for i in range(start, len(text)):
+
+        c = text[i]
+
+        if string:
+
+            if escaped:
+                escaped = False
+
+            elif c == "\\":
+                escaped = True
+
+            elif c == '"':
+                string = False
+
+            continue
+
+        if c == '"':
+            string = True
+
+        elif c == "[":
+            depth += 1
+
+        elif c == "]":
+
+            depth -= 1
+
+            if depth == 0:
+                return text[start:i + 1]
+
+    return None
+
+
+def get_value(text, field):
+
+    pattern = re.compile(
+        rf"{re.escape(field)}\s*:\s*"
+        r'(?:"([^"]*)"|([0-9]+(?:\.[0-9]+)?)|null)'
+    )
+
+    match = pattern.search(text)
 
     if not match:
         return None
 
-    return {
-        "name": match.group(1).strip(),
-        "rating": int(match.group(2)),
-        "type": match.group(3).strip(),
-    }
+    if match.group(1) is not None:
+        return match.group(1)
 
+    if match.group(2) is not None:
+        return match.group(2)
 
-def inspect_card(img, number):
-
-    parsed = parse_card_alt(img.get("alt"))
-
-    print()
-    print("=" * 100)
-    print(f"CARD #{number}")
-    print("=" * 100)
-
-    print("PARSED:")
-    print(parsed)
-
-    print()
-    print("ALT:")
-    print(repr(img.get("alt")))
-
-    print()
-    print("SRC:")
-    print(repr(img.get("src")))
-
-    print()
-    print("ALL IMG ATTRIBUTES:")
-
-    for key, value in img.attrs.items():
-        print(f"{key} = {value!r}")
-
-    print()
-    print("PARENT CHAIN:")
-
-    current = img
-
-    for level in range(1, 7):
-
-        current = current.parent
-
-        if not current:
-            break
-
-        print()
-        print(f"--- LEVEL {level}: <{current.name}> ---")
-        print("ATTRIBUTES:")
-        print(current.attrs)
-
-        html = str(current)
-
-        if len(html) > 6000:
-            html = html[:6000] + "\n...[TRUNCATED]..."
-
-        print("HTML:")
-        print(html)
-
-
-def debug_page(page_name, url):
-
-    print()
-    print("#" * 110)
-    print(page_name)
-    print(url)
-    print("#" * 110)
-
-    try:
-
-        response = requests.get(
-            url,
-            headers=HEADERS,
-            timeout=30
-        )
-
-        print("HTTP STATUS:", response.status_code)
-        print("HTML LENGTH:", len(response.text))
-
-        response.raise_for_status()
-
-    except Exception as e:
-
-        print("REQUEST ERROR:")
-        print(repr(e))
-        return
-
-    soup = BeautifulSoup(
-        response.text,
-        "html.parser"
-    )
-
-    # ============================================================
-    # FIND LINEUP
-    # ============================================================
-
-    print()
-    print("=" * 110)
-    print("FINDING LINEUP")
-    print("=" * 110)
-
-    lineup = soup.find(
-        attrs={
-            "aria-label": "Lineup"
-        }
-    )
-
-    if not lineup:
-
-        print("❌ LINEUP NOT FOUND")
-
-        return
-
-    print("✅ LINEUP FOUND")
-
-    print()
-    print("LINEUP TAG:")
-    print(lineup.name)
-
-    print()
-    print("LINEUP ATTRIBUTES:")
-    print(lineup.attrs)
-
-    # ============================================================
-    # ALL IMAGES INSIDE LINEUP
-    # ============================================================
-
-    images = lineup.find_all("img")
-
-    print()
-    print("=" * 110)
-    print("IMAGES INSIDE LINEUP")
-    print("=" * 110)
-
-    print("TOTAL IMAGES:", len(images))
-
-    cards = []
-
-    for img in images:
-
-        parsed = parse_card_alt(
-            img.get("alt")
-        )
-
-        if parsed:
-
-            cards.append(
-                (
-                    img,
-                    parsed
-                )
-            )
-
-    print()
-    print("CARD-LIKE IMAGES:", len(cards))
-
-    for number, (img, parsed) in enumerate(
-        cards,
-        start=1
-    ):
-
-        print()
-        print(
-            f"{number}. "
-            f"{parsed['name']} | "
-            f"{parsed['rating']} | "
-            f"{parsed['type']}"
-        )
-
-        print(
-            "ALT:",
-            repr(img.get("alt"))
-        )
-
-        print(
-            "SRC:",
-            repr(img.get("src"))
-        )
-
-    # ============================================================
-    # EXPECTED NUMBER
-    # ============================================================
-
-    expected = {
-        "HEROES": 5,
-        "SEASON 1": 10,
-        "HOLOGRAPHICS": 5,
-    }
-
-    wanted = expected.get(page_name)
-
-    print()
-    print("=" * 110)
-    print("COUNT CHECK")
-    print("=" * 110)
-
-    print("EXPECTED:", wanted)
-    print("FOUND:", len(cards))
-
-    if wanted == len(cards):
-
-        print("✅ CORRECT NUMBER")
-
-    else:
-
-        print("❌ WRONG NUMBER")
-
-    # ============================================================
-    # SEARCH NAMES IN WHOLE HTML
-    # ============================================================
-
-    print()
-    print("=" * 110)
-    print("SEARCHING IMPORTANT PLAYERS IN RAW HTML")
-    print("=" * 110)
-
-    important_names = [
-        "Jacobo Ramón",
-        "Nico Paz",
-        "Cucurella",
-        "Harder",
-        "Mora",
-        "Bonny",
-        "Undav",
-        "Bischof",
-        "Yohannes",
-        "Šašić",
-        "Litmanen",
-        "Mascherano",
-        "Milito",
-        "Angerer",
-        "Prinz",
-        "Baresi",
-        "Foudy",
-        "Moore",
-    ]
-
-    raw = response.text
-
-    for name in important_names:
-
-        if name.lower() in raw.lower():
-
-            print("FOUND:", name)
-
-        else:
-
-            print("NOT FOUND:", name)
-
-    # ============================================================
-    # HOLOGRAPHIC DATA
-    # ============================================================
-
-    print()
-    print("=" * 110)
-    print("HOLOGRAPHIC / HOLO DATA")
-    print("=" * 110)
-
-    patterns = [
-        "holographic",
-        "holo",
-        "pristine",
-        "regular",
-        "rarity",
-        "itemType",
-        "cardType",
-        "version",
-    ]
-
-    for pattern in patterns:
-
-        matches = list(
-            re.finditer(
-                re.escape(pattern),
-                raw,
-                re.IGNORECASE
-            )
-        )
-
-        print(
-            f"{pattern}: {len(matches)} occurrences"
-        )
-
-        for match in matches[:3]:
-
-            start = max(
-                0,
-                match.start() - 250
-            )
-
-            end = min(
-                len(raw),
-                match.end() + 500
-            )
-
-            print()
-            print(
-                raw[start:end]
-            )
-
-    # ============================================================
-    # FULL LINEUP HTML
-    # ============================================================
-
-    print()
-    print("=" * 110)
-    print("LINEUP HTML")
-    print("=" * 110)
-
-    lineup_html = str(lineup)
-
-    print(
-        "LINEUP HTML LENGTH:",
-        len(lineup_html)
-    )
-
-    if len(lineup_html) > 30000:
-
-        print(
-            lineup_html[:30000]
-        )
-
-        print()
-        print("...[LINEUP HTML TRUNCATED]...")
-
-    else:
-
-        print(lineup_html)
-
-    # ============================================================
-    # DEEP INSPECTION
-    # ============================================================
-
-    print()
-    print("=" * 110)
-    print("DEEP CARD INSPECTION")
-    print("=" * 110)
-
-    for number, (img, parsed) in enumerate(
-        cards,
-        start=1
-    ):
-
-        inspect_card(
-            img,
-            number
-        )
+    return None
 
 
 def main():
 
-    print()
-    print("FUT.GG LINEUP DEBUGGER")
-    print("======================")
+    for category, page in PAGES.items():
 
-    for page_name, url in PAGES.items():
+        print()
+        print("=" * 70)
+        print(category)
+        print(page["url"])
+        print("=" * 70)
 
-        debug_page(
-            page_name,
-            url
+        try:
+
+            response = requests.get(
+                page["url"],
+                headers=HEADERS,
+                timeout=40
+            )
+
+            response.raise_for_status()
+
+        except Exception as error:
+
+            print(
+                "❌ REQUEST ERROR:",
+                error
+            )
+
+            continue
+
+        source = response.text
+
+        print(
+            f"HTML size: {len(source):,} characters"
         )
+
+        # ----------------------------------------------------
+        # FIND ALL $R OBJECTS
+        # ----------------------------------------------------
+
+        objects = {}
+
+        pattern = re.compile(
+            r"\$R\[(\d+)\]\s*=\s*\{"
+        )
+
+        for match in pattern.finditer(source):
+
+            ref = int(match.group(1))
+
+            obj = extract_object(
+                source,
+                match.end() - 1
+            )
+
+            if obj:
+                objects[ref] = obj
+
+        print(
+            f"RSC objects found: {len(objects)}"
+        )
+
+        # ----------------------------------------------------
+        # FIND SOLUTIONS
+        # ----------------------------------------------------
+
+        solutions = []
+
+        solution_pattern = re.compile(
+            r"solution\s*:\s*\$R\[(\d+)\]\s*=\s*\{"
+        )
+
+        for match in solution_pattern.finditer(
+            source
+        ):
+
+            ref = int(match.group(1))
+
+            obj = objects.get(ref)
+
+            if not obj:
+                continue
+
+            name = get_value(
+                obj,
+                "name"
+            )
+
+            grade = get_value(
+                obj,
+                "grade"
+            )
+
+            required = get_value(
+                obj,
+                "requiredCards"
+            )
+
+            if name != page["name"]:
+                continue
+
+            items_match = re.search(
+                r"items\s*:\s*"
+                r"(?:\$R\[\d+\]\s*=\s*)?\[",
+                obj
+            )
+
+            item_refs = []
+
+            if items_match:
+
+                array_start = obj.find(
+                    "[",
+                    items_match.start()
+                )
+
+                array = extract_array(
+                    obj,
+                    array_start
+                )
+
+                if array:
+
+                    item_refs = [
+                        int(x)
+                        for x in re.findall(
+                            r"\$R\[(\d+)\]",
+                            array
+                        )
+                    ]
+
+            solutions.append({
+                "ref": ref,
+                "name": name,
+                "grade": grade,
+                "required": required,
+                "items": item_refs,
+            })
+
+        if not solutions:
+
+            print(
+                "❌ Nessuna solution trovata."
+            )
+
+            continue
+
+        # ----------------------------------------------------
+        # PRINT SOLUTIONS
+        # ----------------------------------------------------
+
+        print()
+        print("SOLUTIONS FOUND:")
+
+        for solution in solutions:
+
+            print(
+                f"  Grade {solution['grade']} "
+                f"→ {len(solution['items'])} cards "
+                f"(required: "
+                f"{solution['required']})"
+            )
+
+        # ----------------------------------------------------
+        # BEST
+        # ----------------------------------------------------
+
+        solutions.sort(
+            key=lambda x: GRADE_ORDER.get(
+                str(x["grade"]).upper(),
+                0
+            ),
+            reverse=True
+        )
+
+        best = solutions[0]
+
+        print()
+        print(
+            "⭐ BEST SOLUTION"
+        )
+
+        print(
+            f"Grade: {best['grade']}"
+        )
+
+        print(
+            f"Expected: {page['grade']}"
+        )
+
+        print(
+            f"Cards: {len(best['items'])}"
+        )
+
+        print(
+            f"Expected cards: {page['expected']}"
+        )
+
+        # ----------------------------------------------------
+        # CARD DETAILS
+        # ----------------------------------------------------
+
+        print()
+        print("CARDS:")
+
+        for index, item_ref in enumerate(
+            best["items"],
+            start=1
+        ):
+
+            obj = objects.get(
+                item_ref
+            )
+
+            if not obj:
+
+                print(
+                    f"{index}. ❌ "
+                    f"$R[{item_ref}] not found"
+                )
+
+                continue
+
+            ea_id = get_value(
+                obj,
+                "eaId"
+            )
+
+            player_ea_id = get_value(
+                obj,
+                "playerEaId"
+            )
+
+            overall = get_value(
+                obj,
+                "overall"
+            )
+
+            rarity = get_value(
+                obj,
+                "rarityEaId"
+            )
+
+            price = get_value(
+                obj,
+                "price"
+            )
+
+            print(
+                f"{index}. "
+                f"eaId={ea_id} | "
+                f"playerEaId={player_ea_id} | "
+                f"OVR={overall} | "
+                f"rarityEaId={rarity} | "
+                f"price={price}"
+            )
+
+        # ----------------------------------------------------
+        # FINAL CHECK
+        # ----------------------------------------------------
+
+        print()
+
+        if (
+            best["grade"] == page["grade"]
+            and
+            len(best["items"]) == page["expected"]
+        ):
+
+            print(
+                "✅ DEBUG PASSED"
+            )
+
+        else:
+
+            print(
+                "❌ DEBUG FAILED"
+            )
+
+        print()
 
 
 if __name__ == "__main__":
