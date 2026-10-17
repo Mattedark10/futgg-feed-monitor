@@ -1,19 +1,39 @@
 import os
 import re
 import json
-import html
+import time
+from datetime import datetime
+from collections import Counter
+from html import escape
+
 import requests
 from bs4 import BeautifulSoup
-from collections import Counter
-from datetime import datetime, timezone
 
 
 # ============================================================
 # CONFIG
 # ============================================================
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+PLAYERS_FILE = os.path.join(BASE_DIR, "players.json")
+DATABASE_FILE = os.path.join(BASE_DIR, "card_database.json")
+
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (X11; Linux x86_64) "
+        "AppleWebKit/537.36 "
+        "(KHTML, like Gecko) "
+        "Chrome/140.0 Safari/537.36"
+    ),
+    "Accept-Language": "en-US,en;q=0.9",
+}
+
+TIMEOUT = 30
+
 
 CATEGORIES = {
     "Heroes": {
@@ -33,39 +53,25 @@ CATEGORIES = {
     },
 }
 
-PLAYERS_FILE = "players.json"
-DATABASE_FILE = "card_database.json"
-
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/140.0 Safari/537.36"
-    ),
-    "Accept-Language": "en-US,en;q=0.9",
-}
-
 
 # ============================================================
 # KNOWN FINISHES
 # ============================================================
 #
-# Questi sono finish già identificati in precedenza.
+# Questi sono gli ID che abbiamo già verificato.
 #
 # IMPORTANTE:
-# Non vengono usati per inventare nuovi finish.
-# Servono solo come base iniziale del database.
+# Non usiamo più "UNKNOWN -> BASE".
+# Se un ID non è nel database, rimane UNKNOWN.
 #
+# ============================================================
 
 KNOWN_FINISHES = {
+    # PRISTINE HOLO
     "67335170": "PRISTINE HOLO",
     "67114537": "PRISTINE HOLO",
     "67335237": "PRISTINE HOLO",
     "67371135": "PRISTINE HOLO",
-
-    "226306": "BASE",
-    "233700": "BASE",
-
     "67186651": "PRISTINE HOLO",
     "67335157": "PRISTINE HOLO",
     "67384140": "PRISTINE HOLO",
@@ -75,6 +81,7 @@ KNOWN_FINISHES = {
     "67348095": "PRISTINE HOLO",
     "67368151": "PRISTINE HOLO",
 
+    # HOLO
     "67179830": "HOLO",
     "67188263": "HOLO",
     "67368429": "HOLO",
@@ -83,54 +90,34 @@ KNOWN_FINISHES = {
     "67386815": "HOLO",
     "67374557": "HOLO",
 
+    # BASE
+    "226306": "BASE",
+    "233700": "BASE",
     "50590935": "BASE",
 }
 
 
 # ============================================================
-# HELPERS
+# BASIC FILE HELPERS
 # ============================================================
 
-def safe_int(value):
+def load_json(path, default):
     try:
-        return int(str(value))
-    except Exception:
-        return None
+        if not os.path.exists(path):
+            return default
 
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
 
-def normalize_text(value):
-    if value is None:
-        return ""
+    except Exception as e:
+        print(f"Error loading {path}: {e}")
+        return default
 
-    value = html.unescape(str(value))
-    value = value.replace("\xa0", " ")
-    value = re.sub(r"\s+", " ", value)
-
-    return value.strip()
-
-
-def normalize_name(value):
-    return normalize_text(value).casefold()
-
-
-def player_key(name, overall, version):
-    return (
-        f"{normalize_name(name)}|"
-        f"{safe_int(overall) or 0}|"
-        f"{normalize_text(version).casefold()}"
-    )
-
-
-# ============================================================
-# JSON
-# ============================================================
 
 def save_json(path, data):
-    with open(
-        path,
-        "w",
-        encoding="utf-8"
-    ) as f:
+    temp_path = path + ".tmp"
+
+    with open(temp_path, "w", encoding="utf-8") as f:
         json.dump(
             data,
             f,
@@ -138,177 +125,1106 @@ def save_json(path, data):
             indent=2
         )
 
+    os.replace(temp_path, path)
+
+
+# ============================================================
+# PLAYERS
+# ============================================================
 
 def load_players():
+    data = load_json(
+        PLAYERS_FILE,
+        {}
+    )
 
-    default_data = {
-        "Heroes": {
-            "current": [],
-            "previous": [],
-        },
-        "Holographics": {
-            "current": [],
-            "previous": [],
-        },
-        "Season 1": {
-            "current": [],
-            "previous": [],
-        },
-    }
+    # Vecchia struttura:
+    #
+    # "Heroes": [...]
+    #
+    # viene convertita in:
+    #
+    # "Heroes": {
+    #   "current": [...],
+    #   "previous": [...]
+    # }
 
-    if not os.path.exists(
-        PLAYERS_FILE
-    ):
-        return default_data
+    if isinstance(data, list):
+        data = {}
+
+    if not isinstance(data, dict):
+        data = {}
+
+    for category in CATEGORIES:
+        value = data.get(category)
+
+        if isinstance(value, list):
+            data[category] = {
+                "current": value,
+                "previous": []
+            }
+
+        elif not isinstance(value, dict):
+            data[category] = {
+                "current": [],
+                "previous": []
+            }
+
+        else:
+            if not isinstance(value.get("current"), list):
+                value["current"] = []
+
+            if not isinstance(value.get("previous"), list):
+                value["previous"] = []
+
+    return data
+
+
+# ============================================================
+# CARD DATABASE
+# ============================================================
+
+def load_database():
+    data = load_json(
+        DATABASE_FILE,
+        {}
+    )
+
+    if not isinstance(data, dict):
+        data = {}
+
+    if not isinstance(data.get("items"), dict):
+        data["items"] = {}
+
+    if not isinstance(data.get("players"), dict):
+        data["players"] = {}
+
+    if not isinstance(data.get("meta"), dict):
+        data["meta"] = {}
+
+    return data
+
+
+def save_database(database):
+    database.setdefault("meta", {})
+    database["meta"]["last_update"] = datetime.utcnow().isoformat()
+
+    save_json(
+        DATABASE_FILE,
+        database
+    )
+
+
+def seed_known_finishes(database):
+    """
+    Inserisce gli ID già conosciuti.
+
+    NON sovrascrive un finish già presente.
+    """
+
+    database.setdefault("items", {})
+
+    added = 0
+
+    for item_id, finish in KNOWN_FINISHES.items():
+
+        item_id = str(item_id)
+
+        if item_id not in database["items"]:
+            database["items"][item_id] = {
+                "finish": finish,
+                "source": "known"
+            }
+            added += 1
+
+    if added:
+        print(
+            f"Known card finishes added to database: {added}"
+        )
+    else:
+        print("Known card finishes already in database.")
+
+
+# ============================================================
+# HTTP
+# ============================================================
+
+def fetch_page(url):
+    print(f"Fetching: {url}")
+
+    response = requests.get(
+        url,
+        headers=HEADERS,
+        timeout=TIMEOUT
+    )
+
+    print(
+        f"HTTP status: {response.status_code}"
+    )
+
+    print(
+        f"Downloaded: {len(response.text)} characters"
+    )
+
+    response.raise_for_status()
+
+    return response.text
+
+
+# ============================================================
+# ITEM ID EXTRACTION
+# ============================================================
+
+def extract_item_ids_from_text(text):
+    """
+    Estrae esclusivamente gli Item ID dagli URL FUT.GG.
+
+    Esempio:
+
+    .../futgg-player-item-card/27-67335170....
+
+    -> 67335170
+
+    Accettiamo anche ID corti come:
+
+    .../27-5673....
+
+    -> 5673
+    """
+
+    if not text:
+        return set()
+
+    pattern = re.compile(
+        r"futgg-player-item-card/27-(\d+)",
+        re.IGNORECASE
+    )
+
+    return set(
+        pattern.findall(text)
+    )
+
+
+def extract_item_id_from_image(img):
+    """
+    Cerca l'Item ID in tutti gli attributi dell'immagine.
+    """
+
+    if not img:
+        return None
+
+    values = []
+
+    for key, value in img.attrs.items():
+
+        if isinstance(value, list):
+            values.extend(
+                str(x) for x in value
+            )
+        else:
+            values.append(
+                str(value)
+            )
+
+    pattern = re.compile(
+        r"futgg-player-item-card/27-(\d+)",
+        re.IGNORECASE
+    )
+
+    for value in values:
+
+        match = pattern.search(value)
+
+        if match:
+            return match.group(1)
+
+    # Fallback sull'intero tag
+
+    raw = str(img)
+
+    match = pattern.search(raw)
+
+    if match:
+        return match.group(1)
+
+    return None
+
+
+# ============================================================
+# PLAYER KEY
+# ============================================================
+
+def normalize_text(value):
+    if value is None:
+        return ""
+
+    return str(value).strip().lower()
+
+
+def player_key(name, overall, version):
+    return "|".join([
+        normalize_text(name),
+        normalize_text(overall),
+        normalize_text(version),
+    ])
+
+
+# ============================================================
+# CARD KEY
+# ============================================================
+
+def card_key(card):
+    """
+    L'Item ID è la vera identità della carta.
+
+    Questo permette di mantenere due Harder distinti,
+    due Šašić distinti ecc.
+    """
+
+    item_id = str(
+        card.get("item_id") or ""
+    ).strip()
+
+    if item_id:
+        return f"item:{item_id}"
+
+    return (
+        "player:"
+        + player_key(
+            card.get("name"),
+            card.get("overall"),
+            card.get("version")
+        )
+    )
+
+
+# ============================================================
+# FINISH RESOLUTION
+# ============================================================
+
+def get_finish(
+    item_id,
+    name=None,
+    overall=None,
+    version=None,
+    previous_card=None,
+    database=None
+):
+    """
+    Determina il finish.
+
+    ORDINE:
+
+    1. Item ID nel database
+    2. Item ID nei known finishes
+    3. finish della carta precedente
+    4. player database
+    5. UNKNOWN
+
+    MAI:
+        sconosciuto -> BASE
+    """
+
+    database = database or {}
+
+    items = database.get(
+        "items",
+        {}
+    )
+
+    players = database.get(
+        "players",
+        {}
+    )
+
+    item_id = str(
+        item_id or ""
+    ).strip()
+
+    # --------------------------------------------------------
+    # 1. DATABASE ITEM ID
+    # --------------------------------------------------------
+
+    if item_id:
+
+        record = items.get(item_id)
+
+        if isinstance(record, dict):
+
+            finish = record.get("finish")
+
+            if finish in {
+                "BASE",
+                "HOLO",
+                "PRISTINE HOLO"
+            }:
+                return finish
+
+        # Known finishes fallback
+
+        known = KNOWN_FINISHES.get(item_id)
+
+        if known:
+            return known
+
+    # --------------------------------------------------------
+    # 2. PREVIOUS CARD
+    # --------------------------------------------------------
+
+    if previous_card:
+
+        previous_finish = previous_card.get(
+            "finish"
+        )
+
+        if previous_finish in {
+            "BASE",
+            "HOLO",
+            "PRISTINE HOLO"
+        }:
+            return previous_finish
+
+    # --------------------------------------------------------
+    # 3. PLAYER DATABASE
+    # --------------------------------------------------------
+
+    pkey = player_key(
+        name,
+        overall,
+        version
+    )
+
+    record = players.get(pkey)
+
+    if isinstance(record, dict):
+
+        finish = record.get(
+            "finish"
+        )
+
+        if finish in {
+            "BASE",
+            "HOLO",
+            "PRISTINE HOLO"
+        }:
+            return finish
+
+    # --------------------------------------------------------
+    # 4. UNKNOWN
+    # --------------------------------------------------------
+
+    return "UNKNOWN"
+
+
+# ============================================================
+# HOLOGRAPHIC DATABASE
+# ============================================================
+
+def scan_holographic_database(database):
+    """
+    Aggiorna il database degli Item ID Holo.
+
+    ATTENZIONE:
+
+    La pagina FUT.GG può cambiare struttura.
+    Se non troviamo ID, NON cancelliamo il database
+    precedente e NON trasformiamo gli ID in BASE.
+    """
+
+    print("\n" + "=" * 60)
+    print("Updating Holographic database")
+    print("=" * 60)
+
+    pristine_url = (
+        "https://www.fut.gg/holographic-cards/?finish=pristine"
+    )
+
+    holo_url = (
+        "https://www.fut.gg/holographic-cards/?finish=holographic"
+    )
+
+    pristine_ids = set()
+    holo_ids = set()
+
+    # --------------------------------------------------------
+    # PRISTINE
+    # --------------------------------------------------------
+
+    print("\nScanning PRISTINE HOLO...")
 
     try:
-        with open(
-            PLAYERS_FILE,
-            "r",
-            encoding="utf-8"
-        ) as f:
-            data = json.load(f)
+        html = fetch_page(
+            pristine_url
+        )
+
+        pristine_ids = extract_item_ids_from_text(
+            html
+        )
+
+        print(
+            f"  Records found on page: "
+            f"{len(pristine_ids)}"
+        )
 
     except Exception as e:
 
         print(
-            f"WARNING: Could not read "
-            f"{PLAYERS_FILE}: {e}"
+            f"  Error scanning pristine: {e}"
         )
 
-        return default_data
-
     # --------------------------------------------------------
-    # NORMAL DICT
+    # HOLO
     # --------------------------------------------------------
 
-    if isinstance(data, dict):
+    print("\nScanning HOLO...")
 
-        for category in default_data:
+    try:
+        html = fetch_page(
+            holo_url
+        )
 
-            if category not in data:
-
-                data[category] = {
-                    "current": [],
-                    "previous": [],
-                }
-
-                continue
-
-            # Old format:
-            #
-            # "Heroes": [...]
-            #
-            if isinstance(
-                data[category],
-                list
-            ):
-
-                data[category] = {
-                    "current": data[category],
-                    "previous": [],
-                }
-
-            elif not isinstance(
-                data[category],
-                dict
-            ):
-
-                data[category] = {
-                    "current": [],
-                    "previous": [],
-                }
-
-            data[category].setdefault(
-                "current",
-                []
-            )
-
-            data[category].setdefault(
-                "previous",
-                []
-            )
-
-        return data
-
-    # --------------------------------------------------------
-    # ENTIRE FILE IS A LIST
-    # --------------------------------------------------------
-
-    if isinstance(data, list):
-
-        print(
-            "WARNING: players.json is "
-            "a list."
+        holo_ids = extract_item_ids_from_text(
+            html
         )
 
         print(
-            "Migrating to new structure..."
+            f"  Records found on page: "
+            f"{len(holo_ids)}"
         )
 
-        return {
-            "Heroes": {
-                "current": data,
-                "previous": [],
-            },
-            "Holographics": {
-                "current": [],
-                "previous": [],
-            },
-            "Season 1": {
-                "current": [],
-                "previous": [],
-            },
+    except Exception as e:
+
+        print(
+            f"  Error scanning holo: {e}"
+        )
+
+    # --------------------------------------------------------
+    # UPDATE DATABASE
+    # --------------------------------------------------------
+
+    database.setdefault(
+        "items",
+        {}
+    )
+
+    for item_id in pristine_ids:
+
+        database["items"][
+            str(item_id)
+        ] = {
+            "finish": "PRISTINE HOLO",
+            "source": "FUT.GG"
+        }
+
+    for item_id in holo_ids:
+
+        item_id = str(item_id)
+
+        # Pristine ha precedenza
+        if item_id in pristine_ids:
+            continue
+
+        database["items"][
+            item_id
+        ] = {
+            "finish": "HOLO",
+            "source": "FUT.GG"
         }
 
     print(
-        "WARNING: Invalid players.json."
+        f"\nHolographic records discovered: "
+        f"{len(pristine_ids) + len(holo_ids)}"
     )
 
-    return default_data
+    print(
+        f"Database items: "
+        f"{len(database['items'])}"
+    )
+
+    print(
+        f"Database players: "
+        f"{len(database.get('players', {}))}"
+    )
+
+    return database
 
 
-def load_database():
+# ============================================================
+# ALT PARSING
+# ============================================================
 
-    default_database = {
-        "items": {},
-        "players": {},
-        "meta": {
-            "version": 1,
-            "source": "FUT.GG",
-            "last_update": None,
-        },
-    }
+def parse_image_info(img):
+    """
+    Cerca di ricavare nome / overall / version dall'immagine.
+    """
 
-    if not os.path.exists(
-        DATABASE_FILE
+    alt = (
+        img.get("alt")
+        or img.get("title")
+        or ""
+    ).strip()
+
+    name = None
+    overall = None
+    version = None
+
+    if alt:
+
+        parts = [
+            x.strip()
+            for x in re.split(
+                r"\s+-\s+",
+                alt
+            )
+            if x.strip()
+        ]
+
+        if len(parts) >= 1:
+            name = parts[0]
+
+        if len(parts) >= 2:
+
+            try:
+                overall = int(
+                    re.sub(
+                        r"\D",
+                        "",
+                        parts[1]
+                    )
+                )
+
+            except Exception:
+                overall = None
+
+        if len(parts) >= 3:
+
+            version = " - ".join(
+                parts[2:]
+            )
+
+    # Fallback: cerchiamo il nome dal testo vicino
+    if not name:
+
+        parent = img.parent
+
+        if parent:
+
+            text = parent.get_text(
+                " ",
+                strip=True
+            )
+
+            # Alcuni layout FUT.GG hanno:
+            # Name 89 Version
+
+            match = re.search(
+                r"([A-Za-zÀ-ÿŠšŽžĆćĐđÄäÖöÜüß'’\-]+)"
+                r"\s+(\d{2})",
+                text
+            )
+
+            if match:
+
+                name = match.group(1)
+
+                try:
+                    overall = int(
+                        match.group(2)
+                    )
+                except Exception:
+                    overall = None
+
+    return name, overall, version
+
+
+# ============================================================
+# PLACEHOLDER
+# ============================================================
+
+def is_placeholder(img):
+    """
+    Determina se l'immagine è un Player Card vuoto.
+    """
+
+    raw = str(img).lower()
+
+    if "player card" in raw:
+        return True
+
+    alt = (
+        img.get("alt")
+        or ""
+    ).lower()
+
+    if alt.strip() == "player card":
+        return True
+
+    return False
+
+
+# ============================================================
+# FIND CHEAPEST LINEUP
+# ============================================================
+
+def find_lineup_container(soup, expected_slots):
+    """
+    Trova il contenitore della sezione
+    'Cheapest grade ... lineup'.
+
+    Usiamo il testo per evitare di prendere immagini
+    appartenenti alle altre sezioni della pagina.
+    """
+
+    candidates = []
+
+    # Cerchiamo elementi che contengono "Cheapest grade"
+
+    for element in soup.find_all(
+        string=re.compile(
+            r"Cheapest grade",
+            re.IGNORECASE
+        )
     ):
-        return default_database
 
-    try:
+        parent = element.parent
 
-        with open(
-            DATABASE_FILE,
-            "r",
-            encoding="utf-8"
-        ) as f:
-            database = json.load(f)
+        if not parent:
+            continue
 
-    except Exception as e:
+        # Proviamo vari livelli superiori
+
+        current = parent
+
+        for _ in range(7):
+
+            if not current:
+                break
+
+            images = current.find_all(
+                "img"
+            )
+
+            if len(images) >= expected_slots:
+
+                candidates.append(
+                    current
+                )
+
+            current = current.parent
+
+    if not candidates:
+        return None
+
+    # Preferiamo il contenitore più piccolo
+    # che contiene abbastanza immagini.
+
+    candidates.sort(
+        key=lambda x: (
+            len(x.find_all("img")),
+            len(str(x))
+        )
+    )
+
+    return candidates[0]
+
+
+# ============================================================
+# EXTRACT LINEUP
+# ============================================================
+
+def extract_lineup(
+    html,
+    expected_slots,
+    database,
+    previous
+):
+    soup = BeautifulSoup(
+        html,
+        "html.parser"
+    )
+
+    container = find_lineup_container(
+        soup,
+        expected_slots
+    )
+
+    if not container:
 
         print(
-            f"WARNING: Could not read "
-            f"{DATABASE_FILE}: {e}"
+            "WARNING: Cheapest grade lineup "
+            "container not found."
         )
 
-        return default_database
+        return []
 
-    if not isinstance(
+    images = container.find_all(
+        "img"
+    )
+
+    print(
+        f"Images/cards detected in selected "
+        f"container: {len(images)}"
+    )
+
+    cards = []
+
+    previous_by_item = {}
+
+    for card in previous:
+
+        item_id = str(
+            card.get("item_id") or ""
+        ).strip()
+
+        if item_id:
+            previous_by_item[
+                item_id
+            ] = card
+
+    for img in images:
+
+        # ----------------------------------------------------
+        # PLACEHOLDER
+        # ----------------------------------------------------
+
+        if is_placeholder(img):
+            continue
+
+        # ----------------------------------------------------
+        # ITEM ID
+        # ----------------------------------------------------
+
+        item_id = extract_item_id_from_image(
+            img
+        )
+
+        # ----------------------------------------------------
+        # INFO
+        # ----------------------------------------------------
+
+        name, overall, version = parse_image_info(
+            img
+        )
+
+        # Se non abbiamo nemmeno il nome,
+        # probabilmente non è una card reale.
+
+        if not name:
+            continue
+
+        # ----------------------------------------------------
+        # PREVIOUS
+        # ----------------------------------------------------
+
+        previous_card = None
+
+        if item_id:
+            previous_card = previous_by_item.get(
+                str(item_id)
+            )
+
+        # ----------------------------------------------------
+        # FINISH
+        # ----------------------------------------------------
+
+        finish = get_finish(
+            item_id=item_id,
+            name=name,
+            overall=overall,
+            version=version,
+            previous_card=previous_card,
+            database=database
+        )
+
+        card = {
+            "name": name,
+            "overall": overall,
+            "version": version,
+            "item_id": item_id,
+            "finish": finish,
+            "placeholder": False
+        }
+
+        cards.append(card)
+
+    # --------------------------------------------------------
+    # LIMIT TO EXPECTED SLOTS
+    # --------------------------------------------------------
+
+    if len(cards) > expected_slots:
+        cards = cards[:expected_slots]
+
+    print(
+        f"Rendered lineup: "
+        f"{len(cards)}/{expected_slots} real cards"
+    )
+
+    for card in cards:
+
+        print(
+            f"- {card.get('name')} "
+            f"{card.get('overall')} "
+            f"{card.get('version')} "
+            f"— ItemID {card.get('item_id')} "
+            f"— {card.get('finish')}"
+        )
+
+    return cards
+
+
+# ============================================================
+# SCAN CATEGORY
+# ============================================================
+
+def scan_category(
+    category,
+    config,
+    database,
+    players
+):
+    print(
+        f"\nChecking {config['emoji']} "
+        f"{category.upper()} "
+        f"({config['slots']} players)..."
+    )
+
+    print("=" * 60)
+
+    html = fetch_page(
+        config["url"]
+    )
+
+    # --------------------------------------------------------
+    # CHEAPEST GRADE INFO
+    # --------------------------------------------------------
+
+    matches = re.findall(
+        r"Cheapest grade",
+        html,
+        re.IGNORECASE
+    )
+
+    print(
+        f"Cheapest grade matches found: "
+        f"{len(matches)}"
+    )
+
+    previous = players[category].get(
+        "current",
+        []
+    )
+
+    lineup = extract_lineup(
+        html,
+        config["slots"],
         database,
-        dict
-    ):
-        return default_database
+        previous
+    )
 
+    # --------------------------------------------------------
+    # SAFETY
+    # --------------------------------------------------------
+
+    if not lineup:
+
+        print(
+            "WARNING: No valid lineup detected."
+        )
+
+        print(
+            "Previous state kept."
+        )
+
+        return previous, False
+
+    # Se abbiamo trovato meno card del previsto,
+    # non sovrascriviamo la lineup completa con dati
+    # probabilmente incompleti.
+
+    if len(lineup) < config["slots"]:
+
+        print(
+            f"WARNING: Only {len(lineup)}/"
+            f"{config['slots']} cards detected."
+        )
+
+        # Season 1 può avere Player Card placeholder,
+        # quindi una lineup incompleta può essere valida.
+        #
+        # Per Heroes/Holographics invece preferiamo
+        # mantenere lo stato precedente se manca una card.
+
+        if category != "Season 1" and previous:
+
+            print(
+                "Previous state kept."
+            )
+
+            return previous, False
+
+    return lineup, True
+
+
+# ============================================================
+# OCCURRENCE ID
+# ============================================================
+
+def occurrence_identity(card):
+    """
+    L'Item ID identifica la singola carta.
+
+    Se manca, usiamo un fallback.
+    """
+
+    item_id = str(
+        card.get("item_id") or ""
+    ).strip()
+
+    if item_id:
+        return f"item:{item_id}"
+
+    return (
+        "fallback:"
+        + player_key(
+            card.get("name"),
+            card.get("overall"),
+            card.get("version")
+        )
+    )
+
+
+# ============================================================
+# CHANGE DETECTION
+# ============================================================
+
+def detect_changes(previous, current):
+    """
+    Confronta le OCCORRENZE.
+
+    Importante:
+    due Harder con Item ID diversi sono due carte diverse.
+    """
+
+    old_counter = Counter(
+        occurrence_identity(card)
+        for card in previous
+    )
+
+    new_counter = Counter(
+        occurrence_identity(card)
+        for card in current
+    )
+
+    out_cards = []
+    in_cards = []
+
+    # --------------------------------------------------------
+    # OUT
+    # --------------------------------------------------------
+
+    for key, old_count in old_counter.items():
+
+        new_count = new_counter.get(
+            key,
+            0
+        )
+
+        difference = old_count - new_count
+
+        if difference <= 0:
+            continue
+
+        matches = [
+            card
+            for card in previous
+            if occurrence_identity(card) == key
+        ]
+
+        for card in matches[:difference]:
+            out_cards.append(card)
+
+    # --------------------------------------------------------
+    # IN
+    # --------------------------------------------------------
+
+    for key, new_count in new_counter.items():
+
+        old_count = old_counter.get(
+            key,
+            0
+        )
+
+        difference = new_count - old_count
+
+        if difference <= 0:
+            continue
+
+        matches = [
+            card
+            for card in current
+            if occurrence_identity(card) == key
+        ]
+
+        for card in matches[:difference]:
+            in_cards.append(card)
+
+    return out_cards, in_cards
+
+
+# ============================================================
+# MARK NEW CARDS
+# ============================================================
+
+def mark_new_cards(
+    current,
+    incoming
+):
+    incoming_keys = Counter(
+        occurrence_identity(card)
+        for card in incoming
+    )
+
+    marked = []
+
+    for card in current:
+
+        key = occurrence_identity(
+            card
+        )
+
+        if incoming_keys.get(key, 0) > 0:
+
+            copy_card = dict(card)
+
+            copy_card["new"] = True
+
+            incoming_keys[key] -= 1
+
+            marked.append(
+                copy_card
+            )
+
+        else:
+
+            copy_card = dict(card)
+
+            copy_card["new"] = False
+
+            marked.append(
+                copy_card
+            )
+
+    return marked
+
+
+# ============================================================
+# UPDATE PLAYER DATABASE
+# ============================================================
+
+def update_player_database(
+    database,
+    current
+):
     database.setdefault(
         "items",
         {}
@@ -319,1095 +1235,118 @@ def load_database():
         {}
     )
 
-    database.setdefault(
-        "meta",
-        {}
-    )
-
-    return database
-
-
-# ============================================================
-# HTTP
-# ============================================================
-
-def fetch(url):
-
-    print(
-        f"Fetching: {url}"
-    )
-
-    try:
-
-        response = requests.get(
-            url,
-            headers=HEADERS,
-            timeout=30
-        )
-
-        print(
-            f"HTTP status: "
-            f"{response.status_code}"
-        )
-
-        print(
-            f"Downloaded: "
-            f"{len(response.text)} characters"
-        )
-
-        response.raise_for_status()
-
-        return response.text
-
-    except Exception as e:
-
-        print(
-            f"ERROR fetching {url}: {e}"
-        )
-
-        return None
-
-
-# ============================================================
-# PARSE CARD ALT
-# ============================================================
-
-def parse_card_alt(alt):
-
-    alt = normalize_text(alt)
-
-    if not alt:
-        return None
-
-    # Player Card = empty slot
-    if alt.casefold() == "player card":
-
-        return {
-            "placeholder": True
-        }
-
-    match = re.match(
-        r"^(.*?)\s*-\s*(\d+)\s*-\s*(.+)$",
-        alt
-    )
-
-    if not match:
-        return None
-
-    name = normalize_text(
-        match.group(1)
-    )
-
-    overall = safe_int(
-        match.group(2)
-    )
-
-    version = normalize_text(
-        match.group(3)
-    )
-
-    if not name:
-        return None
-
-    if overall is None:
-        return None
-
-    if not version:
-        return None
-
-    return {
-        "name": name,
-        "overall": overall,
-        "version": version,
-        "placeholder": False,
-    }
-
-
-# ============================================================
-# ITEM ID
-# ============================================================
-
-def extract_item_id_from_text(text):
-
-    if not text:
-        return None
-
-    text = str(text)
-
-    patterns = [
-
-        r"item[_-]?id[=/:\-_]+(\d+)",
-
-        r"itemId[=/:\-_]+(\d+)",
-
-        r"item%5[Ff]id[=/:\-_]+(\d+)",
-
-        r"/(\d{5,8})(?:[/?#]|$)",
-
-    ]
-
-    for pattern in patterns:
-
-        match = re.search(
-            pattern,
-            text,
-            re.I
-        )
-
-        if match:
-
-            value = match.group(1)
-
-            # Avoid obvious non-item IDs
-            if len(value) >= 5:
-                return value
-
-    return None
-
-
-def extract_item_id(img):
-
-    if not img:
-        return None
-
-    attributes = [
-        "src",
-        "data-src",
-        "data-original",
-        "data-image",
-        "data-url",
-        "alt",
-        "title",
-        "id",
-        "class",
-    ]
-
-    # Image attributes
-    for attribute in attributes:
-
-        value = img.get(
-            attribute
-        )
-
-        if isinstance(
-            value,
-            list
-        ):
-            value = " ".join(
-                value
-            )
-
-        item_id = (
-            extract_item_id_from_text(
-                value
-            )
-        )
-
-        if item_id:
-            return item_id
-
-    # Parent attributes
-    parent = img.parent
-
-    for _ in range(5):
-
-        if not parent:
-            break
-
-        for attribute in parent.attrs:
-
-            value = parent.get(
-                attribute
-            )
-
-            if isinstance(
-                value,
-                list
-            ):
-                value = " ".join(
-                    value
-                )
-
-            item_id = (
-                extract_item_id_from_text(
-                    value
-                )
-            )
-
-            if item_id:
-                return item_id
-
-        parent = parent.parent
-
-    return None
-
-
-# ============================================================
-# DATABASE SEED
-# ============================================================
-
-def seed_known_finishes(
-    database
-):
-
-    changed = False
-
-    for item_id, finish in (
-        KNOWN_FINISHES.items()
-    ):
-
-        existing = database[
-            "items"
-        ].get(
-            item_id
-        )
-
-        if not existing:
-
-            database[
-                "items"
-            ][item_id] = {
-                "item_id": item_id,
-                "finish": finish,
-                "source": "known",
-            }
-
-            changed = True
-
-        elif not existing.get(
-            "finish"
-        ):
-
-            existing[
-                "finish"
-            ] = finish
-
-            changed = True
-
-    if changed:
-
-        print(
-            "Known card finishes "
-            "added to database."
-        )
-
-    return database
-
-
-# ============================================================
-# HOLOGRAPHIC DATABASE
-# ============================================================
-#
-# FUT.GG's Holographic page is dynamic and
-# does not expose all cards as simple <img> elements.
-#
-# Therefore:
-# - we attempt to read explicit card data;
-# - if nothing is found, we DO NOT destroy the database;
-# - we never convert UNKNOWN into BASE.
-#
-
-def scan_holographic_database(
-    database
-):
-
-    print()
-    print("=" * 60)
-    print(
-        "Updating Holographic database"
-    )
-    print("=" * 60)
-
-    pages = [
-        (
-            "PRISTINE HOLO",
-            "https://www.fut.gg/"
-            "holographic-cards/"
-            "?finish=pristine",
-        ),
-        (
-            "HOLO",
-            "https://www.fut.gg/"
-            "holographic-cards/"
-            "?finish=holographic",
-        ),
-    ]
-
-    discovered = 0
-
-    for finish, url in pages:
-
-        print()
-        print(
-            f"Scanning {finish}..."
-        )
-
-        page = fetch(
-            url
-        )
-
-        if not page:
-            continue
-
-        soup = BeautifulSoup(
-            page,
-            "html.parser"
-        )
-
-        page_found = 0
-
-        # ----------------------------------------------------
-        # 1. Images with card-like ALT
-        # ----------------------------------------------------
-
-        for img in soup.find_all(
-            "img"
-        ):
-
-            parsed = parse_card_alt(
-                img.get("alt")
-            )
-
-            if not parsed:
-                continue
-
-            if parsed.get(
-                "placeholder"
-            ):
-                continue
-
-            item_id = extract_item_id(
-                img
-            )
-
-            key = player_key(
-                parsed["name"],
-                parsed["overall"],
-                parsed["version"]
-            )
-
-            entry = {
-                "name": parsed["name"],
-                "overall": parsed["overall"],
-                "version": parsed["version"],
-                "finish": finish,
-                "source": "FUT.GG",
-            }
-
-            database[
-                "players"
-            ][key] = entry
-
-            if item_id:
-
-                database[
-                    "items"
-                ][str(item_id)] = {
-                    **entry,
-                    "item_id": str(item_id),
-                }
-
-            page_found += 1
-
-        # ----------------------------------------------------
-        # 2. Links containing card-like text
-        # ----------------------------------------------------
-
-        for link in soup.find_all(
-            "a"
-        ):
-
-            text = normalize_text(
-                link.get_text(
-                    " ",
-                    strip=True
-                )
-            )
-
-            if not text:
-                continue
-
-            # We only try short player-like strings
-            # to avoid processing the whole page.
-            if len(text) > 250:
-                continue
-
-            match = re.search(
-                r"([A-Za-zÀ-ÿŠšŽžÄäÖöÜüß'’\-]+)"
-                r"\s+(\d{2})\b",
-                text
-            )
-
-            if not match:
-                continue
-
-            # This is supplemental only.
-            # We do NOT overwrite an exact item record.
-            name = normalize_text(
-                match.group(1)
-            )
-
-            overall = safe_int(
-                match.group(2)
-            )
-
-            if not name or overall is None:
-                continue
-
-            # We don't know the exact version from
-            # this text reliably, so skip it.
-            # This prevents false database entries.
-
-        discovered += page_found
-
-        print(
-            f"  Records found on page: "
-            f"{page_found}"
-        )
-
-    print()
-    print(
-        f"Holographic records discovered: "
-        f"{discovered}"
-    )
-
-    print(
-        f"Database items: "
-        f"{len(database['items'])}"
-    )
-
-    print(
-        f"Database players: "
-        f"{len(database['players'])}"
-    )
-
-    return database
-
-
-# ============================================================
-# FINISH RESOLUTION
-# ============================================================
-
-def get_finish(
-    card,
-    database,
-    previous_card=None
-):
-
-    item_id = str(
-        card.get("item_id") or ""
-    ).strip()
-
-    # --------------------------------------------------------
-    # 1. EXACT ITEM ID
-    # --------------------------------------------------------
-
-    if item_id:
-
-        item = database[
-            "items"
-        ].get(
-            item_id
-        )
-
-        if item:
-
-            finish = item.get(
-                "finish"
-            )
-
-            if finish:
-                return finish
-
-    # --------------------------------------------------------
-    # 2. PLAYER KEY
-    # --------------------------------------------------------
-
-    key = player_key(
-        card.get("name"),
-        card.get("overall"),
-        card.get("version")
-    )
-
-    player = database[
-        "players"
-    ].get(
-        key
-    )
-
-    if player:
-
-        finish = player.get(
-            "finish"
-        )
-
-        if finish:
-            return finish
-
-    # --------------------------------------------------------
-    # 3. PREVIOUS STATE
-    # --------------------------------------------------------
-
-    if previous_card:
-
-        previous_finish = (
-            previous_card.get(
-                "finish"
-            )
-        )
-
-        if (
-            previous_finish
-            and previous_finish != "UNKNOWN"
-        ):
-            return previous_finish
-
-    # --------------------------------------------------------
-    # 4. UNKNOWN
-    # --------------------------------------------------------
-
-    return "UNKNOWN"
-
-
-# ============================================================
-# FIND CHEAPEST GRADE
-# ============================================================
-
-def find_lineup_container(
-    soup,
-    expected_slots
-):
-
-    candidates = []
-
-    nodes = soup.find_all(
-        string=re.compile(
-            r"Cheapest\s+grade",
-            re.I
-        )
-    )
-
-    for node in nodes:
-
-        current = node.parent
-
-        for depth in range(8):
-
-            if not current:
-                break
-
-            images = current.find_all(
-                "img"
-            )
-
-            cards = []
-
-            for img in images:
-
-                parsed = parse_card_alt(
-                    img.get("alt")
-                )
-
-                if parsed:
-
-                    cards.append(
-                        (
-                            img,
-                            parsed
-                        )
-                    )
-
-            # Exact expected number is best
-            if len(cards) >= expected_slots:
-
-                candidates.append(
-                    {
-                        "container": current,
-                        "cards": cards,
-                        "depth": depth,
-                    }
-                )
-
-            current = current.parent
-
-    if not candidates:
-        return None
-
-    scored = []
-
-    for candidate in candidates:
-
-        cards = candidate[
-            "cards"
-        ]
-
-        distance = abs(
-            len(cards)
-            - expected_slots
-        )
-
-        extra = max(
-            0,
-            len(cards)
-            - expected_slots
-        )
-
-        real_cards = sum(
-            1
-            for _, card in cards
-            if not card.get(
-                "placeholder"
-            )
-        )
-
-        score = (
-            10000
-            - distance * 1000
-            - extra * 100
-            + real_cards * 10
-        )
-
-        scored.append(
-            (
-                score,
-                candidate
-            )
-        )
-
-    scored.sort(
-        key=lambda x: x[0],
-        reverse=True
-    )
-
-    best_score, best = scored[0]
-
-    print(
-        f"Cheapest grade matches found: "
-        f"{len(candidates)}"
-    )
-
-    print(
-        f"Selected lineup candidate: "
-        f"{len(best['cards'])} cards "
-        f"(score {best_score})"
-    )
-
-    return best[
-        "container"
-    ]
-
-
-# ============================================================
-# CARD IDENTITY
-# ============================================================
-
-def same_card_identity(
-    a,
-    b
-):
-
-    if not a or not b:
-        return False
-
-    item_a = str(
-        a.get("item_id") or ""
-    ).strip()
-
-    item_b = str(
-        b.get("item_id") or ""
-    ).strip()
-
-    # Exact Item ID
-    if item_a and item_b:
-        return item_a == item_b
-
-    # Fallback
-    return (
-        normalize_name(
-            a.get("name")
-        )
-        == normalize_name(
-            b.get("name")
-        )
-        and safe_int(
-            a.get("overall")
-        )
-        == safe_int(
-            b.get("overall")
-        )
-        and normalize_text(
-            a.get("version")
-        ).casefold()
-        == normalize_text(
-            b.get("version")
-        ).casefold()
-    )
-
-
-def find_previous_matching_card(
-    card,
-    previous_cards
-):
-
-    for previous in previous_cards:
-
-        if previous.get(
-            "placeholder"
-        ):
-            continue
-
-        if same_card_identity(
-            card,
-            previous
-        ):
-            return previous
-
-    return None
-
-
-def occurrence_identity(
-    card
-):
-
-    item_id = str(
-        card.get("item_id") or ""
-    ).strip()
-
-    if item_id:
-        return (
-            f"item:{item_id}"
-        )
-
-    return (
-        "fallback:"
-        f"{normalize_name(card.get('name'))}|"
-        f"{card.get('overall')}|"
-        f"{normalize_text(card.get('version')).casefold()}|"
-        f"{card.get('finish')}"
-    )
-
-
-# ============================================================
-# EXTRACT LINEUP
-# ============================================================
-
-def extract_lineup(
-    soup,
-    expected_slots,
-    database,
-    previous
-):
-
-    container = find_lineup_container(
-        soup,
-        expected_slots
-    )
-
-    if not container:
-
-        print(
-            "ERROR: Cheapest grade "
-            "lineup not found."
-        )
-
-        return None
-
-    parsed_cards = []
-
-    for img in container.find_all(
-        "img"
-    ):
-
-        parsed = parse_card_alt(
-            img.get("alt")
-        )
-
-        if not parsed:
-            continue
-
-        if parsed.get(
-            "placeholder"
-        ):
-
-            parsed_cards.append(
-                {
-                    "placeholder": True
-                }
-            )
-
-            continue
-
-        parsed[
-            "item_id"
-        ] = extract_item_id(
-            img
-        )
-
-        previous_card = (
-            find_previous_matching_card(
-                parsed,
-                previous
-            )
-        )
-
-        parsed[
-            "finish"
-        ] = get_finish(
-            parsed,
-            database,
-            previous_card
-        )
-
-        parsed[
-            "placeholder"
-        ] = False
-
-        parsed_cards.append(
-            parsed
-        )
-
-    print(
-        "Images/cards detected in "
-        "selected container: "
-        f"{len(parsed_cards)}"
-    )
-
-    # --------------------------------------------------------
-    # Take only expected slots
-    # --------------------------------------------------------
-
-    lineup = parsed_cards[
-        :expected_slots
-    ]
-
-    # --------------------------------------------------------
-    # Logging
-    # --------------------------------------------------------
-
-    real_count = sum(
-        1
-        for card in lineup
-        if not card.get(
-            "placeholder"
-        )
-    )
-
-    print(
-        f"Rendered lineup: "
-        f"{real_count}/"
-        f"{expected_slots} real cards"
-    )
-
-    for card in lineup:
-
-        if card.get(
-            "placeholder"
-        ):
-            continue
-
-        print(
-            f"- {card.get('name')} "
-            f"{card.get('overall')} "
-            f"{card.get('version')} "
-            f"— ItemID "
-            f"{card.get('item_id')} "
-            f"— "
-            f"{card.get('finish')}"
-        )
-
-    return lineup
-
-
-# ============================================================
-# CHANGE DETECTION
-# ============================================================
-
-def counter_for(
-    cards
-):
-
-    counter = Counter()
-
-    for card in cards:
-
-        if card.get(
-            "placeholder"
-        ):
-            continue
-
-        counter[
-            occurrence_identity(
-                card
-            )
-        ] += 1
-
-    return counter
-
-
-def detect_changes(
-    previous,
-    current
-):
-
-    old = counter_for(
-        previous
-    )
-
-    new = counter_for(
-        current
-    )
-
-    changes = {
-        "in": Counter(),
-        "out": Counter(),
-    }
-
-    for key in (
-        set(old) | set(new)
-    ):
-
-        old_count = old.get(
-            key,
-            0
-        )
-
-        new_count = new.get(
-            key,
-            0
-        )
-
-        if new_count > old_count:
-
-            changes[
-                "in"
-            ][key] = (
-                new_count
-                - old_count
-            )
-
-        elif old_count > new_count:
-
-            changes[
-                "out"
-            ][key] = (
-                old_count
-                - new_count
-            )
-
-    return changes
-
-
-# ============================================================
-# MARK NEW
-# ============================================================
-
-def mark_new_cards(
-    current,
-    changes
-):
-
-    remaining = changes[
-        "in"
-    ].copy()
-
-    result = []
-
     for card in current:
 
-        card = dict(
-            card
+        item_id = str(
+            card.get("item_id") or ""
+        ).strip()
+
+        finish = card.get(
+            "finish"
         )
 
-        if card.get(
-            "placeholder"
-        ):
+        # ----------------------------------------------------
+        # ITEM
+        # ----------------------------------------------------
 
-            card[
-                "_new"
-            ] = False
+        if item_id and finish in {
+            "BASE",
+            "HOLO",
+            "PRISTINE HOLO"
+        }:
 
-            result.append(
-                card
+            existing = database["items"].get(
+                item_id
             )
 
-            continue
+            # Non sovrascriviamo una classificazione
+            # valida con UNKNOWN.
 
-        key = occurrence_identity(
-            card
-        )
+            if (
+                not isinstance(existing, dict)
+                or existing.get("finish") == "UNKNOWN"
+            ):
 
-        if remaining.get(
-            key,
-            0
-        ) > 0:
+                database["items"][item_id] = {
+                    "finish": finish,
+                    "name": card.get("name"),
+                    "overall": card.get("overall"),
+                    "version": card.get("version"),
+                    "source": "FUT.GG lineup"
+                }
 
-            card[
-                "_new"
-            ] = True
+        # ----------------------------------------------------
+        # PLAYER
+        # ----------------------------------------------------
 
-            remaining[
-                key
-            ] -= 1
+        if finish in {
+            "BASE",
+            "HOLO",
+            "PRISTINE HOLO"
+        }:
 
-        else:
+            pkey = player_key(
+                card.get("name"),
+                card.get("overall"),
+                card.get("version")
+            )
 
-            card[
-                "_new"
-            ] = False
+            # Salviamo solo se non esiste.
+            #
+            # Non possiamo usare il player key come
+            # unica identità perché lo stesso giocatore
+            # può avere BASE e HOLO.
 
-        result.append(
-            card
-        )
+            if pkey not in database["players"]:
 
-    return result
+                database["players"][pkey] = {
+                    "name": card.get("name"),
+                    "overall": card.get("overall"),
+                    "version": card.get("version"),
+                    "finish": finish
+                }
 
 
 # ============================================================
-# TELEGRAM FORMAT
+# FORMAT CARD
 # ============================================================
 
-def format_card(
-    card
-):
-
-    name = html.escape(
-        str(
-            card.get(
-                "name",
-                "Unknown"
-            )
-        )
+def format_card(card, new=False):
+    name = escape(
+        str(card.get("name") or "?")
     )
 
     overall = card.get(
-        "overall",
-        "?"
+        "overall"
     )
 
-    finish = card.get(
-        "finish",
-        "UNKNOWN"
+    overall_text = (
+        str(overall)
+        if overall is not None
+        else "?"
     )
 
-    marker = ""
+    finish = escape(
+        str(card.get("finish") or "UNKNOWN")
+    )
 
-    if card.get(
-        "_new"
-    ):
-        marker = "🟢 "
+    prefix = ""
+
+    if new:
+        prefix = "🟢 "
 
     return (
-        f"{marker}"
-        f"<b>{name} {overall}</b>"
-        f"　·　"
+        f"{prefix}<b>{name} "
+        f"{overall_text}</b>　·　"
         f"{finish}"
     )
 
 
-def build_telegram_message(
-    results
-):
+# ============================================================
+# TELEGRAM MESSAGE
+# ============================================================
 
+def build_telegram_message(results):
     lines = []
 
     lines.append(
@@ -1416,34 +1355,29 @@ def build_telegram_message(
 
     lines.append("")
 
-    for index, result in enumerate(
-        results
-    ):
+    categories = list(
+        results.keys()
+    )
 
-        category = result[
-            "category"
+    for index, category in enumerate(categories):
+
+        data = results[category]
+
+        config = CATEGORIES[
+            category
         ]
 
-        emoji = result[
-            "emoji"
-        ]
+        current = data["current"]
+        out_cards = data["out"]
+        in_cards = data["in"]
 
-        previous = result[
-            "previous"
-        ]
-
-        current = result[
-            "current"
-        ]
-
-        changes = result[
-            "changes"
-        ]
+        # ----------------------------------------------------
+        # CATEGORY
+        # ----------------------------------------------------
 
         lines.append(
-            f"<b>{emoji} "
-            f"{html.escape(category)}"
-            f"</b>"
+            f"<b>{config['emoji']} "
+            f"{escape(category)}</b>"
         )
 
         lines.append("")
@@ -1452,92 +1386,32 @@ def build_telegram_message(
         # OUT
         # ----------------------------------------------------
 
-        remaining_out = (
-            changes["out"].copy()
-        )
+        for card in out_cards:
 
-        for card in previous:
-
-            if card.get(
-                "placeholder"
-            ):
-                continue
-
-            key = occurrence_identity(
-                card
+            lines.append(
+                "🔴 OUT — "
+                + format_card(
+                    card,
+                    new=False
+                )
             )
-
-            if remaining_out.get(
-                key,
-                0
-            ) > 0:
-
-                name = html.escape(
-                    str(
-                        card.get(
-                            "name",
-                            "Unknown"
-                        )
-                    )
-                )
-
-                overall = card.get(
-                    "overall",
-                    "?"
-                )
-
-                finish = card.get(
-                    "finish",
-                    "UNKNOWN"
-                )
-
-                lines.append(
-                    f"🔴 OUT — "
-                    f"<b>{name} {overall}</b>"
-                    f"　·　{finish}"
-                )
-
-                remaining_out[
-                    key
-                ] -= 1
 
         # ----------------------------------------------------
         # IN
         # ----------------------------------------------------
 
-        remaining_in = (
-            changes["in"].copy()
-        )
+        for card in in_cards:
 
-        for card in current:
-
-            if card.get(
-                "placeholder"
-            ):
-                continue
-
-            key = occurrence_identity(
-                card
+            lines.append(
+                "🟢 IN — "
+                + format_card(
+                    card,
+                    new=True
+                )
             )
 
-            if remaining_in.get(
-                key,
-                0
-            ) > 0:
-
-                lines.append(
-                    "🟢 IN — "
-                    + format_card(
-                        card
-                    )
-                )
-
-                remaining_in[
-                    key
-                ] -= 1
-
         # ----------------------------------------------------
-        # CURRENT LINEUP
+        # CURRENT
         # ----------------------------------------------------
 
         lines.append(
@@ -1546,14 +1420,12 @@ def build_telegram_message(
 
         for card in current:
 
-            if card.get(
-                "placeholder"
-            ):
-                continue
-
             lines.append(
                 format_card(
-                    card
+                    card,
+                    new=bool(
+                        card.get("new")
+                    )
                 )
             )
 
@@ -1561,9 +1433,7 @@ def build_telegram_message(
         # SEPARATOR
         # ----------------------------------------------------
 
-        if index < (
-            len(results) - 1
-        ):
+        if index < len(categories) - 1:
 
             lines.append("")
             lines.append(
@@ -1571,41 +1441,29 @@ def build_telegram_message(
             )
             lines.append("")
 
-    return "\n".join(
-        lines
-    )
+    return "\n".join(lines)
 
 
 # ============================================================
-# TELEGRAM
+# TELEGRAM SEND
 # ============================================================
 
-def send_telegram(
-    message
-):
-
+def send_telegram(message):
     if not TELEGRAM_BOT_TOKEN:
-
         print(
-            "WARNING: "
-            "TELEGRAM_BOT_TOKEN missing"
+            "ERROR: TELEGRAM_BOT_TOKEN missing."
         )
-
         return False
 
     if not TELEGRAM_CHAT_ID:
-
         print(
-            "WARNING: "
-            "TELEGRAM_CHAT_ID missing"
+            "ERROR: TELEGRAM_CHAT_ID missing."
         )
-
         return False
 
     url = (
         "https://api.telegram.org/bot"
-        f"{TELEGRAM_BOT_TOKEN}"
-        "/sendMessage"
+        f"{TELEGRAM_BOT_TOKEN}/sendMessage"
     )
 
     payload = {
@@ -1651,265 +1509,204 @@ def send_telegram(
 
 def main():
 
-    print("=" * 60)
     print(
         "FUT.GG MONITOR"
     )
-    print("=" * 60)
+
+    print(
+        "=" * 60
+    )
+
+    # --------------------------------------------------------
+    # LOAD
+    # --------------------------------------------------------
 
     players = load_players()
 
     database = load_database()
 
-    # Add known finishes without
-    # deleting anything already learned.
-    database = seed_known_finishes(
+    # --------------------------------------------------------
+    # SEED KNOWN
+    # --------------------------------------------------------
+
+    seed_known_finishes(
         database
     )
 
-    # Try to update Holographic DB.
-    # If FUT.GG doesn't expose cards,
-    # the existing database is preserved.
-    database = (
-        scan_holographic_database(
-            database
-        )
+    save_database(
+        database
     )
 
-    results = []
+    # --------------------------------------------------------
+    # HOLOGRAPHIC DATABASE
+    # --------------------------------------------------------
 
-    # ========================================================
-    # CATEGORIES
-    # ========================================================
+    database = scan_holographic_database(
+        database
+    )
 
-    for category, config in (
-        CATEGORIES.items()
-    ):
+    # --------------------------------------------------------
+    # SCAN CATEGORIES
+    # --------------------------------------------------------
 
-        print()
+    results = {}
 
-        print(
-            f"Checking "
-            f"{config['emoji']} "
-            f"{category.upper()} "
-            f"({config['slots']} players)..."
-        )
+    changed_anything = False
 
-        print(
-            "=" * 60
-        )
+    for category, config in CATEGORIES.items():
 
-        # ----------------------------------------------------
-        # PREVIOUS
-        # ----------------------------------------------------
+        try:
 
-        category_data = players.get(
-            category,
-            {}
-        )
-
-        if isinstance(
-            category_data,
-            list
-        ):
-
-            previous = (
-                category_data
+            old_current = players[
+                category
+            ].get(
+                "current",
+                []
             )
 
-        elif isinstance(
-            category_data,
-            dict
-        ):
-
-            previous = (
-                category_data.get(
-                    "current",
-                    []
-                )
-            )
-
-        else:
-
-            previous = []
-
-        if not isinstance(
-            previous,
-            list
-        ):
-            previous = []
-
-        # ----------------------------------------------------
-        # FETCH
-        # ----------------------------------------------------
-
-        page = fetch(
-            config["url"]
-        )
-
-        if not page:
-
-            print(
-                "Could not download "
-                f"{category}. "
-                "Keeping previous state."
-            )
-
-            current = previous
-
-        else:
-
-            soup = BeautifulSoup(
-                page,
-                "html.parser"
-            )
-
-            current = extract_lineup(
-                soup,
-                config["slots"],
+            current, valid = scan_category(
+                category,
+                config,
                 database,
-                previous
+                players
             )
 
-            if current is None:
+            if not valid:
 
-                print(
-                    "Could not parse "
-                    f"{category}. "
-                    "Keeping previous state."
-                )
+                # Manteniamo il precedente
+                current = old_current
 
-                current = previous
+            # ------------------------------------------------
+            # CHANGES
+            # ------------------------------------------------
 
-        # ----------------------------------------------------
-        # CHANGES
-        # ----------------------------------------------------
+            out_cards, in_cards = detect_changes(
+                old_current,
+                current
+            )
 
-        changes = detect_changes(
-            previous,
-            current
-        )
+            # ------------------------------------------------
+            # MARK NEW
+            # ------------------------------------------------
 
-        marked_current = (
-            mark_new_cards(
+            current_marked = mark_new_cards(
                 current,
-                changes
+                in_cards
             )
-        )
 
-        # ----------------------------------------------------
-        # UNKNOWN WARNING
-        # ----------------------------------------------------
+            # ------------------------------------------------
+            # UPDATE DATABASE
+            # ------------------------------------------------
 
-        unknowns = [
-            card
-            for card in current
-            if not card.get(
-                "placeholder"
+            update_player_database(
+                database,
+                current
             )
-            and card.get(
-                "finish"
-            ) == "UNKNOWN"
-        ]
 
-        if unknowns:
+            # ------------------------------------------------
+            # SAVE RESULT
+            # ------------------------------------------------
 
-            print()
+            results[category] = {
+                "current": current_marked,
+                "out": out_cards,
+                "in": in_cards,
+            }
+
+            # ------------------------------------------------
+            # SAVE PLAYERS STATE
+            # ------------------------------------------------
+
+            players[category][
+                "previous"
+            ] = old_current
+
+            players[category][
+                "current"
+            ] = current
+
+            if out_cards or in_cards:
+                changed_anything = True
+
+        except Exception as e:
 
             print(
-                "WARNING: Unknown finish "
-                "detected:"
+                f"\nERROR scanning "
+                f"{category}: {e}"
             )
 
-            for card in unknowns:
+            # In caso di errore manteniamo
+            # la vecchia lineup.
 
-                print(
-                    f"  "
-                    f"{card.get('name')} "
-                    f"{card.get('overall')} "
-                    f"{card.get('version')} "
-                    f"ItemID="
-                    f"{card.get('item_id')}"
-                )
+            old_current = players[
+                category
+            ].get(
+                "current",
+                []
+            )
 
-        # ----------------------------------------------------
-        # SAVE STATE
-        # ----------------------------------------------------
-
-        players[
-            category
-        ] = {
-            "previous": previous,
-            "current": current,
-        }
-
-        # ----------------------------------------------------
-        # RESULT
-        # ----------------------------------------------------
-
-        results.append(
-            {
-                "category": category,
-                "emoji": config["emoji"],
-                "previous": previous,
-                "current": marked_current,
-                "changes": changes,
+            results[category] = {
+                "current": old_current,
+                "out": [],
+                "in": [],
             }
-        )
 
-    # ========================================================
-    # SAVE
-    # ========================================================
+    # --------------------------------------------------------
+    # SAVE DATABASE
+    # --------------------------------------------------------
 
-    database[
-        "meta"
-    ][
-        "last_update"
-    ] = datetime.now(
-        timezone.utc
-    ).isoformat()
+    save_database(
+        database
+    )
+
+    # --------------------------------------------------------
+    # SAVE PLAYERS
+    # --------------------------------------------------------
 
     save_json(
         PLAYERS_FILE,
         players
     )
 
-    save_json(
-        DATABASE_FILE,
-        database
-    )
-
-    # ========================================================
+    # --------------------------------------------------------
     # TELEGRAM
-    # ========================================================
+    # --------------------------------------------------------
 
     message = build_telegram_message(
         results
     )
 
-    print()
-    print("=" * 60)
+    print(
+        "\n" + "=" * 60
+    )
+
     print(
         "TELEGRAM MESSAGE"
     )
-    print("=" * 60)
 
-    print(message)
+    print(
+        "=" * 60
+    )
 
-    print("=" * 60)
+    print(
+        message
+    )
+
+    print(
+        "=" * 60
+    )
 
     send_telegram(
         message
     )
 
-    print()
     print(
-        "DONE"
+        "\nDONE"
     )
 
 
 # ============================================================
-# START
+# ENTRY POINT
 # ============================================================
 
 if __name__ == "__main__":
