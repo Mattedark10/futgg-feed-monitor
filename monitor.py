@@ -86,33 +86,86 @@ def load_json(path, default):
 
 
 def save_json(path, data):
-    try:
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(
-                data,
-                f,
-                ensure_ascii=False,
-                indent=2
-            )
-    except Exception as e:
-        print(f"JSON save error ({path}): {e}")
-        raise
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(
+            data,
+            f,
+            ensure_ascii=False,
+            indent=2
+        )
 
 
 # ============================================================
-# FETCH
+# GET PREVIOUS CATEGORY STATE
+# ============================================================
+
+def get_previous_category(state, category):
+    """
+    Supports both old and new players.json formats.
+
+    Old format:
+    {
+        "Heroes": [
+            {...},
+            {...}
+        ]
+    }
+
+    New format:
+    {
+        "Heroes": {
+            "current": [
+                {...},
+                {...}
+            ]
+        }
+    }
+    """
+
+    if not isinstance(state, dict):
+        return []
+
+    category_state = state.get(
+        category,
+        []
+    )
+
+    # Old format: category itself is a list
+    if isinstance(category_state, list):
+        return category_state
+
+    # New format: category is a dictionary
+    if isinstance(category_state, dict):
+
+        current = category_state.get(
+            "current",
+            []
+        )
+
+        if isinstance(current, list):
+            return current
+
+    return []
+
+
+# ============================================================
+# FETCH PAGE
 # ============================================================
 
 def fetch_page(url):
+
     headers = {
         "User-Agent": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Mozilla/5.0 "
+            "(Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 "
+            "(KHTML, like Gecko) "
             "Chrome/140.0 Safari/537.36"
         ),
         "Accept": (
             "text/html,application/xhtml+xml,"
-            "application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"
+            "application/xml;q=0.9,"
+            "image/avif,image/webp,*/*;q=0.8"
         ),
         "Accept-Language": "en-US,en;q=0.9",
         "Cache-Control": "no-cache",
@@ -127,8 +180,13 @@ def fetch_page(url):
         timeout=30
     )
 
-    print(f"HTTP status: {response.status_code}")
-    print(f"Downloaded: {len(response.text)} characters")
+    print(
+        f"HTTP status: {response.status_code}"
+    )
+
+    print(
+        f"Downloaded: {len(response.text)} characters"
+    )
 
     response.raise_for_status()
 
@@ -140,13 +198,6 @@ def fetch_page(url):
 # ============================================================
 
 def find_lineup(soup):
-    """
-    Find the visible FUT.GG lineup.
-
-    We search for the "Cheapest grade X lineup"
-    text and then walk up the DOM looking for
-    a container containing the card images.
-    """
 
     candidates = soup.find_all(
         string=re.compile(
@@ -156,7 +207,8 @@ def find_lineup(soup):
     )
 
     print(
-        f"Cheapest grade matches found: {len(candidates)}"
+        f"Cheapest grade matches found: "
+        f"{len(candidates)}"
     )
 
     if not candidates:
@@ -174,12 +226,17 @@ def find_lineup(soup):
             imgs = parent.find_all("img")
 
             if len(imgs) >= 5:
+
                 print(
-                    f"Lineup container found at DOM level {level}"
+                    f"Lineup container found "
+                    f"at DOM level {level}"
                 )
+
                 print(
-                    f"Images inside container: {len(imgs)}"
+                    f"Images inside container: "
+                    f"{len(imgs)}"
                 )
+
                 return parent
 
             parent = parent.parent
@@ -192,6 +249,7 @@ def find_lineup(soup):
 # ============================================================
 
 def extract_item_id(src):
+
     if not src:
         return None
 
@@ -214,10 +272,11 @@ def extract_item_id(src):
 
 
 # ============================================================
-# ALT PARSER
+# PARSE ALT
 # ============================================================
 
 def parse_alt(alt):
+
     if not alt:
         return None
 
@@ -226,6 +285,7 @@ def parse_alt(alt):
     )
 
     if alt.lower() == "player card":
+
         return {
             "name": "Player Card",
             "overall": None,
@@ -257,6 +317,7 @@ def parse_alt(alt):
     version = ""
 
     if len(parts) >= 3:
+
         version = " - ".join(
             parts[2:]
         ).strip()
@@ -269,10 +330,13 @@ def parse_alt(alt):
 
 
 # ============================================================
-# FINISH
+# RESOLVE FINISH
 # ============================================================
 
-def resolve_finish(item_id, version=""):
+def resolve_finish(
+    item_id,
+    version=""
+):
 
     if item_id in KNOWN_FINISHES:
         return KNOWN_FINISHES[item_id]
@@ -298,7 +362,10 @@ def resolve_finish(item_id, version=""):
 # EXTRACT LINEUP
 # ============================================================
 
-def extract_lineup(container, slots):
+def extract_lineup(
+    container,
+    slots
+):
 
     if container is None:
         return []
@@ -327,7 +394,7 @@ def extract_lineup(container, slots):
             continue
 
         # ----------------------------------------------------
-        # EMPTY SLOT
+        # PLAYER CARD PLACEHOLDER
         # ----------------------------------------------------
 
         if alt.lower() == "player card":
@@ -372,6 +439,7 @@ def extract_lineup(container, slots):
             "placeholder": False,
         })
 
+    # Never exceed configured lineup size
     if len(cards) > slots:
         cards = cards[:slots]
 
@@ -384,6 +452,9 @@ def extract_lineup(container, slots):
 
 def card_key(card):
 
+    if not isinstance(card, dict):
+        return None
+
     if card.get("placeholder"):
         return None
 
@@ -392,7 +463,7 @@ def card_key(card):
     )
 
     if item_id:
-        return item_id
+        return str(item_id)
 
     return (
         card.get("name"),
@@ -427,6 +498,7 @@ def card_label(card):
     )
 
     if finish:
+
         return (
             f"{player_text}　·　{finish}"
         )
@@ -440,12 +512,14 @@ def card_label(card):
 
 def real_cards(cards):
 
+    if not isinstance(cards, list):
+        return []
+
     return [
         card
         for card in cards
-        if not card.get(
-            "placeholder"
-        )
+        if isinstance(card, dict)
+        and not card.get("placeholder")
     ]
 
 
@@ -453,7 +527,10 @@ def real_cards(cards):
 # COMPARE
 # ============================================================
 
-def compare_cards(previous, current):
+def compare_cards(
+    previous,
+    current
+):
 
     previous_keys = [
         card_key(card)
@@ -494,7 +571,10 @@ def compare_cards(previous, current):
         ]
 
         for card in matches[:count]:
-            outgoing.append(card)
+
+            outgoing.append(
+                card
+            )
 
     # --------------------------------------------------------
     # IN
@@ -514,9 +594,15 @@ def compare_cards(previous, current):
         ]
 
         for card in matches[:count]:
-            incoming.append(card)
 
-    return outgoing, incoming
+            incoming.append(
+                card
+            )
+
+    return (
+        outgoing,
+        incoming
+    )
 
 
 # ============================================================
@@ -528,6 +614,7 @@ def has_unknown_finish(cards):
     for card in real_cards(cards):
 
         if not card.get("finish"):
+
             return True
 
     return False
@@ -555,22 +642,35 @@ def process_category(
 
     print("=" * 60)
 
-    previous = (
-        state
-        .get(category, {})
-        .get("current", [])
+    # IMPORTANT:
+    # This works with both old and new players.json
+    previous = get_previous_category(
+        state,
+        category
     )
 
     try:
+
+        # ----------------------------------------------------
+        # FETCH
+        # ----------------------------------------------------
 
         html = fetch_page(
             config["url"]
         )
 
+        # ----------------------------------------------------
+        # PARSE
+        # ----------------------------------------------------
+
         soup = BeautifulSoup(
             html,
             "html.parser"
         )
+
+        # ----------------------------------------------------
+        # FIND LINEUP
+        # ----------------------------------------------------
 
         lineup_container = find_lineup(
             soup
@@ -581,6 +681,10 @@ def process_category(
             raise RuntimeError(
                 "FUT.GG lineup container not found."
             )
+
+        # ----------------------------------------------------
+        # EXTRACT
+        # ----------------------------------------------------
 
         current = extract_lineup(
             lineup_container,
@@ -600,15 +704,19 @@ def process_category(
             )
 
         # ----------------------------------------------------
-        # PRINT CARDS
+        # PRINT CURRENT CARDS
         # ----------------------------------------------------
 
         for card in current:
 
-            if card.get("placeholder"):
+            if card.get(
+                "placeholder"
+            ):
+
                 print(
                     "- Player Card"
                 )
+
                 continue
 
             finish = (
@@ -756,6 +864,10 @@ def format_current_lineup(
 
     for card in current:
 
+        if not isinstance(card, dict):
+            continue
+
+        # Player Card placeholders are hidden
         if card.get("placeholder"):
             continue
 
@@ -766,6 +878,7 @@ def format_current_lineup(
         prefix = ""
 
         if key in incoming_keys:
+
             prefix = "🟢 "
 
         lines.append(
@@ -774,6 +887,7 @@ def format_current_lineup(
         )
 
     if not lines:
+
         return "No real cards"
 
     return "\n".join(
@@ -1068,9 +1182,27 @@ def main():
         {}
     )
 
+    # Safety check
+    if not isinstance(state, dict):
+
+        print(
+            "WARNING: players.json "
+            "root is not a dictionary."
+        )
+
+        print(
+            "Starting with empty state."
+        )
+
+        state = {}
+
     new_state = {}
 
     parts = []
+
+    # --------------------------------------------------------
+    # PROCESS ALL CATEGORIES
+    # --------------------------------------------------------
 
     for category, config in PAGES.items():
 
@@ -1093,7 +1225,7 @@ def main():
         )
 
     # --------------------------------------------------------
-    # SAVE
+    # SAVE STATE
     # --------------------------------------------------------
 
     save_json(
@@ -1120,8 +1252,14 @@ def main():
     print("=" * 60)
     print("TELEGRAM MESSAGE")
     print("=" * 60)
-    print(message)
-    print("=" * 60)
+
+    print(
+        message
+    )
+
+    print(
+        "=" * 60
+    )
 
     send_telegram(
         message
@@ -1134,7 +1272,7 @@ def main():
 
 
 # ============================================================
-# RUN
+# START
 # ============================================================
 
 if __name__ == "__main__":
