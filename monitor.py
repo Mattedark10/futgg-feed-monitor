@@ -49,12 +49,18 @@ session.headers.update(HEADERS)
 
 
 def download_page(url):
-    response = session.get(url, timeout=30)
+    response = session.get(
+        url,
+        timeout=30
+    )
+
     response.raise_for_status()
 
     text = response.text
 
-    print(f"Downloaded {len(text):,} characters.")
+    print(
+        f"Downloaded {len(text):,} characters."
+    )
 
     return text
 
@@ -65,12 +71,15 @@ def download_page(url):
 
 def split_top_level(text, separator=","):
     """
-    Split a JS/RSC expression at top-level separators.
+    Divide un'espressione JS/RSC usando il separatore
+    solo quando siamo al livello principale.
 
-    Example:
+    Esempio:
+
         a:1,b:{x:2},c:[3,4]
 
-    becomes:
+    diventa:
+
         a:1
         b:{x:2}
         c:[3,4]
@@ -79,6 +88,7 @@ def split_top_level(text, separator=","):
     parts = []
 
     start = 0
+
     depth_curly = 0
     depth_square = 0
     depth_paren = 0
@@ -105,26 +115,33 @@ def split_top_level(text, separator=","):
             continue
 
         if char in ('"', "'", "`"):
+
             in_string = True
             quote = char
             continue
 
         if char == "{":
+
             depth_curly += 1
 
         elif char == "}":
+
             depth_curly -= 1
 
         elif char == "[":
+
             depth_square += 1
 
         elif char == "]":
+
             depth_square -= 1
 
         elif char == "(":
+
             depth_paren += 1
 
         elif char == ")":
+
             depth_paren -= 1
 
         elif (
@@ -133,7 +150,11 @@ def split_top_level(text, separator=","):
             and depth_square == 0
             and depth_paren == 0
         ):
-            parts.append(text[start:i].strip())
+
+            parts.append(
+                text[start:i].strip()
+            )
+
             start = i + 1
 
     final = text[start:].strip()
@@ -144,9 +165,14 @@ def split_top_level(text, separator=","):
     return parts
 
 
-def find_matching(text, start, opening, closing):
+def find_matching(
+    text,
+    start,
+    opening,
+    closing
+):
     """
-    Find matching closing bracket for an opening bracket.
+    Trova la parentesi di chiusura corrispondente.
     """
 
     depth = 0
@@ -155,7 +181,10 @@ def find_matching(text, start, opening, closing):
     quote = None
     escape = False
 
-    for i in range(start, len(text)):
+    for i in range(
+        start,
+        len(text)
+    ):
 
         char = text[i]
 
@@ -175,14 +204,17 @@ def find_matching(text, start, opening, closing):
             continue
 
         if char in ('"', "'", "`"):
+
             in_string = True
             quote = char
             continue
 
         if char == opening:
+
             depth += 1
 
         elif char == closing:
+
             depth -= 1
 
             if depth == 0:
@@ -192,14 +224,17 @@ def find_matching(text, start, opening, closing):
 
 
 def parse_primitive(value):
+
     value = value.strip()
 
+    # Boolean
     if value == "true":
         return True
 
     if value == "false":
         return False
 
+    # Null
     if value == "null":
         return None
 
@@ -207,25 +242,32 @@ def parse_primitive(value):
         return None
 
     # String
-    if len(value) >= 2 and value[0] in ('"', "'", "`"):
+    if (
+        len(value) >= 2
+        and value[0] in ('"', "'", "`")
+        and value[-1] == value[0]
+    ):
 
-        quote = value[0]
+        content = value[1:-1]
 
-        if value[-1] == quote:
+        try:
 
-            content = value[1:-1]
+            return bytes(
+                content,
+                "utf-8"
+            ).decode(
+                "unicode_escape"
+            )
 
-            try:
-                return bytes(
-                    content,
-                    "utf-8"
-                ).decode("unicode_escape")
+        except Exception:
 
-            except Exception:
-                return content
+            return content
 
-    # Number
-    if re.fullmatch(r"-?\d+", value):
+    # Integer
+    if re.fullmatch(
+        r"-?\d+",
+        value
+    ):
 
         try:
             return int(value)
@@ -233,7 +275,11 @@ def parse_primitive(value):
         except Exception:
             pass
 
-    if re.fullmatch(r"-?\d+\.\d+", value):
+    # Float
+    if re.fullmatch(
+        r"-?\d+\.\d+",
+        value
+    ):
 
         try:
             return float(value)
@@ -246,26 +292,48 @@ def parse_primitive(value):
 
 def parse_value(value):
     """
-    Parse an RSC value.
+    Parser per valori RSC/JavaScript semplificati.
 
-    Supports:
-        objects
-        arrays
-        primitives
-        $R references
+    Supporta:
+
+        $R[123]
+
+        {...}
+
+        [...]
+
+        stringhe
+
+        numeri
+
+        booleani
+
+        null
     """
 
     value = value.strip()
 
+    # --------------------------------------------------------
     # Reference
-    match = re.fullmatch(r"\$R\[(\d+)\]", value)
+    # --------------------------------------------------------
+
+    match = re.fullmatch(
+        r"\$R\[(\d+)\]",
+        value
+    )
 
     if match:
+
         return {
-            "__ref__": int(match.group(1))
+            "__ref__": int(
+                match.group(1)
+            )
         }
 
+    # --------------------------------------------------------
     # Object
+    # --------------------------------------------------------
+
     if value.startswith("{"):
 
         end = find_matching(
@@ -275,13 +343,19 @@ def parse_value(value):
             "}"
         )
 
-        if end == len(value) - 1:
+        if (
+            end != -1
+            and end == len(value) - 1
+        ):
 
             return parse_object(
                 value[1:end]
             )
 
+    # --------------------------------------------------------
     # Array
+    # --------------------------------------------------------
+
     if value.startswith("["):
 
         end = find_matching(
@@ -291,32 +365,38 @@ def parse_value(value):
             "]"
         )
 
-        if end == len(value) - 1:
+        if (
+            end != -1
+            and end == len(value) - 1
+        ):
 
-            inside = value[1:end]
+            inside = value[
+                1:end
+            ].strip()
 
-            if not inside.strip():
+            if not inside:
                 return []
 
-            items = split_top_level(
+            parts = split_top_level(
                 inside,
                 ","
             )
 
             return [
-                parse_value(item)
-                for item in items
+                parse_value(part)
+                for part in parts
             ]
 
-    return parse_primitive(value)
+    # --------------------------------------------------------
+    # Primitive
+    # --------------------------------------------------------
+
+    return parse_primitive(
+        value
+    )
 
 
 def parse_object(text):
-    """
-    Parse:
-
-        key:value,key2:value2
-    """
 
     result = {}
 
@@ -336,18 +416,21 @@ def parse_object(text):
         )
 
         key = key.strip()
-
         value = value.strip()
 
-        # Remove quotes from keys
+        # Rimuove eventuali virgolette dal nome
+        # della proprietà.
         if (
             len(key) >= 2
             and key[0] in ('"', "'", "`")
             and key[-1] == key[0]
         ):
+
             key = key[1:-1]
 
-        result[key] = parse_value(value)
+        result[key] = parse_value(
+            value
+        )
 
     return result
 
@@ -358,11 +441,11 @@ def parse_object(text):
 
 def extract_rsc_assignments(text):
     """
-    Extract BOTH:
+    Estrae entrambe le forme:
 
         $R[123]={...}
 
-    and:
+    e:
 
         $R[123]=[...]
 
@@ -390,12 +473,17 @@ def extract_rsc_assignments(text):
             start < len(text)
             and text[start].isspace()
         ):
+
             start += 1
 
         if start >= len(text):
             continue
 
         first = text[start]
+
+        # ----------------------------------------------------
+        # Object
+        # ----------------------------------------------------
 
         if first == "{":
 
@@ -405,6 +493,10 @@ def extract_rsc_assignments(text):
                 "{",
                 "}"
             )
+
+        # ----------------------------------------------------
+        # Array
+        # ----------------------------------------------------
 
         elif first == "[":
 
@@ -416,6 +508,7 @@ def extract_rsc_assignments(text):
             )
 
         else:
+
             continue
 
         if end == -1:
@@ -432,6 +525,7 @@ def extract_rsc_assignments(text):
             )
 
         except Exception:
+
             continue
 
     print(
@@ -445,18 +539,48 @@ def extract_rsc_assignments(text):
 # RESOLVE REFERENCES
 # ============================================================
 
-def resolve_reference(value, assignments, depth=0):
-    if depth > 50:
+def resolve_reference(
+    value,
+    assignments,
+    depth=0
+):
+    """
+    Risolve ricorsivamente i riferimenti RSC.
+
+    FUT.GG usa riferimenti come:
+
+        $R[240]
+        $R[241]
+
+    Un riferimento può puntare a:
+
+        object
+        array
+        primitive
+        altro riferimento
+    """
+
+    if depth > 100:
         return value
 
-    if isinstance(value, dict):
+    # --------------------------------------------------------
+    # Reference / Object
+    # --------------------------------------------------------
 
+    if isinstance(
+        value,
+        dict
+    ):
+
+        # Reference puro
         if (
-            len(value) == 1
-            and "__ref__" in value
+            "__ref__" in value
+            and len(value) == 1
         ):
 
-            ref = value["__ref__"]
+            ref = value[
+                "__ref__"
+            ]
 
             if ref not in assignments:
                 return None
@@ -467,25 +591,47 @@ def resolve_reference(value, assignments, depth=0):
                 depth + 1
             )
 
-        return {
-            key: resolve_reference(
+        # Normal object
+        result = {}
+
+        for key, val in value.items():
+
+            result[key] = resolve_reference(
                 val,
                 assignments,
                 depth + 1
             )
-            for key, val in value.items()
-        }
 
-    if isinstance(value, list):
+        return result
 
-        return [
-            resolve_reference(
+    # --------------------------------------------------------
+    # Array
+    # --------------------------------------------------------
+
+    if isinstance(
+        value,
+        list
+    ):
+
+        result = []
+
+        for item in value:
+
+            resolved = resolve_reference(
                 item,
                 assignments,
                 depth + 1
             )
-            for item in value
-        ]
+
+            result.append(
+                resolved
+            )
+
+        return result
+
+    # --------------------------------------------------------
+    # Primitive
+    # --------------------------------------------------------
 
     return value
 
@@ -494,32 +640,44 @@ def resolve_reference(value, assignments, depth=0):
 # FIND SOLUTION
 # ============================================================
 
-def find_solution(text, page_name, expected_count):
+def find_solution(
+    text,
+    page_name,
+    expected_count
+):
     """
-    Find:
-
-        solution:$R[NUMBER]=...
-
-    and resolve the corresponding RSC object.
+    Trova la solution di FUT.GG e recupera
+    l'array items associato.
     """
 
-    pattern = re.search(
+    # --------------------------------------------------------
+    # 1. Trova la reference della solution
+    # --------------------------------------------------------
+
+    match = re.search(
         r"solution:\$R\[(\d+)\]=",
         text
     )
 
-    if not pattern:
+    if not match:
+
         raise RuntimeError(
-            f"Solution reference not found for {page_name}"
+            f"Solution reference not found "
+            f"for {page_name}"
         )
 
     solution_index = int(
-        pattern.group(1)
+        match.group(1)
     )
 
     print(
-        f"Solution RSC reference: {solution_index}"
+        f"Solution RSC reference: "
+        f"{solution_index}"
     )
+
+    # --------------------------------------------------------
+    # 2. Estrai tutte le assegnazioni
+    # --------------------------------------------------------
 
     assignments = extract_rsc_assignments(
         text
@@ -528,18 +686,28 @@ def find_solution(text, page_name, expected_count):
     if solution_index not in assignments:
 
         raise RuntimeError(
-            f"Solution assignment ${solution_index} not found for {page_name}"
+            f"Solution assignment "
+            f"${solution_index} not found "
+            f"for {page_name}"
         )
+
+    # --------------------------------------------------------
+    # 3. Risolvi la solution
+    # --------------------------------------------------------
 
     solution = resolve_reference(
         assignments[solution_index],
         assignments
     )
 
-    if not isinstance(solution, dict):
+    if not isinstance(
+        solution,
+        dict
+    ):
 
         raise RuntimeError(
-            f"Invalid solution for {page_name}"
+            f"Invalid solution "
+            f"for {page_name}"
         )
 
     solution_name = solution.get(
@@ -563,39 +731,80 @@ def find_solution(text, page_name, expected_count):
     if required_cards != expected_count:
 
         raise RuntimeError(
-            f"Unexpected requiredCards={required_cards} "
-            f"for {page_name}, expected {expected_count}"
+            f"Unexpected requiredCards="
+            f"{required_cards} for "
+            f"{page_name}, expected "
+            f"{expected_count}"
         )
 
-    items = solution.get(
+    # --------------------------------------------------------
+    # 4. Recupera items
+    # --------------------------------------------------------
+
+    raw_items = solution.get(
         "items"
     )
 
-    if items is None:
+    if raw_items is None:
 
         raise RuntimeError(
-            f"No solution items found for {page_name}"
-        )
-
-    items = resolve_reference(
-        items,
-        assignments
-    )
-
-    if not isinstance(items, list):
-
-        raise RuntimeError(
-            f"Solution items are not a list for {page_name}"
+            f"No solution items found "
+            f"for {page_name}"
         )
 
     print(
-        f"Solution contains {len(items)}/{expected_count} cards."
+        f"Raw items type: "
+        f"{type(raw_items).__name__}"
+    )
+
+    # --------------------------------------------------------
+    # 5. Risolvi eventuale reference
+    # --------------------------------------------------------
+
+    items = resolve_reference(
+        raw_items,
+        assignments
+    )
+
+    print(
+        f"Resolved items type: "
+        f"{type(items).__name__}"
+    )
+
+    # --------------------------------------------------------
+    # 6. Validazione
+    # --------------------------------------------------------
+
+    if not isinstance(
+        items,
+        list
+    ):
+
+        print(
+            "DEBUG raw_items:",
+            repr(raw_items)[:500]
+        )
+
+        print(
+            "DEBUG resolved_items:",
+            repr(items)[:500]
+        )
+
+        raise RuntimeError(
+            f"Solution items are not "
+            f"a list for {page_name}"
+        )
+
+    print(
+        f"Solution contains "
+        f"{len(items)}/{expected_count} cards."
     )
 
     if len(items) != expected_count:
 
         raise RuntimeError(
-            f"Wrong card count for {page_name}: "
+            f"Wrong card count for "
+            f"{page_name}: "
             f"{len(items)}/{expected_count}"
         )
 
@@ -606,7 +815,9 @@ def find_solution(text, page_name, expected_count):
 # PLAYER DATA
 # ============================================================
 
-def get_player_name(player_ea_id):
+def get_player_name(
+    player_ea_id
+):
 
     url = (
         f"https://www.fut.gg/players/"
@@ -621,14 +832,19 @@ def get_player_name(player_ea_id):
         )
 
         if response.status_code != 200:
-            return f"Player {player_ea_id}"
+
+            return (
+                f"Player {player_ea_id}"
+            )
 
         soup = BeautifulSoup(
             response.text,
             "html.parser"
         )
 
-        h1 = soup.find("h1")
+        h1 = soup.find(
+            "h1"
+        )
 
         if h1:
 
@@ -641,12 +857,17 @@ def get_player_name(player_ea_id):
                 return name
 
     except Exception:
+
         pass
 
-    return f"Player {player_ea_id}"
+    return (
+        f"Player {player_ea_id}"
+    )
 
 
-def get_version(ea_id):
+def get_version(
+    ea_id
+):
 
     url = (
         f"https://www.fut.gg/players/"
@@ -661,6 +882,7 @@ def get_version(ea_id):
         )
 
         if response.status_code != 200:
+
             return "BASE"
 
         soup = BeautifulSoup(
@@ -668,29 +890,37 @@ def get_version(ea_id):
             "html.parser"
         )
 
-        h1 = soup.find("h1")
+        h1 = soup.find(
+            "h1"
+        )
 
         text = ""
 
         if h1:
+
             text = h1.get_text(
                 " ",
                 strip=True
             ).upper()
 
         if "PRISTINE" in text:
+
             return "PRISTINE HOLO"
 
         if "HOLO" in text:
+
             return "HOLO"
 
     except Exception:
+
         pass
 
     return "BASE"
 
 
-def get_card_link(ea_id):
+def get_card_link(
+    ea_id
+):
 
     return (
         f"https://www.fut.gg/players/"
@@ -707,10 +937,14 @@ def parse_players(
 
     for item in items:
 
-        if not isinstance(item, dict):
+        if not isinstance(
+            item,
+            dict
+        ):
 
             raise RuntimeError(
-                f"Invalid card item in {page_name}"
+                f"Invalid card item "
+                f"in {page_name}"
             )
 
         ea_id = item.get(
@@ -732,19 +966,22 @@ def parse_players(
         if ea_id is None:
 
             raise RuntimeError(
-                f"Card without eaId in {page_name}"
+                f"Card without eaId "
+                f"in {page_name}"
             )
 
         if player_ea_id is None:
 
             raise RuntimeError(
-                f"Card without playerEaId in {page_name}"
+                f"Card without "
+                f"playerEaId in {page_name}"
             )
 
         name = get_player_name(
             player_ea_id
         )
 
+        # Holographics sono sempre HOLO
         if page_name == "Holographics":
 
             version = "HOLO"
@@ -755,16 +992,20 @@ def parse_players(
                 ea_id
             )
 
+        card = {
+            "ea_id": ea_id,
+            "player_ea_id": player_ea_id,
+            "name": name,
+            "overall": overall,
+            "rarity_id": rarity_id,
+            "version": version,
+            "url": get_card_link(
+                ea_id
+            ),
+        }
+
         players.append(
-            {
-                "ea_id": ea_id,
-                "player_ea_id": player_ea_id,
-                "name": name,
-                "overall": overall,
-                "rarity_id": rarity_id,
-                "version": version,
-                "url": get_card_link(ea_id),
-            }
+            card
         )
 
         print(
@@ -785,6 +1026,7 @@ def load_state():
     if not os.path.exists(
         STATE_FILE
     ):
+
         return {
             page: []
             for page in PAGES
@@ -798,11 +1040,14 @@ def load_state():
             encoding="utf-8"
         ) as f:
 
-            data = json.load(f)
+            data = json.load(
+                f
+            )
 
         for page in PAGES:
 
             if page not in data:
+
                 data[page] = []
 
         return data
@@ -815,7 +1060,9 @@ def load_state():
         }
 
 
-def save_state(data):
+def save_state(
+    data
+):
 
     with open(
         STATE_FILE,
@@ -831,14 +1078,20 @@ def save_state(data):
         )
 
 
-def save_trending(data):
+def save_trending(
+    data
+):
 
-    os.makedirs(
-        os.path.dirname(
-            TRENDING_FILE
-        ),
-        exist_ok=True
+    directory = os.path.dirname(
+        TRENDING_FILE
     )
+
+    if directory:
+
+        os.makedirs(
+            directory,
+            exist_ok=True
+        )
 
     output = {
         "updated_at": int(
@@ -865,7 +1118,9 @@ def save_trending(data):
 # TELEGRAM
 # ============================================================
 
-def telegram_send(message):
+def telegram_send(
+    message
+):
 
     token = os.getenv(
         "TELEGRAM_BOT_TOKEN"
@@ -884,8 +1139,8 @@ def telegram_send(message):
         return
 
     url = (
-        f"https://api.telegram.org/bot"
-        f"{token}/sendMessage"
+        f"https://api.telegram.org/"
+        f"bot{token}/sendMessage"
     )
 
     try:
@@ -914,11 +1169,16 @@ def telegram_send(message):
 # COMPARISON
 # ============================================================
 
-def card_key(card):
+def card_key(
+    card
+):
 
     return (
         card.get("ea_id"),
-        card.get("version", "BASE")
+        card.get(
+            "version",
+            "BASE"
+        ),
     )
 
 
@@ -940,6 +1200,10 @@ def compare_cards(
     out_cards = []
     in_cards = []
 
+    # --------------------------------------------------------
+    # OUT
+    # --------------------------------------------------------
+
     for key, count in (
         old_counter - new_counter
     ).items():
@@ -950,9 +1214,15 @@ def compare_cards(
 
                 if card_key(card) == key:
 
-                    out_cards.append(card)
+                    out_cards.append(
+                        card
+                    )
 
                     break
+
+    # --------------------------------------------------------
+    # IN
+    # --------------------------------------------------------
 
     for key, count in (
         new_counter - old_counter
@@ -964,14 +1234,21 @@ def compare_cards(
 
                 if card_key(card) == key:
 
-                    in_cards.append(card)
+                    in_cards.append(
+                        card
+                    )
 
                     break
 
-    return out_cards, in_cards
+    return (
+        out_cards,
+        in_cards
+    )
 
 
-def format_card(card):
+def format_card(
+    card
+):
 
     name = card.get(
         "name",
@@ -1001,37 +1278,68 @@ def format_card(card):
 
 def main():
 
-    print("=" * 60)
-    print("FUT.GG MONITOR")
-    print("=" * 60)
+    print(
+        "=" * 60
+    )
+
+    print(
+        "FUT.GG MONITOR"
+    )
+
+    print(
+        "=" * 60
+    )
 
     state = load_state()
 
     successful_pages = 0
 
+    # --------------------------------------------------------
+    # SCAN PAGES
+    # --------------------------------------------------------
+
     for page_name, config in PAGES.items():
 
         print()
-        print("=" * 60)
+        print(
+            "=" * 60
+        )
+
         print(
             f"Scanning {page_name}"
         )
+
         print(
             config["url"]
         )
-        print("=" * 60)
+
+        print(
+            "=" * 60
+        )
 
         try:
+
+            # ------------------------------------------------
+            # Download
+            # ------------------------------------------------
 
             html = download_page(
                 config["url"]
             )
+
+            # ------------------------------------------------
+            # Parse solution
+            # ------------------------------------------------
 
             items = find_solution(
                 html,
                 page_name,
                 config["expected"]
             )
+
+            # ------------------------------------------------
+            # Parse players
+            # ------------------------------------------------
 
             players = parse_players(
                 items,
@@ -1043,13 +1351,20 @@ def main():
                 []
             )
 
-            # First successful run:
-            # save silently.
+            # ------------------------------------------------
+            # FIRST RUN
+            # ------------------------------------------------
+
             if not old_players:
 
                 print(
-                    f"🆕 First state saved for {page_name}."
+                    f"🆕 First state saved "
+                    f"for {page_name}."
                 )
+
+            # ------------------------------------------------
+            # EXISTING STATE
+            # ------------------------------------------------
 
             else:
 
@@ -1058,15 +1373,25 @@ def main():
                     players
                 )
 
-                if out_cards or in_cards:
+                # ------------------------------------------------
+                # CHANGES
+                # ------------------------------------------------
+
+                if (
+                    out_cards
+                    or in_cards
+                ):
 
                     message = (
                         f"<b>{page_name}</b>\n\n"
                     )
 
+                    # OUT
                     if out_cards:
 
-                        message += "🔴 <b>OUT</b>\n"
+                        message += (
+                            "🔴 <b>OUT</b>\n"
+                        )
 
                         for card in out_cards:
 
@@ -1077,9 +1402,12 @@ def main():
 
                         message += "\n"
 
+                    # IN
                     if in_cards:
 
-                        message += "🟢 <b>IN</b>\n"
+                        message += (
+                            "🟢 <b>IN</b>\n"
+                        )
 
                         for card in in_cards:
 
@@ -1091,7 +1419,7 @@ def main():
                         message += "\n"
 
                     message += (
-                        f'🔗 <a href="{config["url"]}">'
+                        f'<a href="{config["url"]}">'
                         f"Open {page_name}"
                         f"</a>"
                     )
@@ -1110,8 +1438,10 @@ def main():
                         "No card changes."
                     )
 
-            # Only update state after
-            # successful parsing.
+            # ------------------------------------------------
+            # SAVE ONLY AFTER SUCCESS
+            # ------------------------------------------------
+
             state[page_name] = players
 
             successful_pages += 1
@@ -1129,25 +1459,41 @@ def main():
             )
 
             print(
-                f"Previous state for {page_name} "
-                f"was preserved."
+                f"Previous state for "
+                f"{page_name} was preserved."
             )
+
+    # ========================================================
+    # NOTHING WORKED
+    # ========================================================
 
     if successful_pages == 0:
 
         print()
+
         print(
             "❌ No pages succeeded."
         )
 
         print()
-        print("=" * 60)
+
+        print(
+            "=" * 60
+        )
+
         print(
             "MONITOR FINISHED"
         )
-        print("=" * 60)
+
+        print(
+            "=" * 60
+        )
 
         return
+
+    # ========================================================
+    # SAVE
+    # ========================================================
 
     save_state(
         state
@@ -1158,8 +1504,10 @@ def main():
     )
 
     print()
+
     print(
-        f"✅ {successful_pages}/{len(PAGES)} pages succeeded."
+        f"✅ {successful_pages}/"
+        f"{len(PAGES)} pages succeeded."
     )
 
     print(
@@ -1171,12 +1519,23 @@ def main():
     )
 
     print()
-    print("=" * 60)
+
+    print(
+        "=" * 60
+    )
+
     print(
         "MONITOR FINISHED"
     )
-    print("=" * 60)
 
+    print(
+        "=" * 60
+    )
+
+
+# ============================================================
+# START
+# ============================================================
 
 if __name__ == "__main__":
     main()
