@@ -2,75 +2,85 @@
   "Heroes": [
     {
       "name": "Šašić",
-      "overall": 89,
-      "rarity": "Base Hero",
-      "item_id": "67335170",
-      "version": "PRISTINE HOLO"
+      "overall": "89",
+      "base_version": "Base Hero",
+      "version": "BASE",
+      "url": "",
+      "item_id": null
     },
     {
-      "name": "Litmanen",
-      "overall": 88,
-      "rarity": "Base Hero",
-      "item_id": "67114537",
-      "version": "PRISTINE HOLO"
-    },
-    {
-      "name": "Keßler",
-      "overall": 88,
-      "rarity": "Base Hero",
-      "item_id": "67335237",
-      "version": "PRISTINE HOLO"
+      "name": "Zamorano",
+      "overall": "88",
+      "base_version": "Base Hero",
+      "version": "BASE",
+      "url": "",
+      "item_id": null
     },
     {
       "name": "Milito",
-      "overall": 88,
-      "rarity": "Base Hero",
-      "item_id": "67371135",
-      "version": "PRISTINE HOLO"
+      "overall": "88",
+      "base_version": "Base Hero",
+      "version": "BASE",
+      "url": "",
+      "item_id": null
     },
     {
       "name": "Šašić",
-      "overall": 89,
-      "rarity": "Base Hero",
-      "item_id": "226306",
-      "version": "BASE"
+      "overall": "89",
+      "base_version": "Base Hero",
+      "version": "BASE",
+      "url": "",
+      "item_id": null
+    },
+    {
+      "name": "Vialli",
+      "overall": "89",
+      "base_version": "Base Hero",
+      "version": "BASE",
+      "url": "",
+      "item_id": null
     }
   ],
   "Holographics": [
     {
       "name": "Angerer",
-      "overall": 92,
-      "rarity": "Base Icon",
-      "item_id": "67335157",
-      "version": "PRISTINE HOLO"
+      "overall": "92",
+      "base_version": "Base Icon",
+      "version": "BASE",
+      "url": "",
+      "item_id": null
     },
     {
       "name": "Prinz",
-      "overall": 92,
-      "rarity": "Base Icon",
-      "item_id": "67384140",
-      "version": "PRISTINE HOLO"
+      "overall": "92",
+      "base_version": "Base Icon",
+      "version": "BASE",
+      "url": "",
+      "item_id": null
     },
     {
       "name": "Baresi",
-      "overall": 91,
-      "rarity": "Base Icon",
-      "item_id": "67275770",
-      "version": "PRISTINE HOLO"
+      "overall": "91",
+      "base_version": "Base Icon",
+      "version": "BASE",
+      "url": "",
+      "item_id": null
     },
     {
       "name": "Foudy",
-      "overall": 90,
-      "rarity": "Base Icon",
-      "item_id": "67180472",
-      "version": "PRISTINE HOLO"
+      "overall": "90",
+      "base_version": "Base Icon",
+      "version": "BASE",
+      "url": "",
+      "item_id": null
     },
     {
       "name": "Moore",
-      "overall": 90,
-      "rarity": "Base Icon",
-      "item_id": "67298908",
-      "version": "PRISTINE HOLO"
+      "overall": "90",
+      "base_version": "Base Icon",
+      "version": "BASE",
+      "url": "",
+      "item_id": null
     }
   ],
   "Season 1": [
