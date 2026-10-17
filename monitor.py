@@ -1,11 +1,9 @@
-import json
 import os
 import re
-from collections import Counter
-
+import json
 import requests
 from bs4 import BeautifulSoup
-
+from collections import Counter
 
 # ============================================================
 # CONFIG
@@ -29,34 +27,25 @@ PAGES = {
     },
 }
 
-
 PLAYERS_FILE = "players.json"
 CACHE_FILE = "card_cache.json"
 
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 
 HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 "
-        "(KHTML, like Gecko) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
         "Chrome/140.0.0.0 Safari/537.36"
-    ),
-    "Accept-Language": "en-US,en;q=0.9",
+    )
 }
-
-
-session = requests.Session()
-session.headers.update(HEADERS)
-
 
 # ============================================================
 # KNOWN FINISHES
 # ============================================================
 
 KNOWN_FINISHES = {
-
-    # HEROES
-
     "67335170": "PRISTINE HOLO",
     "67114537": "PRISTINE HOLO",
     "67335237": "PRISTINE HOLO",
@@ -67,18 +56,15 @@ KNOWN_FINISHES = {
 
     "67186651": "PRISTINE HOLO",
 
-    # HOLOGRAPHICS
-
     "67335157": "PRISTINE HOLO",
     "67384140": "PRISTINE HOLO",
     "67275770": "PRISTINE HOLO",
     "67180472": "PRISTINE HOLO",
     "67298908": "PRISTINE HOLO",
 
-    # SEASON 1
-
     "67348095": "PRISTINE HOLO",
     "67368151": "PRISTINE HOLO",
+
     "67179830": "HOLO",
     "67188263": "HOLO",
     "67368429": "HOLO",
@@ -90,66 +76,23 @@ KNOWN_FINISHES = {
     "50590935": "BASE",
 }
 
-
 # ============================================================
-# HELPERS
-# ============================================================
-
-def clean(value):
-
-    if value is None:
-        return ""
-
-    return re.sub(
-        r"\s+",
-        " ",
-        str(value)
-    ).strip()
-
-
-def normalize_name(name):
-
-    return clean(name).lower()
-
-
-# ============================================================
-# JSON
+# JSON HELPERS
 # ============================================================
 
-def load_json(path, default):
-
-    if not os.path.exists(path):
+def load_json(filename, default):
+    if not os.path.exists(filename):
         return default
 
     try:
-
-        with open(
-            path,
-            "r",
-            encoding="utf-8"
-        ) as f:
-
+        with open(filename, "r", encoding="utf-8") as f:
             return json.load(f)
-
     except Exception:
-
-        print(
-            f"WARNING: cannot read {path}"
-        )
-
         return default
 
 
-def save_json(path, data):
-
-    temp = path + ".tmp"
-
-    with open(
-        temp,
-        "w",
-        encoding="utf-8"
-    ) as f:
-
+def save_json(filename, data):
+    with open(filename, "w", encoding="utf-8") as f:
         json.dump(
             data,
             f,
@@ -157,95 +100,29 @@ def save_json(path, data):
             indent=2
         )
 
-    os.replace(
-        temp,
-        path
-    )
-
-
-# ============================================================
-# FETCH
-# ============================================================
-
-def fetch(url):
-
-    response = session.get(
-        url,
-        timeout=45
-    )
-
-    response.raise_for_status()
-
-    return response.text
-
 
 # ============================================================
 # FIND LINEUP
 # ============================================================
 
-def find_lineup(html):
+def find_lineup(soup):
+    """
+    Finds the 'Cheapest grade X lineup' section.
+    """
 
-    soup = BeautifulSoup(
-        html,
-        "html.parser"
-    )
+    text = soup.get_text(" ", strip=True)
 
-    headings = soup.find_all(
-        string=re.compile(
-            r"Cheapest grade",
-            re.I
-        )
-    )
+    patterns = [
+        r"Cheapest grade [^ ]+ lineup",
+        r"Cheapest grade .*? lineup",
+    ]
 
-    if not headings:
-        raise RuntimeError(
-            "Cheapest grade lineup not found"
-        )
+    for pattern in patterns:
+        match = re.search(pattern, text, re.I)
+        if match:
+            return match.group(0)
 
-    heading = headings[-1]
-
-    node = heading.parent
-
-    for _ in range(12):
-
-        if node is None:
-            break
-
-        text = clean(
-            node.get_text(
-                " ",
-                strip=True
-            )
-        )
-
-        html_text = str(node)
-
-        if (
-            "Add players" in text
-            and len(html_text) > 1000
-        ):
-
-            marker = re.search(
-                r"Add players",
-                html_text,
-                re.I
-            )
-
-            if marker:
-                html_text = html_text[
-                    :marker.start()
-                ]
-
-            return BeautifulSoup(
-                html_text,
-                "html.parser"
-            )
-
-        node = node.parent
-
-    raise RuntimeError(
-        "Could not isolate lineup"
-    )
+    return None
 
 
 # ============================================================
@@ -253,7 +130,6 @@ def find_lineup(html):
 # ============================================================
 
 def extract_item_id(src):
-
     if not src:
         return None
 
@@ -273,85 +149,78 @@ def extract_item_id(src):
 # ============================================================
 
 def parse_alt(alt):
-
-    alt = clean(alt)
+    """
+    Examples:
+        Harder - 88 - Destined for Glory
+        Mora - 87 - Future Stars
+        Šašić - 89 - Base Hero
+    """
 
     if not alt:
         return None
 
-    if alt.lower() == "player card":
+    parts = [
+        p.strip()
+        for p in alt.split(" - ")
+    ]
+
+    if len(parts) < 2:
         return None
 
-    match = re.match(
-        r"^(.+?)\s*-\s*(\d{2})\s*-\s*(.+?)$",
-        alt
+    name = parts[0]
+
+    overall_match = re.search(
+        r"\b(\d{2})\b",
+        parts[1]
     )
 
-    if not match:
+    if not overall_match:
         return None
 
+    overall = overall_match.group(1)
+
+    version = ""
+
+    if len(parts) >= 3:
+        version = " - ".join(parts[2:]).strip()
+
     return {
-        "name": clean(match.group(1)),
-        "overall": int(match.group(2)),
-        "version": clean(match.group(3)),
+        "name": name,
+        "overall": overall,
+        "version": version,
     }
 
 
 # ============================================================
-# FINISH
+# FINISH RESOLUTION
 # ============================================================
 
-def resolve_finish(
-    item_id,
-    previous,
-    cache
-):
+def resolve_finish(item_id, cache, previous_cards):
+    if not item_id:
+        return None
 
     item_id = str(item_id)
 
+    # Known mapping first
     if item_id in KNOWN_FINISHES:
+        finish = KNOWN_FINISHES[item_id]
+        cache[item_id] = finish
+        return finish
 
-        return KNOWN_FINISHES[
-            item_id
-        ]
+    # Cache
+    if item_id in cache:
+        return cache[item_id]
 
-    cached = cache.get(
-        item_id
-    )
-
-    if isinstance(cached, dict):
-
-        finish = cached.get(
-            "finish"
-        )
-
-        if finish in (
-            "BASE",
-            "HOLO",
-            "PRISTINE HOLO"
-        ):
-
-            return finish
-
-    for card in previous:
-
-        if not isinstance(card, dict):
+    # Previous state
+    for card in previous_cards:
+        if not card:
             continue
 
-        if str(
-            card.get("item_id", "")
-        ) == item_id:
+        if str(card.get("item_id")) == item_id:
+            finish = card.get("finish")
 
-            finish = card.get(
-                "finish"
-            )
-
-            if finish in (
-                "BASE",
-                "HOLO",
-                "PRISTINE HOLO"
-            ):
-
+            if finish:
+                cache[item_id] = finish
                 return finish
 
     return None
@@ -363,78 +232,120 @@ def resolve_finish(
 
 def extract_lineup(
     soup,
-    category,
-    previous,
-    cache
+    expected_slots,
+    cache,
+    previous_cards
 ):
+    """
+    Returns exactly expected_slots entries.
 
-    slots = []
+    None = Player Card / empty slot.
+    """
 
-    images = soup.find_all(
-        "img"
-    )
+    lineup = []
 
-    seen = set()
+    # --------------------------------------------------------
+    # Find all images containing FUT card assets
+    # --------------------------------------------------------
+
+    images = soup.find_all("img")
+
+    cards = []
 
     for img in images:
+        alt = img.get("alt", "").strip()
+        src = img.get("src", "")
 
-        alt = clean(
-            img.get("alt")
-        )
-
-        src = clean(
-            img.get("src")
-        )
-
-        if alt.lower() == "player card":
-
-            slots.append(
-                None
-            )
-
+        if not alt:
             continue
 
-        parsed = parse_alt(
-            alt
-        )
+        parsed = parse_alt(alt)
 
         if not parsed:
             continue
 
-        item_id = extract_item_id(
-            src
-        )
+        item_id = extract_item_id(src)
 
         if not item_id:
             continue
 
-        key = (
-            str(item_id),
-            parsed["name"],
-            parsed["overall"],
-            parsed["version"],
-        )
-
-        if key in seen:
-            continue
-
-        seen.add(key)
-
-        finish = resolve_finish(
-            item_id,
-            previous,
-            cache
-        )
-
-        slots.append({
+        cards.append({
             "name": parsed["name"],
             "overall": parsed["overall"],
             "version": parsed["version"],
-            "finish": finish,
-            "item_id": str(item_id),
+            "item_id": item_id,
         })
 
-    return slots
+    # --------------------------------------------------------
+    # Try to detect the actual lineup cards
+    # --------------------------------------------------------
+
+    # Remove accidental duplicates only when they are literally
+    # the same occurrence/item.
+    #
+    # Different Item IDs are intentionally preserved.
+
+    unique_cards = []
+
+    seen_occurrences = set()
+
+    for card in cards:
+        occurrence_key = (
+            card["item_id"],
+            card["name"],
+            card["overall"],
+            card["version"],
+        )
+
+        if occurrence_key in seen_occurrences:
+            continue
+
+        seen_occurrences.add(occurrence_key)
+        unique_cards.append(card)
+
+    cards = unique_cards
+
+    # --------------------------------------------------------
+    # Keep the first expected_slots cards.
+    #
+    # The Season 1 page can contain "Player Card" placeholders.
+    # Those placeholders are reconstructed below when necessary.
+    # --------------------------------------------------------
+
+    real_count = min(
+        len(cards),
+        expected_slots
+    )
+
+    cards = cards[:real_count]
+
+    # --------------------------------------------------------
+    # Build result
+    # --------------------------------------------------------
+
+    for card in cards:
+        item_id = card["item_id"]
+
+        finish = resolve_finish(
+            item_id,
+            cache,
+            previous_cards
+        )
+
+        card["finish"] = finish
+
+        lineup.append(card)
+
+    # --------------------------------------------------------
+    # Pad to exact slot count.
+    #
+    # For Season 1 this represents Player Card placeholders.
+    # --------------------------------------------------------
+
+    while len(lineup) < expected_slots:
+        lineup.append(None)
+
+    return lineup
 
 
 # ============================================================
@@ -442,154 +353,100 @@ def extract_lineup(
 # ============================================================
 
 def card_key(card):
-
-    if card is None:
+    if not card:
         return None
 
     return (
-        normalize_name(
-            card.get("name", "")
-        ),
-        int(
-            card.get("overall", 0)
-        ),
-        clean(
-            card.get("version", "")
-        ).lower(),
-        clean(
-            card.get("finish", "")
-        ).upper(),
-        str(
-            card.get("item_id", "")
-        ),
+        str(card.get("item_id")),
+        card.get("name"),
+        str(card.get("overall")),
+        card.get("finish"),
     )
 
 
 # ============================================================
-# LABEL
+# CARD LABEL
 # ============================================================
 
 def card_label(card):
-
-    if card is None:
+    if not card:
         return "Player Card"
 
-    finish = card.get(
-        "finish"
-    )
+    name = card.get("name", "?")
+    overall = card.get("overall", "?")
+    finish = card.get("finish")
 
     if finish:
+        return f"{name} {overall} — {finish}"
 
-        return (
-            f"{card['name']} "
-            f"{card['overall']} — "
-            f"{finish}"
-        )
-
-    return (
-        f"{card['name']} "
-        f"{card['overall']} — UNKNOWN"
-    )
+    return f"{name} {overall}"
 
 
 # ============================================================
-# REAL CARDS ONLY
+# REAL CARDS
 # ============================================================
 
-def real_cards(slots):
-
+def real_cards(lineup):
     return [
         card
-        for card in slots
+        for card in lineup
         if card is not None
     ]
 
 
 # ============================================================
-# COMPARE
+# COMPARE CARDS
 # ============================================================
 
-def compare_cards(
-    old_slots,
-    new_slots
-):
+def compare_cards(previous, current):
+    """
+    Compare cards as occurrences.
 
-    old_cards = real_cards(
-        old_slots
-    )
+    Counter is important because legitimate duplicates
+    must remain separate.
 
-    new_cards = real_cards(
-        new_slots
-    )
+    Example:
+        Harder 88 BASE
+        Harder 88 BASE
 
-    old_counter = Counter(
+    is counted twice if there are two different Item IDs.
+    """
+
+    previous_counter = Counter(
         card_key(card)
-        for card in old_cards
+        for card in real_cards(previous)
     )
 
-    new_counter = Counter(
+    current_counter = Counter(
         card_key(card)
-        for card in new_cards
+        for card in real_cards(current)
     )
 
-    out = []
-    incoming = []
+    outs = []
+    ins = []
 
-    difference = (
-        old_counter - new_counter
-    )
+    for key, count in previous_counter.items():
+        difference = count - current_counter.get(key, 0)
 
-    for key, count in difference.items():
+        for _ in range(max(0, difference)):
+            outs.append(key)
 
-        for _ in range(count):
+    for key, count in current_counter.items():
+        difference = count - previous_counter.get(key, 0)
 
-            for card in old_cards:
+        for _ in range(max(0, difference)):
+            ins.append(key)
 
-                if card_key(card) == key:
-
-                    out.append(
-                        card
-                    )
-
-                    break
-
-    difference = (
-        new_counter - old_counter
-    )
-
-    for key, count in difference.items():
-
-        for _ in range(count):
-
-            for card in new_cards:
-
-                if card_key(card) == key:
-
-                    incoming.append(
-                        card
-                    )
-
-                    break
-
-    return out, incoming
+    return outs, ins
 
 
 # ============================================================
 # UNKNOWN FINISH
 # ============================================================
 
-def has_unknown_finish(slots):
-
-    for card in real_cards(slots):
-
-        if card.get(
-            "finish"
-        ) not in (
-            "BASE",
-            "HOLO",
-            "PRISTINE HOLO"
-        ):
-
+def has_unknown_finish(lineup):
+    for card in real_cards(lineup):
+        if not card.get("finish"):
             return True
 
     return False
@@ -602,170 +459,151 @@ def has_unknown_finish(slots):
 def process_category(
     category,
     config,
-    state,
+    players,
     cache
 ):
+    url = config["url"]
+    expected_slots = config["slots"]
 
-    print()
     print("=" * 60)
-    print(
-        f"Checking {category}..."
-    )
-    print(
-        config["url"]
-    )
+    print(f"Scanning {category.upper()}")
+    print(url)
+    print("=" * 60)
 
-    previous = state.get(
-        category,
-        []
-    )
+    previous = players.get(category)
 
-    if not isinstance(
-        previous,
-        list
-    ):
+    if not previous:
         previous = []
 
-    html = fetch(
-        config["url"]
-    )
+    # Make sure previous has the right slot count
+    while len(previous) < expected_slots:
+        previous.append(None)
 
-    soup = find_lineup(
-        html
-    )
+    previous = previous[:expected_slots]
 
-    slots = extract_lineup(
-        soup,
-        category,
-        previous,
-        cache
-    )
+    # --------------------------------------------------------
+    # Request
+    # --------------------------------------------------------
 
-    expected = config[
-        "slots"
-    ]
-
-    if len(slots) != expected:
-
-        raise RuntimeError(
-            f"Expected {expected} slots, "
-            f"detected {len(slots)}"
+    try:
+        response = requests.get(
+            url,
+            headers=HEADERS,
+            timeout=30
         )
 
-    cards = real_cards(
-        slots
+        response.raise_for_status()
+
+    except Exception as e:
+        print(f"Request error: {e}")
+
+        return {
+            "changed": False,
+            "error": True,
+            "slots": previous,
+            "outs": [],
+            "ins": [],
+        }
+
+    # --------------------------------------------------------
+    # Parse HTML
+    # --------------------------------------------------------
+
+    soup = BeautifulSoup(
+        response.text,
+        "html.parser"
     )
 
-    empty = slots.count(
-        None
+    find_lineup(soup)
+
+    current = extract_lineup(
+        soup,
+        expected_slots,
+        cache,
+        previous
     )
 
     print(
         f"Rendered lineup: "
-        f"{len(cards)}/{expected} real cards"
+        f"{len(real_cards(current))}/{expected_slots} real cards"
     )
 
-    if category == "Season 1":
+    # --------------------------------------------------------
+    # Validate exact lineup
+    # --------------------------------------------------------
 
+    if len(current) != expected_slots:
         print(
-            f"Unknown slots: {empty}"
-        )
-
-    print(
-        "Detected cards:"
-    )
-
-    for index, card in enumerate(
-        slots,
-        1
-    ):
-
-        if card is None:
-
-            print(
-                f"  [{index}] "
-                f"Player Card"
-            )
-
-        else:
-
-            print(
-                f"  [{index}] "
-                f"{card_label(card)} "
-                f"ItemID={card['item_id']}"
-            )
-
-    if has_unknown_finish(
-        slots
-    ):
-
-        print()
-        print(
-            "WARNING: finish unresolved."
-        )
-
-        print(
-            "Previous state kept."
+            f"Invalid lineup size: "
+            f"{len(current)}/{expected_slots}"
         )
 
         return {
-            "category": category,
+            "changed": False,
+            "error": True,
             "slots": previous,
-            "previous": previous,
-            "out": [],
-            "incoming": [],
-            "safe": False,
+            "outs": [],
+            "ins": [],
         }
+
+    # --------------------------------------------------------
+    # If any finish is unknown, DO NOT overwrite state.
+    # --------------------------------------------------------
+
+    if has_unknown_finish(current):
+        print("Finish unresolved - keeping previous state")
+
+        return {
+            "changed": False,
+            "error": True,
+            "unresolved": True,
+            "slots": previous,
+            "outs": [],
+            "ins": [],
+        }
+
+    # --------------------------------------------------------
+    # First run
+    # --------------------------------------------------------
 
     if not previous:
-
-        print(
-            "No previous state."
-        )
-
-        print(
-            "Initializing current lineup."
-        )
-
-        state[
-            category
-        ] = slots
+        players[category] = current
 
         return {
-            "category": category,
-            "slots": slots,
-            "previous": [],
-            "out": [],
-            "incoming": [],
-            "safe": True,
-            "initializing": True,
+            "changed": False,
+            "initial": True,
+            "error": False,
+            "slots": current,
+            "outs": [],
+            "ins": [],
         }
 
-    out, incoming = compare_cards(
+    # --------------------------------------------------------
+    # Compare
+    # --------------------------------------------------------
+
+    outs, ins = compare_cards(
         previous,
-        slots
+        current
     )
 
-    print(
-        f"OUT: {len(out)}"
+    changed = bool(
+        outs or ins
     )
 
-    print(
-        f"IN: {len(incoming)}"
-    )
+    # --------------------------------------------------------
+    # Save new state
+    # --------------------------------------------------------
 
-    state[
-        category
-    ] = slots
+    players[category] = current
 
     return {
-        "category": category,
-        "slots": slots,
-        "previous": previous,
-        "out": out,
-        "incoming": incoming,
-        "safe": True,
-        "initializing": False,
+        "changed": changed,
+        "initial": False,
+        "error": False,
+        "slots": current,
+        "outs": outs,
+        "ins": ins,
     }
 
 
@@ -773,54 +611,65 @@ def process_category(
 # TELEGRAM
 # ============================================================
 
-def telegram_send(
-    token,
-    chat_id,
-    message
-):
+def send_telegram(message):
+    if not TELEGRAM_BOT_TOKEN:
+        print("TELEGRAM_BOT_TOKEN missing")
+        return
+
+    if not TELEGRAM_CHAT_ID:
+        print("TELEGRAM_CHAT_ID missing")
+        return
 
     url = (
         f"https://api.telegram.org/bot"
-        f"{token}/sendMessage"
+        f"{TELEGRAM_BOT_TOKEN}/sendMessage"
     )
 
-    response = session.post(
-        url,
-        json={
-            "chat_id": chat_id,
-            "text": message,
-        },
-        timeout=30
-    )
+    payload = {
+        "chat_id": TELEGRAM_CHAT_ID,
+        "text": message,
+        "disable_web_page_preview": True,
+    }
 
-    response.raise_for_status()
+    try:
+        response = requests.post(
+            url,
+            json=payload,
+            timeout=30
+        )
+
+        response.raise_for_status()
+
+        print("Telegram message sent")
+
+    except Exception as e:
+        print(f"Telegram error: {e}")
 
 
 # ============================================================
-# TELEGRAM FORMAT
+# FORMAT CATEGORY
 # ============================================================
 
-def format_category(result):
+def format_category(
+    category,
+    config,
+    result
+):
+    emoji = config["emoji"]
 
-    category = result[
-        "category"
-    ]
+    lines = []
 
-    emoji = PAGES[
-        category
-    ]["emoji"]
+    lines.append(
+        f"{emoji} {category}"
+    )
 
-    lines = [
-        f"{emoji} {category}",
-        ""
-    ]
+    lines.append("")
 
-    # ========================================================
-    # FINISH UNRESOLVED
-    # ========================================================
+    # --------------------------------------------------------
+    # Error / unresolved
+    # --------------------------------------------------------
 
-    if not result["safe"]:
-
+    if result.get("unresolved"):
         lines.append(
             "⚠️ Finish unresolved"
         )
@@ -837,29 +686,26 @@ def format_category(result):
 
         lines.append("")
 
-        for card in result["slots"]:
-
-            if card is None:
-                continue
-
+        for card in real_cards(
+            result["slots"]
+        ):
             lines.append(
                 card_label(card)
             )
 
-        return "\n".join(
-            lines
+        return "\n".join(lines)
+
+    # --------------------------------------------------------
+    # Request error
+    # --------------------------------------------------------
+
+    if result.get("error"):
+        lines.append(
+            "⚠️ Feed error"
         )
 
-    # ========================================================
-    # FIRST RUN
-    # ========================================================
-
-    if result.get(
-        "initializing"
-    ):
-
         lines.append(
-            "Initial lineup saved"
+            "Previous state kept"
         )
 
         lines.append("")
@@ -870,82 +716,85 @@ def format_category(result):
 
         lines.append("")
 
-        for card in result["slots"]:
-
-            if card is None:
-                continue
-
+        for card in real_cards(
+            result["slots"]
+        ):
             lines.append(
                 card_label(card)
             )
 
-        return "\n".join(
-            lines
-        )
+        return "\n".join(lines)
 
-    # ========================================================
-    # CHANGES
-    # ========================================================
+    # --------------------------------------------------------
+    # Initial
+    # --------------------------------------------------------
 
-    out = result[
-        "out"
-    ]
-
-    incoming = result[
-        "incoming"
-    ]
-
-    slots = result[
-        "slots"
-    ]
-
-    if out:
-
+    if result.get("initial"):
         lines.append(
-            "🔴 OUT"
+            "Initial lineup saved"
         )
 
-        lines.append("")
+    # --------------------------------------------------------
+    # Normal run
+    # --------------------------------------------------------
 
-        for card in out:
+    else:
+        outs = result.get(
+            "outs",
+            []
+        )
 
+        ins = result.get(
+            "ins",
+            []
+        )
+
+        if outs:
             lines.append(
-                f"• {card_label(card)}"
+                "🔴 OUT"
             )
 
-        lines.append("")
+            for key in outs:
+                if key:
+                    _, name, overall, finish = key
 
-    if incoming:
+                    if finish:
+                        lines.append(
+                            f"{name} {overall} — {finish}"
+                        )
+                    else:
+                        lines.append(
+                            f"{name} {overall}"
+                        )
 
-        lines.append(
-            "🟢 IN"
-        )
-
-        lines.append("")
-
-        for card in incoming:
-
+        if ins:
             lines.append(
-                f"• {card_label(card)}"
+                "🟢 IN"
             )
 
-        lines.append("")
+            for key in ins:
+                if key:
+                    _, name, overall, finish = key
 
-    # ========================================================
-    # NO CHANGES
-    # ========================================================
+                    if finish:
+                        lines.append(
+                            f"{name} {overall} — {finish}"
+                        )
+                    else:
+                        lines.append(
+                            f"{name} {overall}"
+                        )
 
-    if not out and not incoming:
+        if not outs and not ins:
+            lines.append(
+                "No feed changes"
+            )
 
-        lines.append(
-            "No feed changes"
-        )
+    # --------------------------------------------------------
+    # ALWAYS SHOW CURRENT LINEUP
+    # --------------------------------------------------------
 
-        lines.append("")
-
-    # ========================================================
-    # CURRENT LINEUP
-    # ========================================================
+    lines.append("")
 
     lines.append(
         "📋 Current lineup 📋"
@@ -953,39 +802,28 @@ def format_category(result):
 
     lines.append("")
 
-    incoming_counter = Counter(
-        card_key(card)
-        for card in incoming
+    incoming_keys = Counter(
+        result.get("ins", [])
     )
 
-    for card in slots:
+    for card in real_cards(
+        result["slots"]
+    ):
+        key = card_key(card)
 
-        if card is None:
-            continue
-
-        key = card_key(
-            card
-        )
-
-        if incoming_counter[key] > 0:
-
+        if incoming_keys.get(key, 0) > 0:
             lines.append(
                 f"🟢 {card_label(card)}"
             )
 
-            incoming_counter[
-                key
-            ] -= 1
+            incoming_keys[key] -= 1
 
         else:
-
             lines.append(
                 card_label(card)
             )
 
-    return "\n".join(
-        lines
-    )
+    return "\n".join(lines)
 
 
 # ============================================================
@@ -993,30 +831,9 @@ def format_category(result):
 # ============================================================
 
 def main():
-
-    print()
-    print(
-        "FUT.GG MONITOR"
-    )
-    print(
-        "=" * 60
-    )
-
-    token = os.getenv(
-        "TELEGRAM_BOT_TOKEN"
-    )
-
-    chat_id = os.getenv(
-        "TELEGRAM_CHAT_ID"
-    )
-
-    state = load_json(
+    players = load_json(
         PLAYERS_FILE,
-        {
-            "Heroes": [],
-            "Holographics": [],
-            "Season 1": [],
-        }
+        {}
     )
 
     cache = load_json(
@@ -1024,154 +841,68 @@ def main():
         {}
     )
 
-    results = []
-    errors = []
+    results = {}
 
     for category, config in PAGES.items():
-
-        try:
-
-            result = process_category(
-                category,
-                config,
-                state,
-                cache
-            )
-
-            results.append(
-                result
-            )
-
-        except Exception as e:
-
-            print()
-            print(
-                f"ERROR on {category}: {e}"
-            )
-
-            errors.append(
-                (
-                    category,
-                    str(e)
-                )
-            )
+        results[category] = process_category(
+            category,
+            config,
+            players,
+            cache
+        )
 
     # --------------------------------------------------------
-    # SAVE
+    # Save state
     # --------------------------------------------------------
 
     save_json(
         PLAYERS_FILE,
-        state
+        players
+    )
+
+    save_json(
+        CACHE_FILE,
+        cache
     )
 
     # --------------------------------------------------------
-    # TELEGRAM
+    # Build Telegram message
     # --------------------------------------------------------
 
     parts = []
 
-    for result in results:
-
+    for category, config in PAGES.items():
         parts.append(
             format_category(
-                result
+                category,
+                config,
+                results[category]
             )
         )
 
-    for category, error in errors:
-
-        emoji = PAGES[
-            category
-        ]["emoji"]
-
-        parts.append(
-            "\n".join([
-                f"{emoji} {category}",
-                "",
-                "⚠️ Monitor error",
-                "",
-                error,
-            ])
-        )
+    # --------------------------------------------------------
+    # SEPARATOR BETWEEN CATEGORIES
+    # --------------------------------------------------------
 
     message = (
         "\n\n"
-        + "\n\n".join(
+        + "\n\n--------------------\n\n".join(
             parts
         )
     )
 
-    if token and chat_id:
-
-        try:
-
-            telegram_send(
-                token,
-                chat_id,
-                message
-            )
-
-            print()
-            print(
-                "Telegram message sent."
-            )
-
-        except Exception as e:
-
-            print()
-            print(
-                f"Telegram error: {e}"
-            )
-
-    # --------------------------------------------------------
-    # FINAL STATE
-    # --------------------------------------------------------
-
-    print()
+    print("\n" + "=" * 60)
+    print("TELEGRAM MESSAGE")
     print("=" * 60)
-    print(
-        "FINAL STATE"
-    )
+    print(message)
     print("=" * 60)
 
-    for category in PAGES:
+    send_telegram(message)
 
-        slots = state.get(
-            category,
-            []
-        )
 
-        print(
-            f"{category}: "
-            f"{len(slots)} slots"
-        )
-
-        for index, card in enumerate(
-            slots,
-            1
-        ):
-
-            if card is None:
-
-                print(
-                    f"  [{index}] "
-                    f"Player Card"
-                )
-
-            else:
-
-                print(
-                    f"  [{index}] "
-                    f"{card_label(card)} "
-                    f"[{card['item_id']}]"
-                )
-
-    print()
-    print(
-        "Done."
-    )
-
+# ============================================================
+# RUN
+# ============================================================
 
 if __name__ == "__main__":
     main()
