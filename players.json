@@ -1,38 +1,38 @@
 {
   "Heroes": [
     {
-      "player": "Šašić - 89 - Base Hero",
+      "player": "Šašić",
       "overall": 89,
-      "item_id": null,
-      "finish": "UNKNOWN",
+      "item_id": "67335170",
+      "finish": "PRISTINE HOLO",
       "empty": false
     },
     {
-      "player": "Litmanen - 88 - Base Hero",
+      "player": "Litmanen",
       "overall": 88,
-      "item_id": null,
-      "finish": "UNKNOWN",
+      "item_id": "67114537",
+      "finish": "PRISTINE HOLO",
       "empty": false
     },
     {
-      "player": "Márquez - 88 - Base Hero",
+      "player": "Márquez",
       "overall": 88,
-      "item_id": null,
-      "finish": "UNKNOWN",
+      "item_id": "67135573",
+      "finish": "PRISTINE HOLO",
       "empty": false
     },
     {
-      "player": "Milito - 88 - Base Hero",
+      "player": "Milito",
       "overall": 88,
-      "item_id": null,
-      "finish": "UNKNOWN",
+      "item_id": "67371135",
+      "finish": "PRISTINE HOLO",
       "empty": false
     },
     {
-      "player": "Šašić - 89 - Base Hero",
+      "player": "Šašić",
       "overall": 89,
-      "item_id": null,
-      "finish": "UNKNOWN",
+      "item_id": "226306",
+      "finish": "BASE",
       "empty": false
     }
   ],
@@ -75,10 +75,17 @@
   ],
   "Season 1": [
     {
-      "player": "Cucurella - 88 - Destined for Glory",
+      "player": "Cucurella",
       "overall": 88,
-      "item_id": null,
-      "finish": "UNKNOWN",
+      "item_id": "67348095",
+      "finish": "PRISTINE HOLO",
+      "empty": false
+    },
+    {
+      "player": "Godts",
+      "overall": 88,
+      "item_id": "50590026",
+      "finish": "BASE",
       "empty": false
     },
     {
@@ -89,24 +96,24 @@
       "empty": true
     },
     {
-      "player": "Player Card",
-      "overall": null,
-      "item_id": null,
-      "finish": "UNKNOWN",
-      "empty": true
-    },
-    {
-      "player": "Cucurella - 88 - Destined for Glory",
-      "overall": 88,
-      "item_id": null,
-      "finish": "UNKNOWN",
-      "empty": false
-    },
-    {
-      "player": "Undav - 87 - Destined for Glory",
+      "player": "Jacobo Ramón",
       "overall": 87,
-      "item_id": null,
-      "finish": "UNKNOWN",
+      "item_id": "67179830",
+      "finish": "HOLO",
+      "empty": false
+    },
+    {
+      "player": "Mora",
+      "overall": 87,
+      "item_id": "67188263",
+      "finish": "HOLO",
+      "empty": false
+    },
+    {
+      "player": "Bonny",
+      "overall": 87,
+      "item_id": "67368429",
+      "finish": "HOLO",
       "empty": false
     },
     {
@@ -117,32 +124,25 @@
       "empty": true
     },
     {
-      "player": "Player Card",
-      "overall": null,
-      "item_id": null,
-      "finish": "UNKNOWN",
-      "empty": true
+      "player": "Cucurella",
+      "overall": 88,
+      "item_id": "50570879",
+      "finish": "BASE",
+      "empty": false
     },
     {
-      "player": "Player Card",
-      "overall": null,
-      "item_id": null,
-      "finish": "UNKNOWN",
-      "empty": true
+      "player": "Undav",
+      "overall": 87,
+      "item_id": "67353040",
+      "finish": "HOLO",
+      "empty": false
     },
     {
-      "player": "Player Card",
-      "overall": null,
-      "item_id": null,
-      "finish": "UNKNOWN",
-      "empty": true
-    },
-    {
-      "player": "Player Card",
-      "overall": null,
-      "item_id": null,
-      "finish": "UNKNOWN",
-      "empty": true
+      "player": "Bischof",
+      "overall": 86,
+      "item_id": "67372629",
+      "finish": "HOLO",
+      "empty": false
     }
   ]
 }
