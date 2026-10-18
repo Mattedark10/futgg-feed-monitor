@@ -1,0 +1,3908 @@
+{
+  "27": {
+    "item_id": "27",
+    "player": "Joe Cole",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "41": {
+    "item_id": "41",
+    "player": "Iniesta",
+    "overall": 92,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "51": {
+    "item_id": "51",
+    "player": "Alan Shearer",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "240": {
+    "item_id": "240",
+    "player": "Roy Keane",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "246": {
+    "item_id": "246",
+    "player": "Paul Scholes",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "250": {
+    "item_id": "250",
+    "player": "David Beckham",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "330": {
+    "item_id": "330",
+    "player": "Robbie Keane",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "488": {
+    "item_id": "488",
+    "player": "Oliver Kahn",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "570": {
+    "item_id": "570",
+    "player": "Jay-Jay Okocha",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "1025": {
+    "item_id": "1025",
+    "player": "Rui Costa",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "1041": {
+    "item_id": "1041",
+    "player": "Javier Zanetti",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "1088": {
+    "item_id": "1088",
+    "player": "Alessandro Nesta",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "1114": {
+    "item_id": "1114",
+    "player": "Roberto Baggio",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "1116": {
+    "item_id": "1116",
+    "player": "Marcel Desailly",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "1179": {
+    "item_id": "1179",
+    "player": "Gianluigi Buffon",
+    "overall": 92,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "1183": {
+    "item_id": "1183",
+    "player": "Fabio Cannavaro",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "1201": {
+    "item_id": "1201",
+    "player": "Gianfranco Zola",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "1238": {
+    "item_id": "1238",
+    "player": "Francesco Totti",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "1397": {
+    "item_id": "1397",
+    "player": "Zinedine Zidane",
+    "overall": 94,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "1551": {
+    "item_id": "1551",
+    "player": "Ludovic Giuly",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "1605": {
+    "item_id": "1605",
+    "player": "Robert Pirès",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "1615": {
+    "item_id": "1615",
+    "player": "Lilian Thuram",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "1620": {
+    "item_id": "1620",
+    "player": "Emmanuel Petit",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "1625": {
+    "item_id": "1625",
+    "player": "Thierry Henry",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "1668": {
+    "item_id": "1668",
+    "player": "Claude Makélélé",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "1845": {
+    "item_id": "1845",
+    "player": "Ole Gunnar Solskjær",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "3622": {
+    "item_id": "3622",
+    "player": "Ricardo Carvalho",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "4231": {
+    "item_id": "4231",
+    "player": "Rivaldo",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "4833": {
+    "item_id": "4833",
+    "player": "Hristo Stoichkov",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "5003": {
+    "item_id": "5003",
+    "player": "Cafu",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "5419": {
+    "item_id": "5419",
+    "player": "Michael Owen",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "5454": {
+    "item_id": "5454",
+    "player": "Bixente Lizarazu",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "5467": {
+    "item_id": "5467",
+    "player": "Jamie Carragher",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "5471": {
+    "item_id": "5471",
+    "player": "Frank Lampard",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "5479": {
+    "item_id": "5479",
+    "player": "Casillas",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "5589": {
+    "item_id": "5589",
+    "player": "Luís Figo",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "5661": {
+    "item_id": "5661",
+    "player": "Fernando Morientes",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "5673": {
+    "item_id": "5673",
+    "player": "Jari Litmanen",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "5679": {
+    "item_id": "5679",
+    "player": "Nwankwo Kanu",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "5740": {
+    "item_id": "5740",
+    "player": "Jaap Stam",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "6235": {
+    "item_id": "6235",
+    "player": "Pavel Nedvěd",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "6975": {
+    "item_id": "6975",
+    "player": "Freddie Ljungberg",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "7289": {
+    "item_id": "7289",
+    "player": "Rio Ferdinand",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "7512": {
+    "item_id": "7512",
+    "player": "Hernán Crespo",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "7743": {
+    "item_id": "7743",
+    "player": "Landon Donovan",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "7763": {
+    "item_id": "7763",
+    "player": "Andrea Pirlo",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "8348": {
+    "item_id": "8348",
+    "player": "Míchel Salgado",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "8473": {
+    "item_id": "8473",
+    "player": "Tomáš Rosický",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "9676": {
+    "item_id": "9676",
+    "player": "Samuel Eto'o",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "10264": {
+    "item_id": "10264",
+    "player": "Ruud van Nistelrooy",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "10535": {
+    "item_id": "10535",
+    "player": "Xavi",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "10704": {
+    "item_id": "10704",
+    "player": "Roy Makaay",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "10959": {
+    "item_id": "10959",
+    "player": "Pablo Aimar",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "13128": {
+    "item_id": "13128",
+    "player": "Andriy Shevchenko",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "13743": {
+    "item_id": "13743",
+    "player": "Steven Gerrard",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "15723": {
+    "item_id": "15723",
+    "player": "Dirk Kuyt",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "16254": {
+    "item_id": "16254",
+    "player": "Tim Howard",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "16619": {
+    "item_id": "16619",
+    "player": "Iván Córdoba",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "20289": {
+    "item_id": "20289",
+    "player": "Yaya Touré",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "20775": {
+    "item_id": "20775",
+    "player": "Quaresma",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "23174": {
+    "item_id": "23174",
+    "player": "Juan Román Riquelme",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "25420": {
+    "item_id": "25420",
+    "player": "Claudio Pizarro",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "25924": {
+    "item_id": "25924",
+    "player": "Capdevila",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "26709": {
+    "item_id": "26709",
+    "player": "Rafael Márquez",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "28130": {
+    "item_id": "28130",
+    "player": "Ronaldinho",
+    "overall": 93,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "28765": {
+    "item_id": "28765",
+    "player": "Zé Roberto",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "30110": {
+    "item_id": "30110",
+    "player": "Dimitar Berbatov",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "31432": {
+    "item_id": "31432",
+    "player": "Didier Drogba",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "34079": {
+    "item_id": "34079",
+    "player": "Ashley Cole",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "37576": {
+    "item_id": "37576",
+    "player": "Ronaldo",
+    "overall": 94,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "39386": {
+    "item_id": "39386",
+    "player": "DaMarcus Beasley",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "41236": {
+    "item_id": "41236",
+    "player": "Zlatan Ibrahimović",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "44897": {
+    "item_id": "44897",
+    "player": "Jerzy Dudek",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "45197": {
+    "item_id": "45197",
+    "player": "Xabi Alonso",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "45661": {
+    "item_id": "45661",
+    "player": "Raúl",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "45674": {
+    "item_id": "45674",
+    "player": "Michaël Essien",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "47390": {
+    "item_id": "47390",
+    "player": "Gilberto Silva",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "48940": {
+    "item_id": "48940",
+    "player": "Petr Čech",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "49369": {
+    "item_id": "49369",
+    "player": "Fernando Torres",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50752": {
+    "item_id": "50752",
+    "player": "Ledley King",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "51257": {
+    "item_id": "51257",
+    "player": "Peter Crouch",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "51412": {
+    "item_id": "51412",
+    "player": "Tim Cahill",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "51539": {
+    "item_id": "51539",
+    "player": "Edwin van der Sar",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "53302": {
+    "item_id": "53302",
+    "player": "Daniele De Rossi",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "54050": {
+    "item_id": "54050",
+    "player": "Wayne Rooney",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "71557": {
+    "item_id": "71557",
+    "player": "Gareth Bale",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "71587": {
+    "item_id": "71587",
+    "player": "Marinette Pichon",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "71608": {
+    "item_id": "71608",
+    "player": "Julie Foudy",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "77676": {
+    "item_id": "77676",
+    "player": "Steffi Jones",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "77787": {
+    "item_id": "77787",
+    "player": "Iván Zamorano",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "77790": {
+    "item_id": "77790",
+    "player": "Sissi",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "81644": {
+    "item_id": "81644",
+    "player": "Uli Hoeneß",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "82092": {
+    "item_id": "82092",
+    "player": "Mario Kempes",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "82094": {
+    "item_id": "82094",
+    "player": "Geoff Hurst",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "84415": {
+    "item_id": "84415",
+    "player": "Hege Riise",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "120274": {
+    "item_id": "120274",
+    "player": "Antonio Di Natale",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "120533": {
+    "item_id": "120533",
+    "player": "Pepe",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "121939": {
+    "item_id": "121939",
+    "player": "Philipp Lahm",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "121944": {
+    "item_id": "121944",
+    "player": "Bastian Schweinsteiger",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "135455": {
+    "item_id": "135455",
+    "player": "Maicon",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "137186": {
+    "item_id": "137186",
+    "player": "Andrea Barzagli",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "138123": {
+    "item_id": "138123",
+    "player": "Esteban Cambiasso",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "138449": {
+    "item_id": "138449",
+    "player": "Kaká",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "138956": {
+    "item_id": "138956",
+    "player": "Giorgio Chiellini",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "140601": {
+    "item_id": "140601",
+    "player": "Nemanja Vidić",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "142754": {
+    "item_id": "142754",
+    "player": "Javier Mascherano",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "150418": {
+    "item_id": "150418",
+    "player": "Mario Gomez",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "153079": {
+    "item_id": "153079",
+    "player": "Sergio Agüero",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "155897": {
+    "item_id": "155897",
+    "player": "Clint Dempsey",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "156353": {
+    "item_id": "156353",
+    "player": "Luis Hernández",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "156616": {
+    "item_id": "156616",
+    "player": "Franck Ribéry",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "161840": {
+    "item_id": "161840",
+    "player": "Fernando Hierro",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "162895": {
+    "item_id": "162895",
+    "player": "Cesc Fàbregas",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "166124": {
+    "item_id": "166124",
+    "player": "Gheorghe Hagi",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "166149": {
+    "item_id": "166149",
+    "player": "Hugo Sánchez",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "166676": {
+    "item_id": "166676",
+    "player": "Rudi Völler",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "166691": {
+    "item_id": "166691",
+    "player": "Zico",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "166906": {
+    "item_id": "166906",
+    "player": "Franco Baresi",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "167134": {
+    "item_id": "167134",
+    "player": "Jean-Pierre Papin",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "167135": {
+    "item_id": "167135",
+    "player": "Carlos Alberto",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "167198": {
+    "item_id": "167198",
+    "player": "Eric Cantona",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "167425": {
+    "item_id": "167425",
+    "player": "Abedi Pelé",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "167680": {
+    "item_id": "167680",
+    "player": "Ronald Koeman",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "168473": {
+    "item_id": "168473",
+    "player": "Franz Beckenbauer",
+    "overall": 93,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "168886": {
+    "item_id": "168886",
+    "player": "Sami Al Jaber",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "170890": {
+    "item_id": "170890",
+    "player": "Blaise Matuidi",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "171877": {
+    "item_id": "171877",
+    "player": "Marek Hamšík",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "173210": {
+    "item_id": "173210",
+    "player": "Claudio Marchisio",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "176676": {
+    "item_id": "176676",
+    "player": "Marcelo",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "181783": {
+    "item_id": "181783",
+    "player": "Mario Mandžukić",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "182521": {
+    "item_id": "182521",
+    "player": "Toni Kroos",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "183277": {
+    "item_id": "183277",
+    "player": "Eden Hazard",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "184943": {
+    "item_id": "184943",
+    "player": "Ramires",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "190042": {
+    "item_id": "190042",
+    "player": "Diego Armando Maradona",
+    "overall": 95,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "190044": {
+    "item_id": "190044",
+    "player": "Bobby Moore",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "190045": {
+    "item_id": "190045",
+    "player": "Johan Cruyff",
+    "overall": 93,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "190046": {
+    "item_id": "190046",
+    "player": "Sócrates",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "190048": {
+    "item_id": "190048",
+    "player": "Gerd Müller",
+    "overall": 92,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "191190": {
+    "item_id": "191190",
+    "player": "Rivellino",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "191208": {
+    "item_id": "191208",
+    "player": "Cha Bum Kun",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "191694": {
+    "item_id": "191694",
+    "player": "Jorge Campos",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "191695": {
+    "item_id": "191695",
+    "player": "Emilio Butragueño",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "191972": {
+    "item_id": "191972",
+    "player": "David Ginola",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "192181": {
+    "item_id": "192181",
+    "player": "Marco van Basten",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "192190": {
+    "item_id": "192190",
+    "player": "Dunga",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "201535": {
+    "item_id": "201535",
+    "player": "Raphaël Varane",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "214098": {
+    "item_id": "214098",
+    "player": "Frank Rijkaard",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "214100": {
+    "item_id": "214100",
+    "player": "Ruud Gullit",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "214101": {
+    "item_id": "214101",
+    "player": "Paulo Futre",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "214267": {
+    "item_id": "214267",
+    "player": "Gary Lineker",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "214649": {
+    "item_id": "214649",
+    "player": "Davor Šuker",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "215732": {
+    "item_id": "215732",
+    "player": "Oliver Bierhoff",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "221162": {
+    "item_id": "221162",
+    "player": "Gabriel Batistuta",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "222000": {
+    "item_id": "222000",
+    "player": "Michael Laudrup",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "226293": {
+    "item_id": "226293",
+    "player": "Nadine Angerer",
+    "overall": 92,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "226301": {
+    "item_id": "226301",
+    "player": "Alex Morgan",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "226306": {
+    "item_id": "226306",
+    "player": "Celia Šašić",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "226307": {
+    "item_id": "226307",
+    "player": "Simone Laudehr",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "226330": {
+    "item_id": "226330",
+    "player": "Tobin Heath",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "226359": {
+    "item_id": "226359",
+    "player": "Christine Sinclair",
+    "overall": 92,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "226362": {
+    "item_id": "226362",
+    "player": "Louisa Necib",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "226369": {
+    "item_id": "226369",
+    "player": "Lotta Schelin",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "226373": {
+    "item_id": "226373",
+    "player": "Nadine Keßler",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "226764": {
+    "item_id": "226764",
+    "player": "George Best",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "226895": {
+    "item_id": "226895",
+    "player": "Formiga",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "226975": {
+    "item_id": "226975",
+    "player": "Caroline Seger",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "227002": {
+    "item_id": "227002",
+    "player": "Aya Miyama",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "227006": {
+    "item_id": "227006",
+    "player": "Homare Sawa",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "227261": {
+    "item_id": "227261",
+    "player": "Alex Scott",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "227262": {
+    "item_id": "227262",
+    "player": "Jill Scott",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "227263": {
+    "item_id": "227263",
+    "player": "Kelly Smith",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "227270": {
+    "item_id": "227270",
+    "player": "Ellen White",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "227271": {
+    "item_id": "227271",
+    "player": "Fara Williams",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "227315": {
+    "item_id": "227315",
+    "player": "Laura Georges",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "227324": {
+    "item_id": "227324",
+    "player": "Camille Abily",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "230025": {
+    "item_id": "230025",
+    "player": "Bobby Charlton",
+    "overall": 92,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "233700": {
+    "item_id": "233700",
+    "player": "Gianluca Vialli",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "237067": {
+    "item_id": "237067",
+    "player": "Pelé",
+    "overall": 95,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "238382": {
+    "item_id": "238382",
+    "player": "Alessandro Del Piero",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "238384": {
+    "item_id": "238384",
+    "player": "Carles Puyol",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "238388": {
+    "item_id": "238388",
+    "player": "Dennis Bergkamp",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "238424": {
+    "item_id": "238424",
+    "player": "Patrick Kluivert",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "238427": {
+    "item_id": "238427",
+    "player": "Patrick Vieira",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "238428": {
+    "item_id": "238428",
+    "player": "Peter Schmeichel",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "238430": {
+    "item_id": "238430",
+    "player": "Roberto Carlos",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "238435": {
+    "item_id": "238435",
+    "player": "Lothar Matthäus",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "238439": {
+    "item_id": "238439",
+    "player": "Paolo Maldini",
+    "overall": 93,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "238443": {
+    "item_id": "238443",
+    "player": "Laurent Blanc",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "239261": {
+    "item_id": "239261",
+    "player": "Henrik Larsson",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "242510": {
+    "item_id": "242510",
+    "player": "Miroslav Klose",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "242519": {
+    "item_id": "242519",
+    "player": "Eusébio",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "242625": {
+    "item_id": "242625",
+    "player": "Hidetoshi Nakata",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "243027": {
+    "item_id": "243027",
+    "player": "Juan Sebastián Verón",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "243029": {
+    "item_id": "243029",
+    "player": "Sol Campbell",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "243030": {
+    "item_id": "243030",
+    "player": "Gennaro Gattuso",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "243075": {
+    "item_id": "243075",
+    "player": "Karl-Heinz Rummenigge",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "247515": {
+    "item_id": "247515",
+    "player": "John Barnes",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "247553": {
+    "item_id": "247553",
+    "player": "Garrincha",
+    "overall": 93,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "247699": {
+    "item_id": "247699",
+    "player": "Kenny Dalglish",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "247703": {
+    "item_id": "247703",
+    "player": "Ian Rush",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "248146": {
+    "item_id": "248146",
+    "player": "Ian Wright",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "250890": {
+    "item_id": "250890",
+    "player": "Gianluca Zambrotta",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "251483": {
+    "item_id": "251483",
+    "player": "Vincent Kompany",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "254642": {
+    "item_id": "254642",
+    "player": "Ferenc Puskás",
+    "overall": 92,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "261593": {
+    "item_id": "261593",
+    "player": "Jürgen Kohler",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "262112": {
+    "item_id": "262112",
+    "player": "Robin van Persie",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "262271": {
+    "item_id": "262271",
+    "player": "Diego Milito",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "262285": {
+    "item_id": "262285",
+    "player": "Guti",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "266473": {
+    "item_id": "266473",
+    "player": "Park Ji Sung",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "266690": {
+    "item_id": "266690",
+    "player": "Lúcio",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "266691": {
+    "item_id": "266691",
+    "player": "Diego Forlán",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "266694": {
+    "item_id": "266694",
+    "player": "Saeed Al Owairan",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "266801": {
+    "item_id": "266801",
+    "player": "Harry Kewell",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "267275": {
+    "item_id": "267275",
+    "player": "Yuki Nagasato",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "268513": {
+    "item_id": "268513",
+    "player": "Jairzinho",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "273812": {
+    "item_id": "273812",
+    "player": "Steve McManaman",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "274750": {
+    "item_id": "274750",
+    "player": "Wesley Sneijder",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "274966": {
+    "item_id": "274966",
+    "player": "Carlos Tévez",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "274967": {
+    "item_id": "274967",
+    "player": "John Arne Riise",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "275049": {
+    "item_id": "275049",
+    "player": "Enzo Francescoli",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "275092": {
+    "item_id": "275092",
+    "player": "Sonia Bompastor",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "275243": {
+    "item_id": "275243",
+    "player": "Mia Hamm",
+    "overall": 93,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "275276": {
+    "item_id": "275276",
+    "player": "Birgit Prinz",
+    "overall": 92,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "50402374": {
+    "item_id": "50402374",
+    "player": "Anis Hadj Moussa",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50402434": {
+    "item_id": "50402434",
+    "player": "Josh King",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50402614": {
+    "item_id": "50402614",
+    "player": "Jacobo Ramón",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50402615": {
+    "item_id": "50402615",
+    "player": "Carlos Espí",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50403654": {
+    "item_id": "50403654",
+    "player": "Milton Delgado",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50403818": {
+    "item_id": "50403818",
+    "player": "Ilhan Fakili",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50404662": {
+    "item_id": "50404662",
+    "player": "Cornelia Kramer",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50405513": {
+    "item_id": "50405513",
+    "player": "Cavan Sullivan",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50406911": {
+    "item_id": "50406911",
+    "player": "Peio Canales",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50406920": {
+    "item_id": "50406920",
+    "player": "Will Lankshear",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50407181": {
+    "item_id": "50407181",
+    "player": "Kerim Alajbegović",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50407276": {
+    "item_id": "50407276",
+    "player": "Fer López",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50408681": {
+    "item_id": "50408681",
+    "player": "William Gomes",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50408698": {
+    "item_id": "50408698",
+    "player": "Merveille Kanjinga",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50411047": {
+    "item_id": "50411047",
+    "player": "Gilberto Mora",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50411180": {
+    "item_id": "50411180",
+    "player": "Mariam Toloba",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50411878": {
+    "item_id": "50411878",
+    "player": "Bella Andersson",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50412024": {
+    "item_id": "50412024",
+    "player": "Rio Ngumoha",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50412322": {
+    "item_id": "50412322",
+    "player": "Dro Fernández",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50413187": {
+    "item_id": "50413187",
+    "player": "Divine Mukasa",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50413511": {
+    "item_id": "50413511",
+    "player": "Xavi Espart",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50414596": {
+    "item_id": "50414596",
+    "player": "Flávio Gonçalves",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50415142": {
+    "item_id": "50415142",
+    "player": "Rayan",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50415664": {
+    "item_id": "50415664",
+    "player": "Ousmane Diabate",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50416920": {
+    "item_id": "50416920",
+    "player": "Felicia Schröder",
+    "overall": 82,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50418277": {
+    "item_id": "50418277",
+    "player": "André Henrique",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50508651": {
+    "item_id": "50508651",
+    "player": "Luka Modrić",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50515359": {
+    "item_id": "50515359",
+    "player": "Jordan Henderson",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50519998": {
+    "item_id": "50519998",
+    "player": "Marco Reus",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50520193": {
+    "item_id": "50520193",
+    "player": "Robert Lewandowski",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50520215": {
+    "item_id": "50520215",
+    "player": "Pierre-Emerick Aubameyang",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Destined for Glory",
+    "version": "Destined for Glory",
+    "finish": "BASE"
+  },
+  "50522413": {
+    "item_id": "50522413",
+    "player": "Pascal Groß",
+    "overall": 81,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50524633": {
+    "item_id": "50524633",
+    "player": "Kevin De Bruyne",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "50529429": {
+    "item_id": "50529429",
+    "player": "Isco",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50531752": {
+    "item_id": "50531752",
+    "player": "Son Heung Min",
+    "overall": 83,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50536618": {
+    "item_id": "50536618",
+    "player": "Florian Thauvin",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50539513": {
+    "item_id": "50539513",
+    "player": "Marquinhos",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50540979": {
+    "item_id": "50540979",
+    "player": "Mohamed Salah",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "50542162": {
+    "item_id": "50542162",
+    "player": "João Cancelo",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50542545": {
+    "item_id": "50542545",
+    "player": "Chancel Mbemba",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50544661": {
+    "item_id": "50544661",
+    "player": "Frank Acheampong",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50547923": {
+    "item_id": "50547923",
+    "player": "Phillipp Mwene",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50551331": {
+    "item_id": "50551331",
+    "player": "Corentin Tolisso",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50553139": {
+    "item_id": "50553139",
+    "player": "Nico Elvedi",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50554313": {
+    "item_id": "50554313",
+    "player": "Martin Ødegaard",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50555345": {
+    "item_id": "50555345",
+    "player": "Robin Gosens",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Destined for Glory",
+    "version": "Destined for Glory",
+    "finish": "BASE"
+  },
+  "50555358": {
+    "item_id": "50555358",
+    "player": "Vedat Muriqi",
+    "overall": 83,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50555799": {
+    "item_id": "50555799",
+    "player": "Henry Martín",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50558541": {
+    "item_id": "50558541",
+    "player": "Debinha",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "50558851": {
+    "item_id": "50558851",
+    "player": "Alexia Putellas",
+    "overall": 92,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "50559009": {
+    "item_id": "50559009",
+    "player": "Kadidiatou Diani",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Destined for Glory",
+    "version": "Destined for Glory",
+    "finish": "BASE"
+  },
+  "50559029": {
+    "item_id": "50559029",
+    "player": "Janine Sonis",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50559326": {
+    "item_id": "50559326",
+    "player": "Ezri Konsa",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Destined for Glory",
+    "version": "Destined for Glory",
+    "finish": "BASE"
+  },
+  "50561206": {
+    "item_id": "50561206",
+    "player": "Dayot Upamecano",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50562269": {
+    "item_id": "50562269",
+    "player": "Gianluigi Donnarumma",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50562547": {
+    "item_id": "50562547",
+    "player": "Ademola Lookman",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Destined for Glory",
+    "version": "Destined for Glory",
+    "finish": "BASE"
+  },
+  "50562620": {
+    "item_id": "50562620",
+    "player": "Adriel Ba Loua",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50563395": {
+    "item_id": "50563395",
+    "player": "Kylian Mbappé",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Destined for Glory",
+    "version": "Destined for Glory",
+    "finish": "BASE"
+  },
+  "50564136": {
+    "item_id": "50564136",
+    "player": "Cristian Romero",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50565067": {
+    "item_id": "50565067",
+    "player": "Raphinha",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "50565379": {
+    "item_id": "50565379",
+    "player": "Alexander Isak",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50566782": {
+    "item_id": "50566782",
+    "player": "Pablo Rosario",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50568937": {
+    "item_id": "50568937",
+    "player": "Patri Guijarro",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "50569088": {
+    "item_id": "50569088",
+    "player": "Hannes Delcroix",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50569719": {
+    "item_id": "50569719",
+    "player": "Dujon Sterling",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50569878": {
+    "item_id": "50569878",
+    "player": "Jaminton Campaz",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50570392": {
+    "item_id": "50570392",
+    "player": "Weston McKennie",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50570733": {
+    "item_id": "50570733",
+    "player": "Erling Haaland",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50570879": {
+    "item_id": "50570879",
+    "player": "Cucurella",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50571279": {
+    "item_id": "50571279",
+    "player": "Danny Namaso",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50571455": {
+    "item_id": "50571455",
+    "player": "Davide Frattesi",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Destined for Glory",
+    "version": "Destined for Glory",
+    "finish": "BASE"
+  },
+  "50571678": {
+    "item_id": "50571678",
+    "player": "Ellie Carpenter",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50571688": {
+    "item_id": "50571688",
+    "player": "Carlo Holse",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50572365": {
+    "item_id": "50572365",
+    "player": "Lineth Beerensteyn",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "50572884": {
+    "item_id": "50572884",
+    "player": "Antoine Semenyo",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50573299": {
+    "item_id": "50573299",
+    "player": "Viktor Gyökeres",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50573384": {
+    "item_id": "50573384",
+    "player": "Yann Aurel Bisseck",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50573494": {
+    "item_id": "50573494",
+    "player": "Ewa Pajor",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50573586": {
+    "item_id": "50573586",
+    "player": "Nasser Al Dawsari",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50573648": {
+    "item_id": "50573648",
+    "player": "Konstantinos Mavropanos",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50574092": {
+    "item_id": "50574092",
+    "player": "João Félix",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "50574189": {
+    "item_id": "50574189",
+    "player": "Ciaron Brown",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50574527": {
+    "item_id": "50574527",
+    "player": "Maarten Vandevoordt",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "50574555": {
+    "item_id": "50574555",
+    "player": "Bryan Reynolds",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50574612": {
+    "item_id": "50574612",
+    "player": "Anthony Gordon",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50574662": {
+    "item_id": "50574662",
+    "player": "Bryan Mbeumo",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Destined for Glory",
+    "version": "Destined for Glory",
+    "finish": "BASE"
+  },
+  "50574893": {
+    "item_id": "50574893",
+    "player": "Orkun Kökçü",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Destined for Glory",
+    "version": "Destined for Glory",
+    "finish": "BASE"
+  },
+  "50575824": {
+    "item_id": "50575824",
+    "player": "Deniz Undav",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Destined for Glory",
+    "version": "Destined for Glory",
+    "finish": "BASE"
+  },
+  "50577550": {
+    "item_id": "50577550",
+    "player": "Troy Parrott",
+    "overall": 82,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50578336": {
+    "item_id": "50578336",
+    "player": "Saud Abdulhamid",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Destined for Glory",
+    "version": "Destined for Glory",
+    "finish": "BASE"
+  },
+  "50579475": {
+    "item_id": "50579475",
+    "player": "Michael Olise",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50579813": {
+    "item_id": "50579813",
+    "player": "Andrei Rațiu",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Destined for Glory",
+    "version": "Destined for Glory",
+    "finish": "BASE"
+  },
+  "50583793": {
+    "item_id": "50583793",
+    "player": "Nuno Mendes",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Destined for Glory",
+    "version": "Destined for Glory",
+    "finish": "BASE"
+  },
+  "50584019": {
+    "item_id": "50584019",
+    "player": "Jude Bellingham",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50584200": {
+    "item_id": "50584200",
+    "player": "Konstantinos Tzolakis",
+    "overall": 81,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50584757": {
+    "item_id": "50584757",
+    "player": "Joey Veerman",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Destined for Glory",
+    "version": "Destined for Glory",
+    "finish": "BASE"
+  },
+  "50585769": {
+    "item_id": "50585769",
+    "player": "Charlie Cresswell",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50586853": {
+    "item_id": "50586853",
+    "player": "Sebastian Berhalter",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50586923": {
+    "item_id": "50586923",
+    "player": "Milan Iloski",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50587082": {
+    "item_id": "50587082",
+    "player": "Julio César Enciso",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50588551": {
+    "item_id": "50588551",
+    "player": "Gonçalo Ramos",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50588656": {
+    "item_id": "50588656",
+    "player": "Lauren Hemp",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50588927": {
+    "item_id": "50588927",
+    "player": "Álex Baena",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50589605": {
+    "item_id": "50589605",
+    "player": "Marco Rente",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50590026": {
+    "item_id": "50590026",
+    "player": "Mika Godts",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50590628": {
+    "item_id": "50590628",
+    "player": "Alessia Russo",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "50590762": {
+    "item_id": "50590762",
+    "player": "Ole Romeny",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50590935": {
+    "item_id": "50590935",
+    "player": "Pernille Harder",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Destined for Glory",
+    "version": "Destined for Glory",
+    "finish": "BASE"
+  },
+  "50591213": {
+    "item_id": "50591213",
+    "player": "Yoan Bonny",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50591227": {
+    "item_id": "50591227",
+    "player": "Salomón Rodríguez",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50591895": {
+    "item_id": "50591895",
+    "player": "Morgan Rogers",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50592556": {
+    "item_id": "50592556",
+    "player": "Milos Kerkez",
+    "overall": 83,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50592947": {
+    "item_id": "50592947",
+    "player": "Alex Scott",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50593503": {
+    "item_id": "50593503",
+    "player": "Kika Nazareth",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50593509": {
+    "item_id": "50593509",
+    "player": "Jack Moylan",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50593513": {
+    "item_id": "50593513",
+    "player": "Miguel Gutiérrez",
+    "overall": 82,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50594290": {
+    "item_id": "50594290",
+    "player": "Zeki Amdouni",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50594511": {
+    "item_id": "50594511",
+    "player": "Antonio Nusa",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50595413": {
+    "item_id": "50595413",
+    "player": "Tom Bischof",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50595660": {
+    "item_id": "50595660",
+    "player": "Sophia Wilson",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50595905": {
+    "item_id": "50595905",
+    "player": "Tijjani Noslin",
+    "overall": 82,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50596036": {
+    "item_id": "50596036",
+    "player": "Moleiro",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50596510": {
+    "item_id": "50596510",
+    "player": "Maghnes Akliouche",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50596668": {
+    "item_id": "50596668",
+    "player": "Melissa Kössler",
+    "overall": 81,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50596705": {
+    "item_id": "50596705",
+    "player": "Cora Zicai",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50596965": {
+    "item_id": "50596965",
+    "player": "Laura Blindkilde Brown",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50597341": {
+    "item_id": "50597341",
+    "player": "Jakub Kiwior",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50597687": {
+    "item_id": "50597687",
+    "player": "Pubill",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50597775": {
+    "item_id": "50597775",
+    "player": "Lewis Hall",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50598543": {
+    "item_id": "50598543",
+    "player": "Nicolò Tresoldi",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50599622": {
+    "item_id": "50599622",
+    "player": "Mexx Meerdink",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50600351": {
+    "item_id": "50600351",
+    "player": "Nicolò Cambiaghi",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50600784": {
+    "item_id": "50600784",
+    "player": "Kobbie Mainoo",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50600834": {
+    "item_id": "50600834",
+    "player": "Orri Óskarsson",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50600878": {
+    "item_id": "50600878",
+    "player": "Noah Sadiki",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "50600885": {
+    "item_id": "50600885",
+    "player": "Arda Okan Kurtulan",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50601349": {
+    "item_id": "50601349",
+    "player": "Nathaniel Brown",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50602505": {
+    "item_id": "50602505",
+    "player": "Mateus Fernandes",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Destined for Glory",
+    "version": "Destined for Glory",
+    "finish": "BASE"
+  },
+  "50603069": {
+    "item_id": "50603069",
+    "player": "Désiré Doué",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50603094": {
+    "item_id": "50603094",
+    "player": "Vicky López",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50603566": {
+    "item_id": "50603566",
+    "player": "Robin Risser",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50603785": {
+    "item_id": "50603785",
+    "player": "Sara Ortega",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50604260": {
+    "item_id": "50604260",
+    "player": "Brajan Gruda",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50604626": {
+    "item_id": "50604626",
+    "player": "Jorrel Hato",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50604801": {
+    "item_id": "50604801",
+    "player": "Linda Caicedo",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50604825": {
+    "item_id": "50604825",
+    "player": "Olivia Holdt",
+    "overall": 81,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50605211": {
+    "item_id": "50605211",
+    "player": "Annabel Schasching",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50605215": {
+    "item_id": "50605215",
+    "player": "Chiara Hahn",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50605487": {
+    "item_id": "50605487",
+    "player": "Pierce Charles",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50605554": {
+    "item_id": "50605554",
+    "player": "Renato Veiga",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Destined for Glory",
+    "version": "Destined for Glory",
+    "finish": "BASE"
+  },
+  "50605774": {
+    "item_id": "50605774",
+    "player": "Paris Brunner",
+    "overall": 88,
+    "rarity_id": 12,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50606401": {
+    "item_id": "50606401",
+    "player": "Tarciane",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50606461": {
+    "item_id": "50606461",
+    "player": "Gisele Thompson",
+    "overall": 87,
+    "rarity_id": 12,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50606677": {
+    "item_id": "50606677",
+    "player": "Ibrahim Maza",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50607933": {
+    "item_id": "50607933",
+    "player": "Wieke Kaptein",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50608090": {
+    "item_id": "50608090",
+    "player": "Gilberto",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50608342": {
+    "item_id": "50608342",
+    "player": "Johan Manzambi",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50608343": {
+    "item_id": "50608343",
+    "player": "Shea Charles",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50608373": {
+    "item_id": "50608373",
+    "player": "Lorenzo Palmisani",
+    "overall": 82,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "50608873": {
+    "item_id": "50608873",
+    "player": "Jon Martín",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50608900": {
+    "item_id": "50608900",
+    "player": "Samuel Dahl",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50609133": {
+    "item_id": "50609133",
+    "player": "Sidiki Chérif",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50609459": {
+    "item_id": "50609459",
+    "player": "Mathias de Amorim",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50609494": {
+    "item_id": "50609494",
+    "player": "Nico Paz",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50609517": {
+    "item_id": "50609517",
+    "player": "Michael Kayode",
+    "overall": 83,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50609599": {
+    "item_id": "50609599",
+    "player": "Lily Yohannes",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50609822": {
+    "item_id": "50609822",
+    "player": "Julian Hall",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50609974": {
+    "item_id": "50609974",
+    "player": "Alphadjo Cissè",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "50610421": {
+    "item_id": "50610421",
+    "player": "Myles Lewis-Skelly",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50610428": {
+    "item_id": "50610428",
+    "player": "Finn Jeltsch",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50610726": {
+    "item_id": "50610726",
+    "player": "Othmane Maamma",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50611252": {
+    "item_id": "50611252",
+    "player": "Jauregizar",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50611347": {
+    "item_id": "50611347",
+    "player": "Claire Hutton",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "50611447": {
+    "item_id": "50611447",
+    "player": "Temwa Chawinga",
+    "overall": 90,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "67302212": {
+    "item_id": "67302212",
+    "player": "Xherdan Shaqiri",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "67308779": {
+    "item_id": "67308779",
+    "player": "Lewis Dunk",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "67329765": {
+    "item_id": "67329765",
+    "player": "David Raya",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "67330561": {
+    "item_id": "67330561",
+    "player": "Ollie Watkins",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "67336110": {
+    "item_id": "67336110",
+    "player": "Lucy Bronze",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "67336957": {
+    "item_id": "67336957",
+    "player": "Marcus Thuram",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "67341275": {
+    "item_id": "67341275",
+    "player": "Christopher Nkunku",
+    "overall": 82,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "67349089": {
+    "item_id": "67349089",
+    "player": "Matvey Safonov",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "67352494": {
+    "item_id": "67352494",
+    "player": "Jonathan David",
+    "overall": 82,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "67354218": {
+    "item_id": "67354218",
+    "player": "José Paradela",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "67355727": {
+    "item_id": "67355727",
+    "player": "Felix Nmecha",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "BASE"
+  },
+  "67356819": {
+    "item_id": "67356819",
+    "player": "Ianis Stoica",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "67361026": {
+    "item_id": "67361026",
+    "player": "Ayase Ueda",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "67363107": {
+    "item_id": "67363107",
+    "player": "Elliot Anderson",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "67363653": {
+    "item_id": "67363653",
+    "player": "Sven Mijnans",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "67365539": {
+    "item_id": "67365539",
+    "player": "Omar Marmoush",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "67371770": {
+    "item_id": "67371770",
+    "player": "Yannik Engelhardt",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "67373516": {
+    "item_id": "67373516",
+    "player": "Bradley Barcola",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "67373922": {
+    "item_id": "67373922",
+    "player": "Erëleta Memeti",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "67374762": {
+    "item_id": "67374762",
+    "player": "Melchie Dumornay",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "67376394": {
+    "item_id": "67376394",
+    "player": "Esmee Brugts",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "67376538": {
+    "item_id": "67376538",
+    "player": "Amanda Gutierres",
+    "overall": 83,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "67377753": {
+    "item_id": "67377753",
+    "player": "Álvaro Carreras",
+    "overall": 83,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "67379423": {
+    "item_id": "67379423",
+    "player": "Tiago Santos",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "67379904": {
+    "item_id": "67379904",
+    "player": "Jaedyn Shaw",
+    "overall": 82,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "67382428": {
+    "item_id": "67382428",
+    "player": "Gift Orban",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "67382990": {
+    "item_id": "67382990",
+    "player": "Paris Brunner",
+    "overall": 88,
+    "rarity_id": 12,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
+  },
+  "67383677": {
+    "item_id": "67383677",
+    "player": "Gisele Thompson",
+    "overall": 87,
+    "rarity_id": 12,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "HOLO"
+  },
+  "67383910": {
+    "item_id": "67383910",
+    "player": "Bruno Damiani",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "BASE"
+  },
+  "67386075": {
+    "item_id": "67386075",
+    "player": "Franculino",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "67386507": {
+    "item_id": "67386507",
+    "player": "Lamine Yamal",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "67388037": {
+    "item_id": "67388037",
+    "player": "Franco Mastantuono",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "67388405": {
+    "item_id": "67388405",
+    "player": "Trent Koné-Doherty",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "84112442": {
+    "item_id": "84112442",
+    "player": "Louisa Necib",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "BASE"
+  },
+  "84137646": {
+    "item_id": "84137646",
+    "player": "Gabriel Martinelli",
+    "overall": 82,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "84163723": {
+    "item_id": "84163723",
+    "player": "Lamine Yamal",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  },
+  "84165253": {
+    "item_id": "84165253",
+    "player": "Franco Mastantuono",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "BASE"
+  }
+}

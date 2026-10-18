@@ -163,11 +163,11 @@
       "empty": false
     },
     {
-      "player": "Márquez",
+      "player": "Mascherano",
       "overall": 88,
       "version": "Base Hero",
-      "item_id": "67135573",
-      "finish": "PRISTINE HOLO",
+      "item_id": "67251618",
+      "finish": "UNKNOWN",
       "empty": false
     },
     {
@@ -213,19 +213,19 @@
       "empty": false
     },
     {
-      "player": "Foudy",
-      "overall": 90,
+      "player": "van Basten",
+      "overall": 91,
       "version": "Base Icon",
-      "item_id": "67180472",
-      "finish": "PRISTINE HOLO",
+      "item_id": "67301045",
+      "finish": "UNKNOWN",
       "empty": false
     },
     {
-      "player": "Moore",
-      "overall": 90,
+      "player": "van Nistelrooy",
+      "overall": 89,
       "version": "Base Icon",
-      "item_id": "67298908",
-      "finish": "PRISTINE HOLO",
+      "item_id": "67119128",
+      "finish": "UNKNOWN",
       "empty": false
     }
   ],
@@ -239,27 +239,11 @@
       "empty": false
     },
     {
-      "player": "Godts",
+      "player": "Harder",
       "overall": 88,
-      "version": "Future Stars",
-      "item_id": "50590026",
-      "finish": "BASE",
-      "empty": false
-    },
-    {
-      "player": "Player Card",
-      "overall": null,
-      "version": null,
-      "item_id": null,
-      "finish": null,
-      "empty": true
-    },
-    {
-      "player": "Jacobo Ramón",
-      "overall": 87,
-      "version": "Future Stars",
-      "item_id": "67179830",
-      "finish": "HOLO",
+      "version": "Destined for Glory",
+      "item_id": "67368151",
+      "finish": "PRISTINE HOLO",
       "empty": false
     },
     {
@@ -287,10 +271,10 @@
       "empty": true
     },
     {
-      "player": "Cucurella",
+      "player": "Harder",
       "overall": 88,
       "version": "Destined for Glory",
-      "item_id": "50570879",
+      "item_id": "50590935",
       "finish": "BASE",
       "empty": false
     },
@@ -303,10 +287,26 @@
       "empty": false
     },
     {
-      "player": "Bischof",
+      "player": "Player Card",
+      "overall": null,
+      "version": null,
+      "item_id": null,
+      "finish": null,
+      "empty": true
+    },
+    {
+      "player": "Player Card",
+      "overall": null,
+      "version": null,
+      "item_id": null,
+      "finish": null,
+      "empty": true
+    },
+    {
+      "player": "Yohannes",
       "overall": 86,
       "version": "Future Stars",
-      "item_id": "67372629",
+      "item_id": "67386815",
       "finish": "HOLO",
       "empty": false
     }
