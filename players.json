@@ -3,31 +3,31 @@
     {
       "player": "Šašić",
       "overall": 89,
-      "item_id": null,
-      "finish": "BASE"
+      "item_id": "67335170",
+      "finish": "PRISTINE HOLO"
     },
     {
       "player": "Litmanen",
       "overall": 88,
-      "item_id": null,
-      "finish": "BASE"
+      "item_id": "67114537",
+      "finish": "PRISTINE HOLO"
     },
     {
       "player": "Mascherano",
       "overall": 88,
-      "item_id": null,
+      "item_id": "67251618",
       "finish": "BASE"
     },
     {
       "player": "Milito",
       "overall": 88,
-      "item_id": null,
-      "finish": "BASE"
+      "item_id": "67371135",
+      "finish": "PRISTINE HOLO"
     },
     {
       "player": "Šašić",
       "overall": 89,
-      "item_id": null,
+      "item_id": "226306",
       "finish": "BASE"
     }
   ],
@@ -35,79 +35,79 @@
     {
       "player": "Angerer",
       "overall": 92,
-      "item_id": null,
-      "finish": "BASE"
+      "item_id": "67335157",
+      "finish": "PRISTINE HOLO"
     },
     {
       "player": "Prinz",
       "overall": 92,
-      "item_id": null,
-      "finish": "BASE"
+      "item_id": "67384140",
+      "finish": "PRISTINE HOLO"
     },
     {
       "player": "Baresi",
       "overall": 91,
-      "item_id": null,
-      "finish": "BASE"
+      "item_id": "67275770",
+      "finish": "PRISTINE HOLO"
     },
     {
       "player": "van Basten",
       "overall": 91,
-      "item_id": null,
-      "finish": "BASE"
+      "item_id": "67301045",
+      "finish": "PRISTINE HOLO"
     },
     {
       "player": "van Nistelrooy",
       "overall": 89,
-      "item_id": null,
-      "finish": "BASE"
+      "item_id": "67119128",
+      "finish": "PRISTINE HOLO"
     }
   ],
   "Season 1": [
     {
       "player": "Cucurella",
       "overall": 88,
-      "item_id": null,
-      "finish": "BASE"
+      "item_id": "67348095",
+      "finish": "PRISTINE HOLO"
     },
     {
       "player": "Harder",
       "overall": 88,
-      "item_id": null,
-      "finish": "BASE"
+      "item_id": "67368151",
+      "finish": "PRISTINE HOLO"
     },
     {
       "player": "Mora",
       "overall": 87,
-      "item_id": null,
-      "finish": "BASE"
+      "item_id": "67188263",
+      "finish": "HOLO"
     },
     {
       "player": "Bonny",
       "overall": 87,
-      "item_id": null,
-      "finish": "BASE"
+      "item_id": "67368429",
+      "finish": "HOLO"
     },
     null,
     {
       "player": "Harder",
       "overall": 88,
-      "item_id": null,
+      "item_id": "50590935",
       "finish": "BASE"
     },
     {
       "player": "Undav",
       "overall": 87,
-      "item_id": null,
-      "finish": "BASE"
+      "item_id": "67353040",
+      "finish": "HOLO"
     },
     null,
     null,
     {
       "player": "Yohannes",
       "overall": 86,
-      "item_id": null,
-      "finish": "BASE"
+      "item_id": "67386815",
+      "finish": "HOLO"
     }
   ]
 }
