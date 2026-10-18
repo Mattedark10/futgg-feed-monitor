@@ -3903,8 +3903,8 @@
     "version": "",
     "finish": "PRISTINE HOLO"
   },
-  "67135573": {
-    "item_id": "67135573",
+  "67335237": {
+    "item_id": "67335237",
     "player": "",
     "overall": null,
     "rarity": "",
@@ -3921,6 +3921,30 @@
   },
   "67342564": {
     "item_id": "67342564",
+    "player": "",
+    "overall": null,
+    "rarity": "",
+    "version": "",
+    "finish": "PRISTINE HOLO"
+  },
+  "67186651": {
+    "item_id": "67186651",
+    "player": "",
+    "overall": null,
+    "rarity": "",
+    "version": "",
+    "finish": "PRISTINE HOLO"
+  },
+  "67335573": {
+    "item_id": "67335573",
+    "player": "",
+    "overall": null,
+    "rarity": "",
+    "version": "",
+    "finish": "PRISTINE HOLO"
+  },
+  "67135573": {
+    "item_id": "67135573",
     "player": "",
     "overall": null,
     "rarity": "",
@@ -3969,6 +3993,14 @@
   },
   "67348095": {
     "item_id": "67348095",
+    "player": "",
+    "overall": null,
+    "rarity": "",
+    "version": "",
+    "finish": "PRISTINE HOLO"
+  },
+  "67368151": {
+    "item_id": "67368151",
     "player": "",
     "overall": null,
     "rarity": "",
