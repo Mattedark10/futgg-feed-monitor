@@ -10,10 +10,26 @@
         "placeholder": false
       },
       {
-        "name": "Vialli",
-        "overall": 89,
+        "name": "Litmanen",
+        "overall": 88,
         "version": "Base Hero",
-        "item_id": "67342564",
+        "item_id": "67114537",
+        "finish": "PRISTINE HOLO",
+        "placeholder": false
+      },
+      {
+        "name": "Márquez",
+        "overall": 88,
+        "version": "Base Hero",
+        "item_id": "67135573",
+        "finish": "UNKNOWN",
+        "placeholder": false
+      },
+      {
+        "name": "Milito",
+        "overall": 88,
+        "version": "Base Hero",
+        "item_id": "67371135",
         "finish": "PRISTINE HOLO",
         "placeholder": false
       },
@@ -22,22 +38,6 @@
         "overall": 89,
         "version": "Base Hero",
         "item_id": "226306",
-        "finish": "BASE",
-        "placeholder": false
-      },
-      {
-        "name": "Vialli",
-        "overall": 89,
-        "version": "Base Hero",
-        "item_id": "233700",
-        "finish": "BASE",
-        "placeholder": false
-      },
-      {
-        "name": "Litmanen",
-        "overall": 88,
-        "version": "Base Hero",
-        "item_id": "5673",
         "finish": "BASE",
         "placeholder": false
       }
@@ -98,11 +98,27 @@
         "placeholder": false
       },
       {
-        "name": "Harder",
+        "name": "Godts",
         "overall": 88,
-        "version": "Destined for Glory",
-        "item_id": "67368151",
-        "finish": "PRISTINE HOLO",
+        "version": "Future Stars",
+        "item_id": "50590026",
+        "finish": "UNKNOWN",
+        "placeholder": false
+      },
+      {
+        "name": "",
+        "overall": null,
+        "version": "",
+        "item_id": null,
+        "finish": "UNKNOWN",
+        "placeholder": true
+      },
+      {
+        "name": "Jacobo Ramón",
+        "overall": 87,
+        "version": "Future Stars",
+        "item_id": "67179830",
+        "finish": "HOLO",
         "placeholder": false
       },
       {
@@ -130,11 +146,11 @@
         "placeholder": true
       },
       {
-        "name": "Harder",
+        "name": "Cucurella",
         "overall": 88,
         "version": "Destined for Glory",
-        "item_id": "50590935",
-        "finish": "BASE",
+        "item_id": "50570879",
+        "finish": "UNKNOWN",
         "placeholder": false
       },
       {
@@ -146,26 +162,10 @@
         "placeholder": false
       },
       {
-        "name": "",
-        "overall": null,
-        "version": "",
-        "item_id": null,
-        "finish": "UNKNOWN",
-        "placeholder": true
-      },
-      {
-        "name": "",
-        "overall": null,
-        "version": "",
-        "item_id": null,
-        "finish": "UNKNOWN",
-        "placeholder": true
-      },
-      {
-        "name": "Yohannes",
+        "name": "Bischof",
         "overall": 86,
         "version": "Future Stars",
-        "item_id": "67386815",
+        "item_id": "67372629",
         "finish": "HOLO",
         "placeholder": false
       }

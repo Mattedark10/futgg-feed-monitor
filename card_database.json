@@ -1,9 +1,297 @@
 {
   "items": {},
-  "players": {},
   "meta": {
     "version": 1,
     "source": "FUT.GG",
     "last_update": null
+  },
+  "players": {},
+  "67335170": {
+    "item_id": "67335170",
+    "finish": "PRISTINE HOLO"
+  },
+  "67114537": {
+    "item_id": "67114537",
+    "finish": "PRISTINE HOLO"
+  },
+  "67335237": {
+    "item_id": "67335237",
+    "finish": "PRISTINE HOLO"
+  },
+  "67371135": {
+    "item_id": "67371135",
+    "finish": "PRISTINE HOLO"
+  },
+  "67342564": {
+    "item_id": "67342564",
+    "finish": "PRISTINE HOLO"
+  },
+  "226306": {
+    "item_id": "226306",
+    "finish": "BASE"
+  },
+  "233700": {
+    "item_id": "233700",
+    "finish": "BASE"
+  },
+  "5673": {
+    "item_id": "5673",
+    "finish": "BASE"
+  },
+  "67186651": {
+    "item_id": "67186651",
+    "finish": "PRISTINE HOLO"
+  },
+  "67335157": {
+    "item_id": "67335157",
+    "finish": "PRISTINE HOLO"
+  },
+  "67384140": {
+    "item_id": "67384140",
+    "finish": "PRISTINE HOLO"
+  },
+  "67275770": {
+    "item_id": "67275770",
+    "finish": "PRISTINE HOLO"
+  },
+  "67180472": {
+    "item_id": "67180472",
+    "finish": "PRISTINE HOLO"
+  },
+  "67298908": {
+    "item_id": "67298908",
+    "finish": "PRISTINE HOLO"
+  },
+  "67348095": {
+    "item_id": "67348095",
+    "finish": "PRISTINE HOLO"
+  },
+  "67368151": {
+    "item_id": "67368151",
+    "finish": "PRISTINE HOLO"
+  },
+  "67179830": {
+    "item_id": "67179830",
+    "finish": "HOLO"
+  },
+  "67188263": {
+    "item_id": "67188263",
+    "finish": "HOLO"
+  },
+  "67368429": {
+    "item_id": "67368429",
+    "finish": "HOLO"
+  },
+  "67353040": {
+    "item_id": "67353040",
+    "finish": "HOLO"
+  },
+  "67372629": {
+    "item_id": "67372629",
+    "finish": "HOLO"
+  },
+  "67386815": {
+    "item_id": "67386815",
+    "finish": "HOLO"
+  },
+  "67374557": {
+    "item_id": "67374557",
+    "finish": "HOLO"
+  },
+  "50590935": {
+    "item_id": "50590935",
+    "finish": "BASE"
+  },
+  "100890499": {
+    "item_id": "100890499",
+    "finish": "PRISTINE HOLO"
+  },
+  "100664693": {
+    "item_id": "100664693",
+    "finish": "PRISTINE HOLO"
+  },
+  "100922276": {
+    "item_id": "100922276",
+    "finish": "PRISTINE HOLO"
+  },
+  "67110489": {
+    "item_id": "67110489",
+    "finish": "PRISTINE HOLO"
+  },
+  "67351383": {
+    "item_id": "67351383",
+    "finish": "PRISTINE HOLO"
+  },
+  "67345931": {
+    "item_id": "67345931",
+    "finish": "PRISTINE HOLO"
+  },
+  "67189240": {
+    "item_id": "67189240",
+    "finish": "PRISTINE HOLO"
+  },
+  "67367844": {
+    "item_id": "67367844",
+    "finish": "PRISTINE HOLO"
+  },
+  "67336067": {
+    "item_id": "67336067",
+    "finish": "PRISTINE HOLO"
+  },
+  "67298909": {
+    "item_id": "67298909",
+    "finish": "PRISTINE HOLO"
+  },
+  "100905142": {
+    "item_id": "100905142",
+    "finish": "PRISTINE HOLO"
+  },
+  "100893917": {
+    "item_id": "100893917",
+    "finish": "PRISTINE HOLO"
+  },
+  "67192358": {
+    "item_id": "67192358",
+    "finish": "PRISTINE HOLO"
+  },
+  "67347303": {
+    "item_id": "67347303",
+    "finish": "PRISTINE HOLO"
+  },
+  "100942469": {
+    "item_id": "100942469",
+    "finish": "PRISTINE HOLO"
+  },
+  "67380310": {
+    "item_id": "67380310",
+    "finish": "PRISTINE HOLO"
+  },
+  "67346153": {
+    "item_id": "67346153",
+    "finish": "PRISTINE HOLO"
+  },
+  "67275555": {
+    "item_id": "67275555",
+    "finish": "PRISTINE HOLO"
+  },
+  "100920304": {
+    "item_id": "100920304",
+    "finish": "PRISTINE HOLO"
+  },
+  "67340611": {
+    "item_id": "67340611",
+    "finish": "PRISTINE HOLO"
+  },
+  "67298906": {
+    "item_id": "67298906",
+    "finish": "PRISTINE HOLO"
+  },
+  "67382990": {
+    "item_id": "67382990",
+    "finish": "PRISTINE HOLO"
+  },
+  "67136994": {
+    "item_id": "67136994",
+    "finish": "PRISTINE HOLO"
+  },
+  "67342283": {
+    "item_id": "67342283",
+    "finish": "PRISTINE HOLO"
+  },
+  "67375558": {
+    "item_id": "67375558",
+    "finish": "HOLO"
+  },
+  "67125483": {
+    "item_id": "67125483",
+    "finish": "HOLO"
+  },
+  "100861077": {
+    "item_id": "100861077",
+    "finish": "HOLO"
+  },
+  "67137629": {
+    "item_id": "67137629",
+    "finish": "HOLO"
+  },
+  "67369111": {
+    "item_id": "67369111",
+    "finish": "HOLO"
+  },
+  "100876309": {
+    "item_id": "100876309",
+    "finish": "HOLO"
+  },
+  "67114604": {
+    "item_id": "67114604",
+    "finish": "HOLO"
+  },
+  "67351878": {
+    "item_id": "67351878",
+    "finish": "HOLO"
+  },
+  "100940548": {
+    "item_id": "100940548",
+    "finish": "HOLO"
+  },
+  "100903336": {
+    "item_id": "100903336",
+    "finish": "HOLO"
+  },
+  "67110065": {
+    "item_id": "67110065",
+    "finish": "HOLO"
+  },
+  "67280741": {
+    "item_id": "67280741",
+    "finish": "HOLO"
+  },
+  "67351743": {
+    "item_id": "67351743",
+    "finish": "HOLO"
+  },
+  "100906203": {
+    "item_id": "100906203",
+    "finish": "HOLO"
+  },
+  "67246050": {
+    "item_id": "67246050",
+    "finish": "HOLO"
+  },
+  "67370719": {
+    "item_id": "67370719",
+    "finish": "HOLO"
+  },
+  "67387190": {
+    "item_id": "67387190",
+    "finish": "HOLO"
+  },
+  "100749925": {
+    "item_id": "100749925",
+    "finish": "HOLO"
+  },
+  "67293807": {
+    "item_id": "67293807",
+    "finish": "HOLO"
+  },
+  "67279754": {
+    "item_id": "67279754",
+    "finish": "HOLO"
+  },
+  "67370163": {
+    "item_id": "67370163",
+    "finish": "HOLO"
+  },
+  "100901526": {
+    "item_id": "100901526",
+    "finish": "HOLO"
+  },
+  "100921253": {
+    "item_id": "100921253",
+    "finish": "HOLO"
+  },
+  "100928316": {
+    "item_id": "100928316",
+    "finish": "HOLO"
   }
 }
