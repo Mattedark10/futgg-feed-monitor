@@ -59,14 +59,14 @@ SESSION.headers.update(HEADERS)
 
 
 # ============================================================
-# VERIFIED FINISHES
+# VERIFIED ITEM IDS
 # ============================================================
 
 KNOWN_FINISHES = {
 
-    # --------------------------------------------------------
+    # ========================================================
     # PRISTINE HOLO
-    # --------------------------------------------------------
+    # ========================================================
 
     "67335170": "PRISTINE HOLO",   # Šašić
     "67114537": "PRISTINE HOLO",   # Litmanen
@@ -91,9 +91,9 @@ KNOWN_FINISHES = {
     "67119128": "PRISTINE HOLO",   # van Nistelrooy
 
 
-    # --------------------------------------------------------
+    # ========================================================
     # HOLO
-    # --------------------------------------------------------
+    # ========================================================
 
     "67179830": "HOLO",             # Jacobo Ramón
     "67188263": "HOLO",             # Mora
@@ -105,9 +105,9 @@ KNOWN_FINISHES = {
     "67383677": "HOLO",             # Gisele Thompson
 
 
-    # --------------------------------------------------------
+    # ========================================================
     # BASE
-    # --------------------------------------------------------
+    # ========================================================
 
     "226306": "BASE",               # Šašić
     "233700": "BASE",               # Vialli
@@ -120,6 +120,7 @@ KNOWN_FINISHES = {
 }
 
 
+# Player fallback only when Item ID cannot be read.
 KNOWN_PLAYER_FINISHES = {
     "Mascherano": "BASE",
     "van Basten": "PRISTINE HOLO",
@@ -128,7 +129,7 @@ KNOWN_PLAYER_FINISHES = {
 
 
 # ============================================================
-# FETCH
+# FETCH PAGE
 # ============================================================
 
 def fetch_page(url):
@@ -139,7 +140,9 @@ def fetch_page(url):
         timeout=30,
     )
 
-    print(f"HTTP status: {response.status_code}")
+    print(
+        f"HTTP status: {response.status_code}"
+    )
 
     response.raise_for_status()
 
@@ -185,7 +188,7 @@ def load_database():
 
 
 # ============================================================
-# TEXT
+# TEXT HELPERS
 # ============================================================
 
 def normalize_text(value):
@@ -204,16 +207,17 @@ def clean_player_name(value):
 
 
 # ============================================================
-# CARD ALT
+# PARSE CARD ALT
 # ============================================================
 
 def parse_card_alt(alt):
+
     alt = normalize_text(alt)
 
     if not alt:
         return None
 
-    # Empty FUT.GG slot
+    # Empty slot
     if alt.lower() == "player card":
         return None
 
@@ -230,6 +234,7 @@ def parse_card_alt(alt):
     overall = None
 
     for part in parts[1:]:
+
         match = re.search(
             r"\b(\d{2,3})\b",
             part,
@@ -252,9 +257,7 @@ def parse_card_alt(alt):
         )
 
     return {
-        "player": clean_player_name(
-            player
-        ),
+        "player": clean_player_name(player),
         "overall": overall,
         "version": version,
         "alt": alt,
@@ -262,23 +265,10 @@ def parse_card_alt(alt):
 
 
 # ============================================================
-# ITEM ID
+# ITEM ID EXTRACTION
 # ============================================================
 
 def extract_item_id_from_value(value):
-    """
-    IMPORTANT:
-
-    Only accept REAL FUT.GG item IDs.
-
-    Valid example:
-        /27-67335170/
-
-    Invalid:
-        2027
-        27
-        random numbers from image URLs
-    """
 
     if not value:
         return None
@@ -286,16 +276,39 @@ def extract_item_id_from_value(value):
     value = str(value)
 
     # --------------------------------------------------------
-    # REAL FUT.GG PLAYER URL
+    # FUT.GG CARD URL
     #
-    # /27-67335170/
-    # /27-67188263/
+    # Examples:
+    #
+    # .../27-67335157.webp
+    # .../27-67335157.hash.webp
+    # .../27-67335157_hash.webp
+    # .../27-67335157?...
+    #
+    # IMPORTANT:
+    # Never extract 2027.
+    # We ONLY accept the number immediately after "27-".
+    # --------------------------------------------------------
+
+    match = re.search(
+        r"(?:^|[/_-])27-(\d{4,10})(?=[./?_-]|$)",
+        value,
+        re.IGNORECASE,
+    )
+
+    if match:
+        return match.group(1)
+
+    # --------------------------------------------------------
+    # Explicit item ID attributes
     # --------------------------------------------------------
 
     patterns = [
-        r"/27-(\d{4,10})(?:/|$)",
-        r"/27-(\d{4,10})(?:[?#]|$)",
-        r"[-_/]27-(\d{4,10})[-_/]",
+        r'item[_-]?id\s*=\s*["\']?(\d{4,10})',
+        r'itemId\s*=\s*["\']?(\d{4,10})',
+        r'item_id\s*=\s*["\']?(\d{4,10})',
+        r'"itemId"\s*:\s*(\d{4,10})',
+        r'"item_id"\s*:\s*(\d{4,10})',
     ]
 
     for pattern in patterns:
@@ -303,57 +316,22 @@ def extract_item_id_from_value(value):
         match = re.search(
             pattern,
             value,
-            re.I,
+            re.IGNORECASE,
         )
 
         if match:
             return match.group(1)
-
-    # --------------------------------------------------------
-    # Explicit item ID attributes
-    # --------------------------------------------------------
-
-    explicit_patterns = [
-        r"(?:item[_-]?id)\s*[=:]\s*[\"']?(\d{4,10})",
-        r"(?:itemId)\s*[=:]\s*[\"']?(\d{4,10})",
-        r"(?:item_id)\s*[=:]\s*[\"']?(\d{4,10})",
-    ]
-
-    for pattern in explicit_patterns:
-
-        match = re.search(
-            pattern,
-            value,
-            re.I,
-        )
-
-        if match:
-            return match.group(1)
-
-    # --------------------------------------------------------
-    # NEVER use a generic number regex here.
-    #
-    # This is what caused:
-    #
-    # ItemID 2027
-    #
-    # --------------------------------------------------------
 
     return None
 
 
 def find_item_id_for_image(img):
-    """
-    Extract Item ID from THIS exact card image.
 
-    We do not scan large parent containers.
-    """
+    # ========================================================
+    # 1. IMAGE ATTRIBUTES
+    # ========================================================
 
-    # --------------------------------------------------------
-    # 1. Image attributes
-    # --------------------------------------------------------
-
-    image_attributes = [
+    attributes = [
         "src",
         "data-src",
         "data-lazy-src",
@@ -365,7 +343,7 @@ def find_item_id_for_image(img):
         "item-id",
     ]
 
-    for attr in image_attributes:
+    for attr in attributes:
 
         value = img.get(attr)
 
@@ -379,63 +357,17 @@ def find_item_id_for_image(img):
         if item_id:
             return item_id
 
-    # --------------------------------------------------------
-    # 2. Direct parent <a>
-    # --------------------------------------------------------
+    # ========================================================
+    # 2. IMMEDIATE PARENT
+    # ========================================================
 
     parent = img.parent
-
-    if parent and parent.name == "a":
-
-        values = [
-            parent.get("href"),
-            parent.get("data-href"),
-            parent.get("data-item-id"),
-            parent.get("data-itemid"),
-            parent.get("item-id"),
-        ]
-
-        for value in values:
-
-            item_id = extract_item_id_from_value(
-                value
-            )
-
-            if item_id:
-                return item_id
-
-    # --------------------------------------------------------
-    # 3. Search nearest <a>
-    #
-    # Only the nearest link, never a whole lineup.
-    # --------------------------------------------------------
-
-    parent_link = img.find_parent("a")
-
-    if parent_link:
-
-        for value in [
-            parent_link.get("href"),
-            parent_link.get("data-href"),
-            parent_link.get("data-item-id"),
-            parent_link.get("data-itemid"),
-            parent_link.get("item-id"),
-        ]:
-
-            item_id = extract_item_id_from_value(
-                value
-            )
-
-            if item_id:
-                return item_id
-
-    # --------------------------------------------------------
-    # 4. Immediate parent data attributes
-    # --------------------------------------------------------
 
     if parent:
 
         for attr in [
+            "href",
+            "data-href",
             "data-item-id",
             "data-itemid",
             "item-id",
@@ -451,14 +383,75 @@ def find_item_id_for_image(img):
             if item_id:
                 return item_id
 
+    # ========================================================
+    # 3. NEAREST <A>
+    # ========================================================
+
+    parent_link = img.find_parent("a")
+
+    if parent_link:
+
+        for attr in [
+            "href",
+            "data-href",
+            "data-item-id",
+            "data-itemid",
+            "item-id",
+            "data-card-id",
+        ]:
+
+            value = parent_link.get(attr)
+
+            item_id = extract_item_id_from_value(
+                value
+            )
+
+            if item_id:
+                return item_id
+
+    # ========================================================
+    # 4. SMALL IMMEDIATE WRAPPER
+    # ========================================================
+
+    if parent:
+
+        for child in parent.find_all(
+            recursive=False
+        ):
+
+            if child is img:
+                continue
+
+            for attr in [
+                "src",
+                "data-src",
+                "data-lazy-src",
+                "data-original",
+                "href",
+                "data-href",
+                "data-item-id",
+                "data-itemid",
+                "item-id",
+            ]:
+
+                value = child.get(attr)
+
+                item_id = extract_item_id_from_value(
+                    value
+                )
+
+                if item_id:
+                    return item_id
+
     return None
 
 
 # ============================================================
-# FINISH
+# FINISH FROM VERSION
 # ============================================================
 
 def finish_from_version(version):
+
     version = normalize_text(
         version
     ).lower()
@@ -482,19 +475,20 @@ def finish_from_version(version):
 
 
 # ============================================================
-# LINEUP CONTAINER
+# FIND LINEUP CONTAINER
 # ============================================================
 
 def find_best_lineup_container(
     soup,
     target_slots,
 ):
+
     candidates = []
 
     text_nodes = soup.find_all(
         string=re.compile(
             r"Cheapest\s+grade",
-            re.I,
+            re.IGNORECASE,
         )
     )
 
@@ -528,7 +522,11 @@ def find_best_lineup_container(
                     continue
 
                 if alt.lower() == "player card":
-                    card_images.append(img)
+
+                    card_images.append(
+                        img
+                    )
+
                     continue
 
                 parsed = parse_card_alt(
@@ -536,6 +534,7 @@ def find_best_lineup_container(
                 )
 
                 if parsed:
+
                     card_images.append(
                         img
                     )
@@ -578,6 +577,7 @@ def parse_lineup(
     target_slots,
     database,
 ):
+
     soup = BeautifulSoup(
         html,
         "html.parser",
@@ -591,8 +591,8 @@ def parse_lineup(
     if container is None:
 
         print(
-            f"Could not find lineup "
-            f"container for {category_name}."
+            f"Could not find lineup container "
+            f"for {category_name}."
         )
 
         return []
@@ -617,7 +617,9 @@ def parse_lineup(
         # ----------------------------------------------------
 
         if alt.lower() == "player card":
+
             slots.append(None)
+
             continue
 
         parsed = parse_card_alt(
@@ -631,6 +633,10 @@ def parse_lineup(
         overall = parsed["overall"]
         version = parsed["version"]
 
+        # ----------------------------------------------------
+        # ITEM ID
+        # ----------------------------------------------------
+
         item_id = find_item_id_for_image(
             img
         )
@@ -641,14 +647,14 @@ def parse_lineup(
 
         finish = None
 
-        # 1. Verified hardcoded Item ID
+        # 1. VERIFIED ITEM ID
         if item_id:
 
             finish = KNOWN_FINISHES.get(
                 str(item_id)
             )
 
-        # 2. Database
+        # 2. DATABASE
         if finish is None and item_id:
 
             db_item = database.get(
@@ -665,26 +671,28 @@ def parse_lineup(
                 )
 
                 if db_finish:
+
                     finish = normalize_text(
                         db_finish
                     ).upper()
 
-        # 3. Version
+        # 3. VERSION
         if finish is None:
 
             finish = finish_from_version(
                 version
             )
 
-        # 4. Player fallback
+        # 4. PLAYER FALLBACK
         if finish is None:
 
             finish = KNOWN_PLAYER_FINISHES.get(
                 player
             )
 
-        # 5. Default
+        # 5. DEFAULT
         if finish is None:
+
             finish = "BASE"
 
         card = {
@@ -703,21 +711,19 @@ def parse_lineup(
         if len(slots) >= target_slots:
             break
 
-    # --------------------------------------------------------
-    # EXACT SLOT COUNT
-    # --------------------------------------------------------
+    # ========================================================
+    # EXACT NUMBER OF SLOTS
+    # ========================================================
 
-    if len(slots) > target_slots:
-        slots = slots[
-            :target_slots
-        ]
+    slots = slots[:target_slots]
 
     while len(slots) < target_slots:
+
         slots.append(None)
 
-    # --------------------------------------------------------
+    # ========================================================
     # DEBUG
-    # --------------------------------------------------------
+    # ========================================================
 
     print(
         f"Lineup slot images found: "
@@ -749,7 +755,11 @@ def parse_lineup(
 # ============================================================
 
 def card_key(card):
-    if not card:
+
+    if not isinstance(
+        card,
+        dict,
+    ):
         return None
 
     player = card.get(
@@ -764,13 +774,45 @@ def card_key(card):
     )
 
     if item_id:
-        return f"item:{item_id}"
+        return (
+            f"item:{item_id}"
+        )
 
     return (
         f"{player}|"
         f"{card.get('overall', '')}|"
         f"{card.get('finish', '')}"
     )
+
+
+# ============================================================
+# VALID CARD
+# ============================================================
+
+def valid_card(card):
+
+    if not isinstance(
+        card,
+        dict,
+    ):
+        return False
+
+    player = card.get(
+        "player"
+    )
+
+    if not player:
+        return False
+
+    if str(player).strip().lower() == "player card":
+        return False
+
+    if card.get(
+        "overall"
+    ) is None:
+        return False
+
+    return True
 
 
 # ============================================================
@@ -807,61 +849,6 @@ def load_previous_state():
         )
 
         return {}
-
-
-def save_state(current_data):
-
-    with open(
-        STATE_FILE,
-        "w",
-        encoding="utf-8",
-    ) as f:
-
-        json.dump(
-            current_data,
-            f,
-            ensure_ascii=False,
-            indent=2,
-        )
-
-
-# ============================================================
-# CLEAN OLD STATE
-# ============================================================
-
-def valid_card(card):
-    """
-    Prevent old malformed entries such as:
-
-        Player Card None
-
-    from appearing as OUT.
-    """
-
-    if not isinstance(
-        card,
-        dict,
-    ):
-        return False
-
-    player = card.get(
-        "player"
-    )
-
-    if not player:
-        return False
-
-    if str(player).strip().lower() == "player card":
-        return False
-
-    overall = card.get(
-        "overall"
-    )
-
-    if overall is None:
-        return False
-
-    return True
 
 
 def clean_state(data):
@@ -902,8 +889,24 @@ def clean_state(data):
     return cleaned
 
 
+def save_state(current_data):
+
+    with open(
+        STATE_FILE,
+        "w",
+        encoding="utf-8",
+    ) as f:
+
+        json.dump(
+            current_data,
+            f,
+            ensure_ascii=False,
+            indent=2,
+        )
+
+
 # ============================================================
-# TELEGRAM
+# TELEGRAM HTML
 # ============================================================
 
 def telegram_escape(value):
@@ -947,6 +950,10 @@ def card_display_name(card):
         f"{finish}"
     )
 
+
+# ============================================================
+# TELEGRAM SEND
+# ============================================================
 
 def send_telegram_message(message):
 
@@ -1010,13 +1017,14 @@ def send_telegram_message(message):
 
 
 # ============================================================
-# TELEGRAM MESSAGE
+# BUILD TELEGRAM MESSAGE
 # ============================================================
 
 def build_telegram_message(
     current_data,
     previous_data,
 ):
+
     lines = [
         "📋 <b>Current lineup</b> 📋",
         "",
@@ -1030,11 +1038,9 @@ def build_telegram_message(
         category_names
     ):
 
-        config = CATEGORIES[
+        emoji = CATEGORIES[
             category_name
-        ]
-
-        emoji = config["emoji"]
+        ]["emoji"]
 
         current_slots = current_data.get(
             category_name,
@@ -1046,19 +1052,11 @@ def build_telegram_message(
             [],
         )
 
-        # ----------------------------------------------------
-        # CURRENT
-        # ----------------------------------------------------
-
         current_cards = [
             card
             for card in current_slots
             if valid_card(card)
         ]
-
-        # ----------------------------------------------------
-        # PREVIOUS
-        # ----------------------------------------------------
 
         previous_cards = [
             card
@@ -1077,7 +1075,7 @@ def build_telegram_message(
         )
 
         # ----------------------------------------------------
-        # CURRENT CARDS
+        # CURRENT
         # ----------------------------------------------------
 
         for card in current_cards:
@@ -1093,9 +1091,7 @@ def build_telegram_message(
 
         for card in previous_cards:
 
-            key = card_key(card)
-
-            if key not in current_keys:
+            if card_key(card) not in current_keys:
 
                 lines.append(
                     "🔴 OUT — "
@@ -1103,7 +1099,7 @@ def build_telegram_message(
                 )
 
         # ----------------------------------------------------
-        # SEPARATOR
+        # CATEGORY SEPARATOR
         # ----------------------------------------------------
 
         if category_index < (
@@ -1135,11 +1131,14 @@ def main():
         "=" * 60
     )
 
+    # --------------------------------------------------------
+    # DATABASE
+    # --------------------------------------------------------
+
     database = load_database()
 
     # --------------------------------------------------------
-    # IMPORTANT:
-    # Clean old malformed players.json entries.
+    # PREVIOUS STATE
     # --------------------------------------------------------
 
     previous_data = clean_state(
@@ -1149,7 +1148,7 @@ def main():
     current_data = {}
 
     # --------------------------------------------------------
-    # CHECK CATEGORIES
+    # SCAN
     # --------------------------------------------------------
 
     for category_name, config in CATEGORIES.items():
@@ -1190,9 +1189,8 @@ def main():
                 f"{category_name}: {e}"
             )
 
-            # Do not mark everything OUT if FUT.GG
-            # temporarily fails.
-
+            # If FUT.GG temporarily fails,
+            # keep previous lineup.
             current_data[
                 category_name
             ] = previous_data.get(
@@ -1201,7 +1199,7 @@ def main():
             )
 
     # --------------------------------------------------------
-    # TELEGRAM
+    # TELEGRAM MESSAGE
     # --------------------------------------------------------
 
     message = build_telegram_message(
@@ -1229,6 +1227,10 @@ def main():
         "=" * 60
     )
 
+    # --------------------------------------------------------
+    # SEND
+    # --------------------------------------------------------
+
     send_telegram_message(
         message
     )
@@ -1254,6 +1256,10 @@ def main():
         ).isoformat(),
     )
 
+
+# ============================================================
+# START
+# ============================================================
 
 if __name__ == "__main__":
     main()
