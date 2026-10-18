@@ -4,23 +4,23 @@
       "empty": false,
       "player": "Šašić",
       "overall": 89,
-      "item_id": "226306",
-      "finish": "BASE",
+      "item_id": "67335170",
+      "finish": "PRISTINE HOLO",
       "version": "Base Hero"
     },
     {
       "empty": false,
       "player": "Litmanen",
       "overall": 88,
-      "item_id": "226306",
-      "finish": "BASE",
+      "item_id": "67114537",
+      "finish": "PRISTINE HOLO",
       "version": "Base Hero"
     },
     {
       "empty": false,
       "player": "Mascherano",
       "overall": 88,
-      "item_id": "226306",
+      "item_id": "67251618",
       "finish": "BASE",
       "version": "Base Hero"
     },
@@ -28,8 +28,8 @@
       "empty": false,
       "player": "Milito",
       "overall": 88,
-      "item_id": "226306",
-      "finish": "BASE",
+      "item_id": "67371135",
+      "finish": "PRISTINE HOLO",
       "version": "Base Hero"
     },
     {
@@ -46,31 +46,31 @@
       "empty": false,
       "player": "Angerer",
       "overall": 92,
-      "item_id": "67119128",
-      "finish": "BASE",
+      "item_id": "67335157",
+      "finish": "PRISTINE HOLO",
       "version": "Base Icon"
     },
     {
       "empty": false,
       "player": "Prinz",
       "overall": 92,
-      "item_id": "67119128",
-      "finish": "BASE",
+      "item_id": "67384140",
+      "finish": "PRISTINE HOLO",
       "version": "Base Icon"
     },
     {
       "empty": false,
       "player": "Baresi",
       "overall": 91,
-      "item_id": "67119128",
-      "finish": "BASE",
+      "item_id": "67275770",
+      "finish": "PRISTINE HOLO",
       "version": "Base Icon"
     },
     {
       "empty": false,
       "player": "van Basten",
       "overall": 91,
-      "item_id": "67119128",
+      "item_id": "67301045",
       "finish": "BASE",
       "version": "Base Icon"
     },
@@ -88,32 +88,32 @@
       "empty": false,
       "player": "Cucurella",
       "overall": 88,
-      "item_id": "50590935",
-      "finish": "BASE",
+      "item_id": "67348095",
+      "finish": "PRISTINE HOLO",
       "version": "Destined for Glory"
     },
     {
       "empty": false,
       "player": "Harder",
       "overall": 88,
-      "item_id": "50590935",
-      "finish": "BASE",
+      "item_id": "67368151",
+      "finish": "PRISTINE HOLO",
       "version": "Destined for Glory"
     },
     {
       "empty": false,
       "player": "Mora",
       "overall": 87,
-      "item_id": "50590935",
-      "finish": "BASE",
+      "item_id": "67188263",
+      "finish": "HOLO",
       "version": "Future Stars"
     },
     {
       "empty": false,
       "player": "Bonny",
       "overall": 87,
-      "item_id": "50590935",
-      "finish": "BASE",
+      "item_id": "67368429",
+      "finish": "HOLO",
       "version": "Future Stars"
     },
     {
@@ -121,7 +121,8 @@
       "player": "Player Card",
       "overall": null,
       "item_id": null,
-      "finish": null
+      "finish": null,
+      "version": null
     },
     {
       "empty": false,
@@ -135,8 +136,8 @@
       "empty": false,
       "player": "Undav",
       "overall": 87,
-      "item_id": "50590935",
-      "finish": "BASE",
+      "item_id": "67353040",
+      "finish": "HOLO",
       "version": "Destined for Glory"
     },
     {
@@ -144,21 +145,23 @@
       "player": "Player Card",
       "overall": null,
       "item_id": null,
-      "finish": null
+      "finish": null,
+      "version": null
     },
     {
       "empty": true,
       "player": "Player Card",
       "overall": null,
       "item_id": null,
-      "finish": null
+      "finish": null,
+      "version": null
     },
     {
       "empty": false,
       "player": "Yohannes",
       "overall": 86,
-      "item_id": "50590935",
-      "finish": "BASE",
+      "item_id": "67386815",
+      "finish": "HOLO",
       "version": "Future Stars"
     }
   ]
