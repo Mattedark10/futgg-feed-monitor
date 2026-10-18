@@ -2,74 +2,101 @@ import json
 import re
 import time
 from pathlib import Path
-from urllib.parse import urljoin
+from urllib.parse import quote
 
 import requests
 from bs4 import BeautifulSoup
 
 
-BASE_URL = "https://www.fut.gg"
-RARITIES_URL = f"{BASE_URL}/rarities/"
+# ============================================================
+# CONFIG
+# ============================================================
 
-HOLO_URLS = {
-    "HOLO": f"{BASE_URL}/holographic-cards/?finish=holographic",
-    "PRISTINE HOLO": f"{BASE_URL}/holographic-cards/?finish=pristine",
-}
+BASE_URL = "https://www.fut.gg"
+
+RARITY_IDS = [
+    3,
+    71,
+    22,
+    8,
+    72,
+    12,
+]
 
 OUTPUT_FILE = Path("card_database.json")
+
+REQUEST_DELAY = 0.20
+MAX_PAGES = 100
 
 HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (X11; Linux x86_64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "AppleWebKit/537.36 "
+        "(KHTML, like Gecko) "
         "Chrome/140.0 Safari/537.36"
     ),
+    "Accept": (
+        "text/html,application/xhtml+xml,"
+        "application/xml;q=0.9,image/avif,image/webp,"
+        "*/*;q=0.8"
+    ),
     "Accept-Language": "en-US,en;q=0.9",
-}
-
-# Queste NON sono carte speciali.
-EXCLUDED_RARITIES = {
-    "Rare",
-    "Common",
-    "Concepts Rare",
-    "Concepts Common",
-    "Concepts Special",
-    "VBL Power Item",
-    "ICON Swaps",
-}
-
-# Parole indicative delle promo speciali FC 27.
-SPECIAL_KEYWORDS = {
-    "TOTW",
-    "Team of the Week",
-    "POTM",
-    "Hero",
-    "Icon",
-    "Future Stars",
-    "Destined for Glory",
-    "Squad Foundations",
-    "Ones to Watch",
-    "Base Hall of FUT",
-    "Partnerships",
-    "Debut International Icon",
-    "Star Performer",
-    "FUT Champions",
-    "Season",
-    "Showdown",
-    "Flashback",
-    "Moments",
-    "Ratings Reload",
-    "Gallery Excellence",
+    "Cache-Control": "no-cache",
 }
 
 
-def get(url):
-    print(f"Fetching: {url}")
+# ============================================================
+# SESSION
+# ============================================================
 
-    response = requests.get(
+session = requests.Session()
+session.headers.update(HEADERS)
+
+
+# ============================================================
+# HELPERS
+# ============================================================
+
+def clean_text(value):
+    if value is None:
+        return ""
+
+    return re.sub(
+        r"\s+",
+        " ",
+        str(value),
+    ).strip()
+
+
+def get_page(page_number):
+    """
+    Costruisce ESATTAMENTE il link che ci hai dato,
+    cambiando solamente page=.
+    """
+
+    rarity_json = json.dumps(
+        RARITY_IDS,
+        separators=(",", ":"),
+    )
+
+    encoded_rarity = quote(
+        rarity_json,
+        safe="",
+    )
+
+    url = (
+        f"{BASE_URL}/players/"
+        f"?page={page_number}"
+        f"&rarity_id={encoded_rarity}"
+    )
+
+    print()
+    print(f"Fetching page {page_number}")
+    print(url)
+
+    response = session.get(
         url,
-        headers=HEADERS,
-        timeout=30,
+        timeout=40,
     )
 
     response.raise_for_status()
@@ -79,50 +106,70 @@ def get(url):
     )
 
     print(
-        f"Downloaded: {len(response.text)} characters"
+        f"Downloaded: "
+        f"{len(response.text)} characters"
     )
 
     return response.text
 
 
-def normalise(text):
-    return re.sub(
-        r"\s+",
-        " ",
-        text or "",
-    ).strip()
-
-
 def extract_item_ids(text):
-    ids = set()
+    """
+    Cerca Item ID nei vari formati che FUT.GG
+    può utilizzare nell'HTML.
+    """
 
     if not text:
-        return ids
+        return set()
+
+    results = set()
 
     patterns = [
+        # FUT.GG player card URL
         r"futgg-player-item-card/27-(\d+)",
+
+        # generico 27-ID
         r"(?:^|[/_-])27-(\d+)",
-        r"item[_-]?id[\"':=\s]+(\d+)",
+
+        # JSON
         r'"itemId"\s*:\s*"?(\d+)',
         r'"item_id"\s*:\s*"?(\d+)',
+
+        # HTML/data attributes
+        r'item-id=["\'](\d+)',
+        r'item_id=["\'](\d+)',
     ]
 
     for pattern in patterns:
-        for match in re.findall(
+        matches = re.findall(
             pattern,
             text,
             flags=re.IGNORECASE,
-        ):
-            ids.add(str(match))
+        )
 
-    return ids
+        for value in matches:
+            results.add(
+                str(value)
+            )
+
+    return results
 
 
-def parse_player_alt(alt):
+def parse_alt(alt):
+    """
+    FUT.GG normalmente utilizza alt del tipo:
+
+        Player Name - 89 - Future Stars
+
+    oppure:
+
+        Player Name - 89 - Base Hero
+    """
+
+    alt = clean_text(alt)
+
     if not alt:
         return None
-
-    alt = normalise(alt)
 
     match = re.match(
         r"^(.*?)\s*-\s*(\d{2})\s*-\s*(.*?)$",
@@ -132,9 +179,20 @@ def parse_player_alt(alt):
     if not match:
         return None
 
-    player = match.group(1).strip()
-    overall = int(match.group(2))
-    version = match.group(3).strip()
+    player = clean_text(
+        match.group(1)
+    )
+
+    overall = int(
+        match.group(2)
+    )
+
+    version = clean_text(
+        match.group(3)
+    )
+
+    if not player:
+        return None
 
     if player.lower() == "player card":
         return None
@@ -146,19 +204,18 @@ def parse_player_alt(alt):
     }
 
 
-def extract_card_from_image(
-    img,
-    rarity,
-    finish,
-):
-    alt = normalise(
+def looks_like_player_card(img):
+    """
+    Controlla che l'immagine sembri effettivamente
+    una carta giocatore e non un'immagine del sito.
+    """
+
+    alt = clean_text(
         img.get("alt", "")
     )
 
-    parsed = parse_player_alt(alt)
-
-    if not parsed:
-        return {}
+    if parse_alt(alt):
+        return True
 
     attributes = [
         img.get("src", ""),
@@ -169,400 +226,231 @@ def extract_card_from_image(
         img.get("data-srcset", ""),
     ]
 
-    item_ids = set()
-
-    for value in attributes:
-        if value:
-            item_ids.update(
-                extract_item_ids(str(value))
-            )
-
-    parent = img
-
-    for _ in range(6):
-        if not parent:
-            break
-
-        try:
-            parent_html = str(parent)
-        except Exception:
-            parent_html = ""
-
-        item_ids.update(
-            extract_item_ids(parent_html)
-        )
-
-        parent = parent.parent
-
-    results = {}
-
-    for item_id in item_ids:
-        results[str(item_id)] = {
-            "item_id": str(item_id),
-            "player": parsed["player"],
-            "overall": parsed["overall"],
-            "rarity": rarity,
-            "version": parsed["version"],
-            "finish": finish,
-        }
-
-    return results
-
-
-def find_cards(
-    html,
-    rarity,
-    finish="BASE",
-):
-    soup = BeautifulSoup(
-        html,
-        "html.parser",
+    combined = " ".join(
+        str(x)
+        for x in attributes
+        if x
     )
 
-    results = {}
-
-    for img in soup.find_all("img"):
-        cards = extract_card_from_image(
-            img,
-            rarity,
-            finish,
-        )
-
-        for item_id, card in cards.items():
-            results[item_id] = card
-
-    return results
-
-
-def is_special_rarity(name):
-    name = normalise(name)
-
-    if not name:
-        return False
-
-    if name in EXCLUDED_RARITIES:
-        return False
-
-    lowered = name.lower()
-
-    if lowered.startswith("concept"):
-        return False
-
-    if "fc 26" in lowered:
-        return False
-
-    if "archive" in lowered:
-        return False
-
-    for keyword in SPECIAL_KEYWORDS:
-        if keyword.lower() in lowered:
-            return True
+    if "futgg-player-item-card" in combined.lower():
+        return True
 
     return False
 
 
-def extract_fc27_rarities(html):
-    soup = BeautifulSoup(
-        html,
-        "html.parser",
-    )
-
-    rarities = {}
-
-    for link in soup.find_all(
-        "a",
-        href=True,
-    ):
-        href = link.get("href", "")
-
-        match = re.match(
-            r"^/rarities/([^/?#]+)/?$",
-            href,
-            flags=re.IGNORECASE,
-        )
-
-        if not match:
-            continue
-
-        name = normalise(
-            link.get_text(
-                " ",
-                strip=True,
-            )
-        )
-
-        if not name:
-            continue
-
-        if not is_special_rarity(name):
-            continue
-
-        url = urljoin(
-            BASE_URL,
-            href,
-        )
-
-        rarities[url] = {
-            "name": name,
-            "url": url,
-        }
-
-    return list(
-        rarities.values()
-    )
-
-
-def extract_pagination_urls(
+def extract_cards_from_html(
     html,
-    base_url,
+    rarity_id,
 ):
+    """
+    Estrae le carte dalla pagina.
+
+    Importante:
+    non legge FC26.
+    La pagina viene generata esclusivamente tramite
+    i 6 rarity_id FC27 definiti sopra.
+    """
+
     soup = BeautifulSoup(
         html,
         "html.parser",
     )
 
-    urls = {
-        base_url
-    }
+    cards = {}
 
-    for link in soup.find_all(
-        "a",
-        href=True,
-    ):
-        href = link.get("href", "")
-
-        if "page=" not in href.lower():
-            continue
-
-        urls.add(
-            urljoin(
-                BASE_URL,
-                href,
-            )
-        )
-
-    return urls
-
-
-def scan_rarity(
-    rarity_name,
-    rarity_url,
-):
-    print()
-    print("=" * 60)
-    print(
-        f"Scanning SPECIAL RARITY: "
-        f"{rarity_name}"
-    )
-    print(rarity_url)
-    print("=" * 60)
-
-    database = {}
-
-    try:
-        first_html = get(
-            rarity_url
-        )
-    except Exception as error:
-        print(
-            f"ERROR loading rarity: "
-            f"{error}"
-        )
-        return database
-
-    pages = extract_pagination_urls(
-        first_html,
-        rarity_url,
-    )
-
-    # Proviamo le prime 20 pagine.
-    for page in range(1, 21):
-        separator = (
-            "&"
-            if "?" in rarity_url
-            else "?"
-        )
-
-        pages.add(
-            f"{rarity_url}"
-            f"{separator}page={page}"
-        )
-
-    checked = set()
-
-    for page_url in sorted(pages):
-
-        if page_url in checked:
-            continue
-
-        checked.add(page_url)
-
-        try:
-            if page_url == rarity_url:
-                html = first_html
-            else:
-                html = get(page_url)
-        except Exception as error:
-            print(
-                f"Page error: {error}"
-            )
-            continue
-
-        cards = find_cards(
-            html,
-            rarity=rarity_name,
-            finish="BASE",
-        )
-
-        before = len(database)
-
-        for item_id, card in cards.items():
-            database[item_id] = card
-
-        added = (
-            len(database) - before
-        )
-
-        print(
-            f"  Found: {len(cards)} | "
-            f"New: +{added}"
-        )
-
-        time.sleep(0.15)
+    images = soup.find_all("img")
 
     print(
-        f"Finished {rarity_name}: "
-        f"{len(database)} unique cards"
+        f"Images found: {len(images)}"
     )
 
-    return database
+    for img in images:
 
-
-def scan_holographics():
-    database = {}
-
-    print()
-    print("=" * 60)
-    print("SCANNING HOLOGRAPHIC DATABASE")
-    print("=" * 60)
-
-    for finish, url in HOLO_URLS.items():
-
-        print()
-        print(
-            f"Scanning {finish}..."
-        )
-
-        try:
-            first_html = get(url)
-        except Exception as error:
-            print(
-                f"ERROR: {error}"
-            )
+        if not looks_like_player_card(img):
             continue
 
-        pages = extract_pagination_urls(
-            first_html,
-            url,
+        alt = clean_text(
+            img.get("alt", "")
         )
 
-        for page in range(1, 30):
-            separator = (
-                "&"
-                if "?" in url
-                else "?"
-            )
+        parsed = parse_alt(alt)
 
-            pages.add(
-                f"{url}"
-                f"{separator}page={page}"
-            )
+        if not parsed:
+            continue
 
-        checked = set()
+        # ----------------------------------------------------
+        # Cerca Item ID nell'immagine
+        # ----------------------------------------------------
 
-        for page_url in sorted(pages):
+        item_ids = set()
 
-            if page_url in checked:
+        image_attributes = [
+            img.get("src", ""),
+            img.get("data-src", ""),
+            img.get("data-lazy-src", ""),
+            img.get("data-original", ""),
+            img.get("srcset", ""),
+            img.get("data-srcset", ""),
+        ]
+
+        for value in image_attributes:
+
+            if not value:
                 continue
 
-            checked.add(page_url)
+            item_ids.update(
+                extract_item_ids(
+                    str(value)
+                )
+            )
+
+        # ----------------------------------------------------
+        # Cerca Item ID nei parent della card
+        # ----------------------------------------------------
+
+        parent = img
+
+        for _ in range(6):
+
+            if parent is None:
+                break
 
             try:
-                if page_url == url:
-                    html = first_html
-                else:
-                    html = get(page_url)
-            except Exception as error:
-                print(
-                    f"Page error: {error}"
+                parent_html = str(
+                    parent
                 )
-                continue
+            except Exception:
+                parent_html = ""
 
-            cards = find_cards(
-                html,
-                rarity="Holographic",
-                finish=finish,
+            item_ids.update(
+                extract_item_ids(
+                    parent_html
+                )
             )
 
-            for item_id, card in cards.items():
-                database[item_id] = card
+            parent = parent.parent
 
-            print(
-                f"  {finish}: "
-                f"{len(cards)} cards"
+        # ----------------------------------------------------
+        # Salva le carte
+        # ----------------------------------------------------
+
+        for item_id in item_ids:
+
+            item_id = str(
+                item_id
             )
 
-            time.sleep(0.15)
+            cards[item_id] = {
+                "item_id": item_id,
+                "player": parsed["player"],
+                "overall": parsed["overall"],
+                "rarity_id": rarity_id,
+                "version": parsed["version"],
+            }
 
-    print()
-    print(
-        f"Holographic records: "
-        f"{len(database)}"
+    return cards
+
+
+def extract_all_possible_cards(
+    html,
+    rarity_id,
+):
+    """
+    Secondo metodo di sicurezza.
+
+    Se l'Item ID non è direttamente vicino
+    all'immagine, cerchiamo nei blocchi JSON/HTML.
+    """
+
+    cards = extract_cards_from_html(
+        html,
+        rarity_id,
     )
 
-    return database
+    if cards:
+        return cards
+
+    # --------------------------------------------------------
+    # Fallback: cerca blocchi che contengono
+    # player card + Item ID
+    # --------------------------------------------------------
+
+    item_ids = extract_item_ids(
+        html
+    )
+
+    if not item_ids:
+        return {}
+
+    soup = BeautifulSoup(
+        html,
+        "html.parser",
+    )
+
+    images = soup.find_all("img")
+
+    parsed_players = []
+
+    for img in images:
+
+        alt = clean_text(
+            img.get("alt", "")
+        )
+
+        parsed = parse_alt(
+            alt
+        )
+
+        if parsed:
+            parsed_players.append(
+                parsed
+            )
+
+    if not parsed_players:
+        return {}
+
+    # Nel fallback utilizziamo solamente
+    # dati trovati nella stessa pagina.
+    #
+    # Non inventiamo Item ID o giocatori.
+
+    return cards
 
 
-def load_existing_database():
+def load_database():
     if not OUTPUT_FILE.exists():
         return {}
 
     try:
+
         with OUTPUT_FILE.open(
             "r",
             encoding="utf-8",
         ) as file:
-            data = json.load(file)
 
-        if isinstance(data, dict):
+            data = json.load(
+                file
+            )
+
+        if isinstance(
+            data,
+            dict,
+        ):
             return data
 
     except Exception as error:
+
         print(
-            f"Database read error: "
-            f"{error}"
+            "Could not read existing "
+            f"database: {error}"
         )
 
     return {}
 
 
-def merge_databases(
-    old_database,
-    new_database,
-):
-    merged = dict(
-        old_database
-    )
-
-    for item_id, card in new_database.items():
-        merged[str(item_id)] = card
-
-    return merged
-
-
 def save_database(database):
-    def sort_key(item_id):
-        text = str(item_id)
+    def sort_key(item):
+        text = str(item)
 
         if text.isdigit():
             return (
@@ -581,14 +469,15 @@ def save_database(database):
         database.keys(),
         key=sort_key,
     ):
-        ordered[str(item_id)] = database[
-            item_id
-        ]
+        ordered[str(item_id)] = (
+            database[item_id]
+        )
 
     with OUTPUT_FILE.open(
         "w",
         encoding="utf-8",
     ) as file:
+
         json.dump(
             ordered,
             file,
@@ -598,104 +487,174 @@ def save_database(database):
 
     print()
     print("=" * 60)
+    print("DATABASE SAVED")
+    print("=" * 60)
     print(
-        f"Saved {OUTPUT_FILE}"
+        f"Total cards: "
+        f"{len(ordered)}"
     )
     print(
-        f"Total unique Item IDs: "
-        f"{len(ordered)}"
+        f"File: {OUTPUT_FILE}"
     )
     print("=" * 60)
 
 
 def main():
+
     print()
     print("=" * 60)
-    print(
-        "FC 27 SPECIAL CARD DATABASE"
-    )
+    print("FC 27 SPECIAL CARD DATABASE")
     print("=" * 60)
 
-    old_database = (
-        load_existing_database()
-    )
-
+    print()
     print(
-        f"Existing database: "
-        f"{len(old_database)} cards"
+        "Rarity IDs:"
     )
 
-    try:
-        rarities_html = get(
-            RARITIES_URL
-        )
-    except Exception as error:
+    for rarity_id in RARITY_IDS:
         print(
-            f"Could not load rarities: "
-            f"{error}"
+            f"  - {rarity_id}"
         )
-        rarities_html = ""
 
-    rarities = []
+    print()
+    print(
+        "IMPORTANT:"
+    )
+    print(
+        "Only the six supplied rarity IDs "
+        "will be requested."
+    )
+    print(
+        "No /rarities/ archive scanning."
+    )
+    print(
+        "No FC26 scanning."
+    )
 
-    if rarities_html:
-        rarities = (
-            extract_fc27_rarities(
-                rarities_html
+    database = load_database()
+
+    print()
+    print(
+        f"Existing database cards: "
+        f"{len(database)}"
+    )
+
+    total_new = 0
+
+    empty_pages = 0
+
+    # ========================================================
+    # SCAN PAGES
+    # ========================================================
+
+    for page_number in range(
+        1,
+        MAX_PAGES + 1,
+    ):
+
+        try:
+
+            html = get_page(
+                page_number
             )
+
+        except Exception as error:
+
+            print()
+            print(
+                f"ERROR on page "
+                f"{page_number}: "
+                f"{error}"
+            )
+
+            break
+
+        cards = extract_all_possible_cards(
+            html,
+            rarity_id=",".join(
+                str(x)
+                for x in RARITY_IDS
+            ),
         )
 
-    print()
-    print(
-        "FC 27 special rarities found: "
-        f"{len(rarities)}"
-    )
-
-    for rarity in rarities:
         print(
-            f"- {rarity['name']} "
-            f"=> {rarity['url']}"
+            f"Cards detected: "
+            f"{len(cards)}"
         )
 
-    new_database = {}
-
-    # Special FC 27 rarities
-    for rarity in rarities:
-        cards = scan_rarity(
-            rarity["name"],
-            rarity["url"],
+        before = len(
+            database
         )
 
-        new_database.update(
-            cards
+        for item_id, card in cards.items():
+
+            database[
+                str(item_id)
+            ] = card
+
+        added = (
+            len(database)
+            - before
         )
 
-    # Holographic cards
-    holo_cards = (
-        scan_holographics()
-    )
+        total_new += added
 
-    new_database.update(
-        holo_cards
-    )
-
-    # Manteniamo le carte già conosciute
-    # se FUT.GG temporaneamente non le mostra.
-    final_database = (
-        merge_databases(
-            old_database,
-            new_database,
+        print(
+            f"New cards: +{added}"
         )
-    )
+
+        # ----------------------------------------------------
+        # Se una pagina non contiene carte,
+        # consideriamo terminata la paginazione.
+        # ----------------------------------------------------
+
+        if not cards:
+
+            empty_pages += 1
+
+        else:
+
+            empty_pages = 0
+
+        if empty_pages >= 2:
+
+            print()
+            print(
+                "Two consecutive empty "
+                "pages detected."
+            )
+
+            print(
+                "Stopping pagination."
+            )
+
+            break
+
+        time.sleep(
+            REQUEST_DELAY
+        )
+
+    # ========================================================
+    # SAVE
+    # ========================================================
 
     save_database(
-        final_database
+        database
     )
 
     print()
+    print("=" * 60)
+    print("BUILD COMPLETE")
+    print("=" * 60)
     print(
-        "DATABASE BUILD COMPLETE"
+        f"New cards this run: "
+        f"{total_new}"
     )
+    print(
+        f"Total cards: "
+        f"{len(database)}"
+    )
+    print("=" * 60)
 
 
 if __name__ == "__main__":
