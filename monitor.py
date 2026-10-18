@@ -19,27 +19,18 @@ CATEGORIES = {
         "url": f"{BASE_URL}/fut-gallery/rarities/heroes/",
         "emoji": "🦸‍♂️",
         "slots": 5,
-        "heading_patterns": [
-            "Cheapest grade"
-        ],
     },
 
     "Holographics": {
         "url": f"{BASE_URL}/fut-gallery/rarities/holographics/",
         "emoji": "✨️",
         "slots": 5,
-        "heading_patterns": [
-            "Cheapest grade S"
-        ],
     },
 
     "Season 1": {
         "url": f"{BASE_URL}/fut-gallery/rarities/season-1/",
         "emoji": "1️⃣",
         "slots": 10,
-        "heading_patterns": [
-            "Cheapest grade"
-        ],
     },
 }
 
@@ -98,14 +89,19 @@ KNOWN_FINISHES = {
     "67335573": "PRISTINE HOLO",
     "67135573": "PRISTINE HOLO",   # Márquez
 
+    # Holographics
     "67335157": "PRISTINE HOLO",   # Angerer
     "67384140": "PRISTINE HOLO",   # Prinz
     "67275770": "PRISTINE HOLO",   # Baresi
     "67180472": "PRISTINE HOLO",   # Foudy
     "67298908": "PRISTINE HOLO",   # Moore
 
+    # Season 1
     "67348095": "PRISTINE HOLO",   # Cucurella
     "67368151": "PRISTINE HOLO",   # Harder
+
+    # Paris Brunner
+    "67382990": "PRISTINE HOLO",
 
     # ========================================================
     # HOLO
@@ -119,6 +115,9 @@ KNOWN_FINISHES = {
     "67386815": "HOLO",             # Yohannes
     "67374557": "HOLO",
 
+    # Gisele Thompson
+    "67383677": "HOLO",
+
     # ========================================================
     # BASE
     # ========================================================
@@ -130,35 +129,22 @@ KNOWN_FINISHES = {
     "50590026": "BASE",             # Godts
     "50570879": "BASE",             # Cucurella
 
-    # ========================================================
-    # GISELE THOMPSON
-    # ========================================================
-
+    # Gisele Thompson
     "50606461": "BASE",
-    "67383677": "HOLO",
 
-    # ========================================================
-    # PARIS BRUNNER
-    # ========================================================
-
+    # Paris Brunner
     "50605774": "BASE",
-    "67382990": "PRISTINE HOLO",
 }
 
 
 # ============================================================
-# KNOWN PLAYER FALLBACKS
-#
-# Used ONLY when FUT.GG doesn't expose the finish/Item ID
-# correctly in the lineup.
+# PLAYER FALLBACKS
 # ============================================================
 
 KNOWN_PLAYER_FINISHES = {
 
-    # Heroes
     "Mascherano": "BASE",
 
-    # Holographics
     "van Basten": "PRISTINE HOLO",
     "van Nistelrooy": "PRISTINE HOLO",
 }
@@ -169,6 +155,7 @@ KNOWN_PLAYER_FINISHES = {
 # ============================================================
 
 def clean_text(value):
+
     if value is None:
         return ""
 
@@ -180,6 +167,7 @@ def clean_text(value):
 
 
 def normalize_name(name):
+
     name = clean_text(name)
 
     replacements = {
@@ -204,7 +192,10 @@ def normalize_name(name):
     }
 
     for old, new in replacements.items():
-        name = name.replace(old, new)
+        name = name.replace(
+            old,
+            new
+        )
 
     return name.lower()
 
@@ -216,10 +207,6 @@ def normalize_name(name):
 def load_database():
 
     if not DATABASE_FILE.exists():
-        print(
-            "card_database.json not found."
-        )
-
         return {}
 
     try:
@@ -231,10 +218,8 @@ def load_database():
 
             data = json.load(file)
 
-        if not isinstance(data, dict):
-            return {}
-
-        return data
+        if isinstance(data, dict):
+            return data
 
     except Exception as error:
 
@@ -242,38 +227,50 @@ def load_database():
             f"Database error: {error}"
         )
 
-        return {}
+    return {}
 
 
-def database_finish(item_id):
+# ============================================================
+# DATABASE FINISH
+# ============================================================
+
+def database_finish(
+    item_id,
+    database
+):
 
     if not item_id:
         return None
 
-    item_id = str(item_id)
+    item_id = str(
+        item_id
+    )
 
-    # Known hardcoded mapping first
+    # Hardcoded verified IDs first
     if item_id in KNOWN_FINISHES:
-        return KNOWN_FINISHES[item_id]
-
-    database = load_database()
+        return KNOWN_FINISHES[
+            item_id
+        ]
 
     card = database.get(
         item_id
     )
 
-    if not card:
+    if not isinstance(
+        card,
+        dict
+    ):
         return None
 
     finish = card.get(
         "finish"
     )
 
-    if finish in [
+    if finish in (
         "BASE",
         "HOLO",
         "PRISTINE HOLO",
-    ]:
+    ):
         return finish
 
     return None
@@ -343,55 +340,67 @@ def player_fallback_finish(player):
 
 
 # ============================================================
-# ITEM ID EXTRACTION
+# EXTRACT ITEM IDS FROM ONE VALUE
 # ============================================================
 
-def extract_item_ids(text):
+def extract_item_ids(value):
 
-    if not text:
-        return set()
+    if not value:
+        return []
 
-    text = str(text)
+    value = str(
+        value
+    )
 
     patterns = [
+
+        # FUT.GG card URL
         r"/27-(\d+)",
+
+        # Generic 27-ID
         r"\b27-(\d+)\b",
-        r'futgg-player-item-card/27-(\d+)',
+
+        # JSON
         r'"itemId"\s*:\s*"?(\\?\d+)',
         r'"item_id"\s*:\s*"?(\\?\d+)',
         r'"itemID"\s*:\s*"?(\\?\d+)',
+
+        # HTML data attributes
         r'data-item-id=["\'](\d+)',
+
     ]
 
-    results = set()
+    results = []
 
     for pattern in patterns:
 
         matches = re.findall(
             pattern,
-            text,
+            value,
             re.IGNORECASE
         )
 
         for match in matches:
 
-            value = str(
+            item_id = str(
                 match
             ).replace(
                 "\\",
                 ""
             )
 
-            if value.isdigit():
-                results.add(
-                    value
-                )
+            if item_id.isdigit():
+
+                if item_id not in results:
+                    results.append(
+                        item_id
+                    )
 
     return results
 
 
 # ============================================================
-# ALT PARSER
+# PARSE ALT
 # ============================================================
 
 def parse_card_alt(alt):
@@ -404,6 +413,7 @@ def parse_card_alt(alt):
         return None
 
     if alt.lower() == "player card":
+
         return {
             "empty": True
         }
@@ -425,10 +435,13 @@ def parse_card_alt(alt):
     )
 
     try:
+
         overall = int(
             match.group(2)
         )
+
     except Exception:
+
         return None
 
     version = clean_text(
@@ -444,12 +457,18 @@ def parse_card_alt(alt):
 
 
 # ============================================================
-# FIND ITEM IDS NEAR IMAGE
+# FIND ITEM ID FOR THIS EXACT IMAGE
 # ============================================================
 
-def find_item_ids_near_image(img):
+def find_item_id_for_image(img):
 
-    item_ids = set()
+    # IMPORTANT:
+    # We ONLY inspect this image and its direct link.
+    #
+    # We DO NOT scan 8 parent containers anymore.
+    #
+    # That was the reason the same ItemID was being assigned
+    # to every player in the lineup.
 
     attributes = [
         "src",
@@ -460,47 +479,87 @@ def find_item_ids_near_image(img):
         "data-srcset",
     ]
 
+    # --------------------------------------------------------
+    # 1. Image attributes
+    # --------------------------------------------------------
+
     for attribute in attributes:
 
         value = img.get(
             attribute
         )
 
-        if value:
-
-            item_ids.update(
-                extract_item_ids(
-                    value
-                )
-            )
-
-    current = img
-
-    for _ in range(8):
-
-        if current is None:
-            break
-
-        try:
-            html = str(
-                current
-            )
-        except Exception:
-            html = ""
-
-        item_ids.update(
-            extract_item_ids(
-                html
-            )
+        ids = extract_item_ids(
+            value
         )
 
-        current = current.parent
+        if ids:
+            return ids[0]
 
-    return item_ids
+    # --------------------------------------------------------
+    # 2. Direct parent <a>
+    # --------------------------------------------------------
+
+    parent_link = img.find_parent(
+        "a"
+    )
+
+    if parent_link:
+
+        href = parent_link.get(
+            "href",
+            ""
+        )
+
+        ids = extract_item_ids(
+            href
+        )
+
+        if ids:
+            return ids[0]
+
+    # --------------------------------------------------------
+    # 3. Very close wrapper only
+    #
+    # We inspect one immediate parent, but never the whole
+    # lineup container.
+    # --------------------------------------------------------
+
+    parent = img.parent
+
+    if parent:
+
+        for attribute in (
+            "data-item-id",
+            "data-itemid",
+            "data-id",
+        ):
+
+            value = parent.get(
+                attribute
+            )
+
+            if value:
+
+                ids = extract_item_ids(
+                    value
+                )
+
+                if ids:
+                    return ids[0]
+
+                value = str(
+                    value
+                )
+
+                if value.isdigit():
+                    return value
+
+    return None
 
 
 # ============================================================
-# FIND CHEAPEST LINEUP
+# FIND CHEAPEST LINEUP CONTAINER
 # ============================================================
 
 def find_best_lineup_container(
@@ -508,33 +567,26 @@ def find_best_lineup_container(
     category
 ):
 
-    config = CATEGORIES[
+    target_slots = CATEGORIES[
         category
-    ]
-
-    target_slots = config[
-        "slots"
-    ]
-
-    headings = soup.find_all(
-        ["h1", "h2", "h3", "h4", "div", "span"]
-    )
+    ]["slots"]
 
     candidates = []
 
-    for heading in headings:
-
-        text = clean_text(
-            heading.get_text(
-                " ",
-                strip=True
-            )
+    # Find headings specifically
+    # containing "Cheapest grade".
+    headings = soup.find_all(
+        string=re.compile(
+            r"Cheapest grade",
+            re.IGNORECASE
         )
+    )
 
-        if not text:
-            continue
+    for heading_text in headings:
 
-        if "Cheapest grade" not in text:
+        heading = heading_text.parent
+
+        if heading is None:
             continue
 
         parent = heading
@@ -560,6 +612,7 @@ def find_best_lineup_container(
                 )
 
                 if parsed:
+
                     cards.append(
                         (
                             img,
@@ -582,7 +635,7 @@ def find_best_lineup_container(
     if not candidates:
         return None
 
-    # Closest candidate with enough cards
+    # Prefer candidate closest to target slot count
     candidates.sort(
         key=lambda x: (
             abs(
@@ -601,7 +654,8 @@ def find_best_lineup_container(
 
 def parse_lineup(
     html,
-    category
+    category,
+    database
 ):
 
     soup = BeautifulSoup(
@@ -609,13 +663,9 @@ def parse_lineup(
         "html.parser"
     )
 
-    config = CATEGORIES[
+    target_slots = CATEGORIES[
         category
-    ]
-
-    target_slots = config[
-        "slots"
-    ]
+    ]["slots"]
 
     candidate = find_best_lineup_container(
         soup,
@@ -630,37 +680,28 @@ def parse_lineup(
 
         return []
 
-    _, container, _ = candidate
-
-    images = container.find_all(
-        "img"
-    )
+    _, container, cards = candidate
 
     print(
         f"Lineup slot images found: "
-        f"{len(images)}/{target_slots}"
+        f"{len(cards)}/{target_slots}"
     )
 
     lineup = []
 
-    used_image_indexes = set()
+    # --------------------------------------------------------
+    # IMPORTANT:
+    # We use the actual card images in DOM order.
+    # --------------------------------------------------------
 
-    for index, img in enumerate(
-        images
-    ):
+    for img, parsed in cards:
 
         if len(lineup) >= target_slots:
             break
 
-        parsed = parse_card_alt(
-            img.get(
-                "alt",
-                ""
-            )
-        )
-
-        if not parsed:
-            continue
+        # ----------------------------------------------------
+        # EMPTY SLOT
+        # ----------------------------------------------------
 
         if parsed.get(
             "empty"
@@ -672,11 +713,8 @@ def parse_lineup(
                 "overall": None,
                 "item_id": None,
                 "finish": None,
+                "version": None,
             })
-
-            used_image_indexes.add(
-                index
-            )
 
             continue
 
@@ -692,48 +730,36 @@ def parse_lineup(
             "version"
         ]
 
-        item_ids = (
-            find_item_ids_near_image(
-                img
-            )
+        # ----------------------------------------------------
+        # EXACT ITEM ID
+        # ----------------------------------------------------
+
+        item_id = find_item_id_for_image(
+            img
         )
 
-        item_id = None
-
-        if item_ids:
-
-            # Prefer the first numeric ID
-            item_id = sorted(
-                item_ids,
-                key=lambda x: int(x)
-            )[0]
+        # ----------------------------------------------------
+        # FINISH
+        # ----------------------------------------------------
 
         finish = None
 
-        # ----------------------------------------------------
-        # 1. Known Item ID
-        # ----------------------------------------------------
-
+        # 1. Verified Item ID
         if item_id:
 
             finish = database_finish(
-                item_id
+                item_id,
+                database
             )
 
-        # ----------------------------------------------------
         # 2. Version text
-        # ----------------------------------------------------
-
         if not finish:
 
             finish = detect_finish_from_text(
                 version
             )
 
-        # ----------------------------------------------------
         # 3. Player fallback
-        # ----------------------------------------------------
-
         if not finish:
 
             finish = player_fallback_finish(
@@ -749,12 +775,8 @@ def parse_lineup(
             "version": version,
         })
 
-        used_image_indexes.add(
-            index
-        )
-
     # --------------------------------------------------------
-    # Safety: make sure exactly N slots
+    # EXACTLY N SLOTS
     # --------------------------------------------------------
 
     while len(lineup) < target_slots:
@@ -765,13 +787,12 @@ def parse_lineup(
             "overall": None,
             "item_id": None,
             "finish": None,
+            "version": None,
         })
 
-    if len(lineup) > target_slots:
-
-        lineup = lineup[
-            :target_slots
-        ]
+    lineup = lineup[
+        :target_slots
+    ]
 
     print(
         f"Rendered lineup: "
@@ -841,7 +862,7 @@ def card_key(card):
         "item_id"
     )
 
-    # Item ID is strongest identity
+    # Item ID = strongest identity
     if item_id:
 
         return (
@@ -849,7 +870,7 @@ def card_key(card):
             str(item_id)
         )
 
-    # Fallback identity
+    # Fallback
     return (
         "CARD",
         normalize_name(
@@ -880,17 +901,20 @@ def load_previous_state():
                 file
             )
 
-        if not isinstance(
+        if isinstance(
             data,
             dict
         ):
-            return {}
+            return data
 
-        return data
+    except Exception as error:
 
-    except Exception:
+        print(
+            f"Previous state error: "
+            f"{error}"
+        )
 
-        return {}
+    return {}
 
 
 # ============================================================
@@ -919,15 +943,19 @@ def save_state(state):
 def send_telegram(message):
 
     if not TELEGRAM_BOT_TOKEN:
+
         print(
             "TELEGRAM_BOT_TOKEN missing."
         )
+
         return
 
     if not TELEGRAM_CHAT_ID:
+
         print(
             "TELEGRAM_CHAT_ID missing."
         )
+
         return
 
     url = (
@@ -1032,17 +1060,11 @@ def main():
     )
     print("=" * 60)
 
+    # --------------------------------------------------------
+    # LOAD ONCE
+    # --------------------------------------------------------
+
     previous = load_previous_state()
-
-    current_state = {}
-
-    message_parts = [
-        "<b>📋 FUT.GG Monitor</b>"
-    ]
-
-    # ========================================================
-    # DATABASE INFO
-    # ========================================================
 
     database = load_database()
 
@@ -1052,11 +1074,24 @@ def main():
         f"{len(database)}"
     )
 
+    current_state = {}
+
+    message_parts = [
+        "<b>📋 FUT.GG Monitor</b>"
+    ]
+
+    categories = list(
+        CATEGORIES.items()
+    )
+
     # ========================================================
     # CATEGORIES
     # ========================================================
 
-    for category, config in CATEGORIES.items():
+    for category_index, (
+        category,
+        config
+    ) in enumerate(categories):
 
         print()
         print("=" * 60)
@@ -1086,7 +1121,8 @@ def main():
 
         lineup = parse_lineup(
             html,
-            category
+            category,
+            database
         )
 
         current_state[
@@ -1116,7 +1152,7 @@ def main():
                 )
 
         # ----------------------------------------------------
-        # MESSAGE
+        # TELEGRAM CATEGORY
         # ----------------------------------------------------
 
         message_parts.append(
@@ -1150,23 +1186,18 @@ def main():
             )
 
             if key:
+
                 current_keys.add(
                     key
                 )
 
-            status = (
-                "IN"
-                if key in previous_keys
-                or not previous_lineup
-                else "IN"
-            )
-
             formatted = format_card(
                 card,
-                status
+                "IN"
             )
 
             if formatted:
+
                 message_parts.append(
                     formatted
                 )
@@ -1183,8 +1214,6 @@ def main():
 
         # ----------------------------------------------------
         # OUT CARDS
-        #
-        # Keep old cards that disappeared.
         # ----------------------------------------------------
 
         for old_card in previous_lineup:
@@ -1210,6 +1239,7 @@ def main():
             )
 
             if formatted:
+
                 message_parts.append(
                     formatted
                 )
@@ -1218,6 +1248,8 @@ def main():
                 f"OUT — "
                 f"{old_card.get('player')} "
                 f"{old_card.get('overall')} "
+                f"— ItemID "
+                f"{old_card.get('item_id')} "
                 f"— "
                 f"{old_card.get('finish') or 'UNKNOWN'}"
             )
@@ -1226,9 +1258,9 @@ def main():
         # SEPARATOR
         # ----------------------------------------------------
 
-        if category != list(
-            CATEGORIES.keys()
-        )[-1]:
+        if category_index < len(
+            categories
+        ) - 1:
 
             message_parts.append(
                 ""
@@ -1258,7 +1290,10 @@ def main():
     print("=" * 60)
     print("TELEGRAM MESSAGE")
     print("=" * 60)
-    print(message)
+
+    print(
+        message
+    )
 
     send_telegram(
         message
@@ -1267,6 +1302,10 @@ def main():
     print()
     print("DONE")
 
+
+# ============================================================
+# START
+# ============================================================
 
 if __name__ == "__main__":
     main()
