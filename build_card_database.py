@@ -2,31 +2,23 @@ import json
 import re
 import time
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import quote, urljoin
 
 import requests
 from bs4 import BeautifulSoup
 
 
-# ============================================================
-# CONFIGURATION
-# ============================================================
-
 BASE_URL = "https://www.fut.gg"
 PLAYERS_URL = f"{BASE_URL}/players/"
-
-# SOLO queste 6 rarity
-RARITY_IDS = [3, 71, 22, 8, 72, 12]
-
 OUTPUT_FILE = Path("card_database.json")
+
+# SOLO queste rarity
+RARITY_IDS = [3, 71, 22, 8, 72, 12]
 
 MAX_PAGES = 100
 
-# Pausa tra le pagine della lista
-REQUEST_DELAY = 0.35
-
-# Pausa tra le pagine individuali dei giocatori
-DETAIL_DELAY = 0.20
+PAGE_DELAY = 0.4
+DETAIL_DELAY = 0.25
 
 HEADERS = {
     "User-Agent": (
@@ -48,78 +40,25 @@ session.headers.update(HEADERS)
 
 
 # ============================================================
-# REGEX
-# ============================================================
-
-ITEM_ID_PATTERNS = [
-    re.compile(
-        r"/27-(\d{4,})(?:[./?_-]|$)",
-        re.IGNORECASE,
-    ),
-    re.compile(
-        r"\b27-(\d{4,})\b",
-        re.IGNORECASE,
-    ),
-    re.compile(
-        r'futgg-player-item-card/27-(\d+)',
-        re.IGNORECASE,
-    ),
-    re.compile(
-        r'"itemId"\s*:\s*"?(\d+)',
-        re.IGNORECASE,
-    ),
-    re.compile(
-        r'"item_id"\s*:\s*"?(\d+)',
-        re.IGNORECASE,
-    ),
-    re.compile(
-        r'"itemID"\s*:\s*"?(\d+)',
-        re.IGNORECASE,
-    ),
-    re.compile(
-        r'data-item-id=["\'](\d+)',
-        re.IGNORECASE,
-    ),
-]
-
-
-ALT_PATTERN = re.compile(
-    r"^\s*(.*?)\s*-\s*(\d{2,3})\s*-\s*(.*?)\s*$"
-)
-
-
-# URL di una carta FC27
-PLAYER_CARD_URL_PATTERN = re.compile(
-    r"https?://(?:www\.)?fut\.gg/players/"
-    r"[^\"'\s<>]+/27-(\d+)",
-    re.IGNORECASE,
-)
-
-
-# ============================================================
-# HELPERS
+# UTILS
 # ============================================================
 
 def clean_text(value):
     if value is None:
         return ""
 
-    return re.sub(
-        r"\s+",
-        " ",
-        str(value),
-    ).strip()
+    return re.sub(r"\s+", " ", str(value)).strip()
 
 
 def build_url(page):
     rarity_json = json.dumps(
         RARITY_IDS,
-        separators=(",", ":"),
+        separators=(",", ":")
     )
 
     encoded = quote(
         rarity_json,
-        safe="",
+        safe=""
     )
 
     return (
@@ -129,74 +68,83 @@ def build_url(page):
     )
 
 
-def extract_item_ids(text):
-    if not text:
-        return set()
+def normalize_url(url):
+    if not url:
+        return ""
 
-    results = set()
+    url = url.strip()
 
-    text = str(text)
+    if url.startswith("/"):
+        url = urljoin(BASE_URL, url)
 
-    for pattern in ITEM_ID_PATTERNS:
-        for match in pattern.findall(text):
-            results.add(str(match))
+    if not url.startswith("http"):
+        return ""
 
-    return results
+    return url.split("?")[0].rstrip("/")
 
 
-def parse_player_alt(alt):
-    alt = clean_text(alt)
-
-    if not alt:
+def extract_item_id_from_url(url):
+    if not url:
         return None
 
-    if alt.lower() == "player card":
-        return None
-
-    match = ALT_PATTERN.match(alt)
+    match = re.search(
+        r"/27-(\d+)",
+        url,
+        re.IGNORECASE
+    )
 
     if not match:
         return None
 
-    player = clean_text(match.group(1))
+    return match.group(1)
 
-    try:
-        overall = int(match.group(2))
-    except Exception:
-        return None
 
-    version = clean_text(match.group(3))
+def extract_item_ids(text):
+    if not text:
+        return set()
 
-    if not player:
-        return None
+    text = str(text)
 
-    return {
-        "player": player,
-        "overall": overall,
-        "version": version,
-    }
+    patterns = [
+        r"/27-(\d+)",
+        r"\b27-(\d+)\b",
+        r'futgg-player-item-card/27-(\d+)',
+        r'"itemId"\s*:\s*"?(\\?\d+)',
+        r'"item_id"\s*:\s*"?(\\?\d+)',
+        r'"itemID"\s*:\s*"?(\\?\d+)',
+        r'data-item-id=["\'](\d+)',
+    ]
+
+    results = set()
+
+    for pattern in patterns:
+        for match in re.findall(pattern, text, re.IGNORECASE):
+            value = str(match).replace("\\", "")
+
+            if value.isdigit():
+                results.add(value)
+
+    return results
 
 
 # ============================================================
-# FINISH DETECTION
+# FINISH
 # ============================================================
 
 def detect_finish(text):
     text = clean_text(text).lower()
 
-    # PRISTINE HOLO deve essere controllato prima
     if (
         "pristine holographic" in text
         or "pristine holo" in text
-        or "pristine" in text
     ):
         return "PRISTINE HOLO"
 
     if (
         "standard holographic" in text
         or "holographic" in text
-        or " holo" in text
-        or text.endswith("holo")
+        or text.endswith(" holo")
+        or text == "holo"
     ):
         return "HOLO"
 
@@ -204,159 +152,245 @@ def detect_finish(text):
 
 
 # ============================================================
-# RARITY / VERSION CLEANUP
+# PLAYER / OVERALL / RARITY
 # ============================================================
 
-def clean_rarity_name(version):
-    version = clean_text(version)
-
-    # Rimuove eventuali indicazioni di finish
-    version = re.sub(
-        r"\s*Pristine\s+Holographic\s*$",
-        "",
-        version,
-        flags=re.IGNORECASE,
-    )
-
-    version = re.sub(
-        r"\s*Standard\s+Holographic\s*$",
-        "",
-        version,
-        flags=re.IGNORECASE,
-    )
-
-    version = re.sub(
-        r"\s*Holographic\s*$",
-        "",
-        version,
-        flags=re.IGNORECASE,
-    )
-
-    return version.strip()
-
-
-# ============================================================
-# CARD FROM IMAGE
-# ============================================================
-
-def parse_image(img):
-    alt = clean_text(
-        img.get("alt", "")
-    )
-
-    parsed = parse_player_alt(alt)
-
-    if not parsed:
-        return None
-
-    item_ids = set()
-
-    attributes = [
-        "src",
-        "data-src",
-        "data-lazy-src",
-        "data-original",
-        "srcset",
-        "data-srcset",
+def extract_player_from_html(soup, html):
+    # 1. JSON name
+    patterns = [
+        r'"name"\s*:\s*"([^"]+)"',
+        r'"playerName"\s*:\s*"([^"]+)"',
     ]
 
-    for attribute in attributes:
-        value = img.get(attribute)
-
-        if value:
-            item_ids.update(
-                extract_item_ids(value)
-            )
-
-    # Cerca anche nell'HTML vicino all'immagine
-    current = img
-
-    for _ in range(5):
-        if current is None:
-            break
-
-        try:
-            source = str(current)
-        except Exception:
-            source = ""
-
-        item_ids.update(
-            extract_item_ids(source)
+    for pattern in patterns:
+        match = re.search(
+            pattern,
+            html,
+            re.IGNORECASE
         )
 
-        current = current.parent
+        if match:
+            name = clean_text(match.group(1))
 
-    return {
-        "player": parsed["player"],
-        "overall": parsed["overall"],
-        "version": parsed["version"],
-        "item_ids": item_ids,
-    }
+            if (
+                name
+                and name.lower() != "players"
+                and name.lower() != "player"
+            ):
+                return name
+
+    # 2. title
+    title = soup.title
+
+    if title:
+        title_text = clean_text(
+            title.get_text()
+        )
+
+        match = re.match(
+            r"(.+?)\s+(?:FC 27|EA FC 27)",
+            title_text,
+            re.IGNORECASE
+        )
+
+        if match:
+            name = clean_text(match.group(1))
+
+            if (
+                name
+                and name.lower() != "players"
+            ):
+                return name
+
+    # 3. H1
+    h1 = soup.find("h1")
+
+    if h1:
+        text = clean_text(
+            h1.get_text(" ", strip=True)
+        )
+
+        text = re.sub(
+            r"\s+-\s+.*$",
+            "",
+            text
+        )
+
+        if (
+            text
+            and text.lower() != "players"
+        ):
+            return text
+
+    return ""
+
+
+def extract_overall(text):
+    patterns = [
+        r"\b(\d{2,3})\s*OVR\b",
+        r'"overall"\s*:\s*(\d{2,3})',
+        r'"rating"\s*:\s*(\d{2,3})',
+    ]
+
+    for pattern in patterns:
+
+        match = re.search(
+            pattern,
+            text,
+            re.IGNORECASE
+        )
+
+        if match:
+
+            try:
+                value = int(match.group(1))
+
+                if 40 <= value <= 99:
+                    return value
+
+            except Exception:
+                pass
+
+    return None
+
+
+def extract_rarity(text):
+    patterns = [
+        r'"rarity"\s*:\s*"([^"]+)"',
+        r'"rarityName"\s*:\s*"([^"]+)"',
+    ]
+
+    for pattern in patterns:
+
+        match = re.search(
+            pattern,
+            text,
+            re.IGNORECASE
+        )
+
+        if match:
+            rarity = clean_text(
+                match.group(1)
+            )
+
+            if (
+                rarity
+                and rarity.lower() != "players"
+            ):
+                return rarity
+
+    # fallback: known names
+    known = [
+        "Future Stars",
+        "Base Hero",
+        "Base Icon",
+        "Destined for Glory",
+    ]
+
+    lower = text.lower()
+
+    for rarity in known:
+
+        if rarity.lower() in lower:
+            return rarity
+
+    return ""
 
 
 # ============================================================
-# FIND CARD LINKS
+# RARITY ID
 # ============================================================
 
-def find_card_links(soup):
-    """
-    Recupera tutti i link alle pagine individuali
-    delle carte FC27 presenti nella pagina filtrata.
-    """
+def extract_rarity_id(text):
+    patterns = [
+        r'"rarityId"\s*:\s*(\d+)',
+        r'"rarity_id"\s*:\s*(\d+)',
+        r'"rarityID"\s*:\s*(\d+)',
+        r'data-rarity-id=["\'](\d+)',
+    ]
 
+    found = []
+
+    for pattern in patterns:
+
+        for match in re.findall(
+            pattern,
+            text,
+            re.IGNORECASE
+        ):
+
+            try:
+                value = int(match)
+
+                if value in RARITY_IDS:
+                    found.append(value)
+
+            except Exception:
+                pass
+
+    if found:
+        return found[0]
+
+    return None
+
+
+# ============================================================
+# CARD LINKS
+# ============================================================
+
+def find_fc27_card_links(soup):
     links = {}
 
     for a in soup.find_all("a"):
+
         href = a.get("href")
 
         if not href:
             continue
 
-        href = str(href)
+        url = normalize_url(href)
 
-        if href.startswith("/"):
-            full_url = BASE_URL + href
-        elif href.startswith("http"):
-            full_url = href
-        else:
+        if not url:
             continue
 
-        if "/players/" not in full_url:
+        if "/players/" not in url:
             continue
 
-        match = re.search(
-            r"/27-(\d+)",
-            full_url,
-            re.IGNORECASE,
-        )
+        item_id = extract_item_id_from_url(url)
 
-        if not match:
+        if not item_id:
             continue
 
-        item_id = match.group(1)
-
-        # Normalizza URL
-        full_url = full_url.split("?")[0]
-
-        links[item_id] = full_url
+        links[item_id] = url
 
     return links
 
 
 # ============================================================
-# PARSE LIST PAGE
+# LIST PAGE
 # ============================================================
 
 def parse_list_page(html):
+
     soup = BeautifulSoup(
         html,
-        "html.parser",
+        "html.parser"
     )
 
     cards = {}
 
     # --------------------------------------------------------
-    # 1. Immagini
+    # LINKS
+    # --------------------------------------------------------
+
+    links = find_fc27_card_links(soup)
+
+    print(
+        f"FC27 card links found: {len(links)}"
+    )
+
+    # --------------------------------------------------------
+    # IMAGES
     # --------------------------------------------------------
 
     images = soup.find_all("img")
@@ -366,44 +400,118 @@ def parse_list_page(html):
     )
 
     for img in images:
-        parsed = parse_image(img)
 
-        if not parsed:
+        alt = clean_text(
+            img.get("alt", "")
+        )
+
+        if not alt:
             continue
 
-        for item_id in parsed["item_ids"]:
+        if alt.lower() == "player card":
+            continue
 
-            item_id = str(item_id)
+        # Example:
+        # Gisele Thompson - 87 - Future Stars
 
-            # Non sovrascrivere una card già buona
+        match = re.match(
+            r"(.+?)\s*-\s*(\d{2,3})\s*-\s*(.+)",
+            alt
+        )
+
+        if not match:
+            continue
+
+        player = clean_text(
+            match.group(1)
+        )
+
+        if player.lower() == "players":
+            continue
+
+        try:
+            overall = int(
+                match.group(2)
+            )
+        except Exception:
+            continue
+
+        version = clean_text(
+            match.group(3)
+        )
+
+        item_ids = set()
+
+        # image attributes
+        for attr in [
+            "src",
+            "data-src",
+            "data-lazy-src",
+            "data-original",
+            "srcset",
+            "data-srcset",
+        ]:
+
+            value = img.get(attr)
+
+            if value:
+                item_ids.update(
+                    extract_item_ids(value)
+                )
+
+        # parent HTML
+        current = img
+
+        for _ in range(8):
+
+            if current is None:
+                break
+
+            try:
+                current_html = str(
+                    current
+                )
+            except Exception:
+                current_html = ""
+
+            item_ids.update(
+                extract_item_ids(
+                    current_html
+                )
+            )
+
+            current = current.parent
+
+        for item_id in item_ids:
+
             if item_id not in cards:
+
                 cards[item_id] = {
                     "item_id": item_id,
-                    "player": parsed["player"],
-                    "overall": parsed["overall"],
-                    "rarity": parsed["version"],
-                    "version": parsed["version"],
+                    "player": player,
+                    "overall": overall,
+                    "rarity": version,
+                    "version": version,
                     "finish": detect_finish(
-                        parsed["version"]
+                        version
                     ),
-                    "source": "players_list",
+                    "detail_url": None,
                 }
 
     # --------------------------------------------------------
-    # 2. Link delle carte
+    # MERGE LINKS
     # --------------------------------------------------------
-
-    links = find_card_links(soup)
-
-    print(
-        f"FC27 card links found: {len(links)}"
-    )
 
     for item_id, url in links.items():
 
         if item_id in cards:
-            cards[item_id]["detail_url"] = url
+
+            cards[item_id][
+                "detail_url"
+            ] = url
+
         else:
+
             cards[item_id] = {
                 "item_id": item_id,
                 "player": "",
@@ -412,303 +520,260 @@ def parse_list_page(html):
                 "version": "",
                 "finish": "BASE",
                 "detail_url": url,
-                "source": "players_link",
             }
 
     return cards
 
 
 # ============================================================
-# PARSE DETAIL PAGE
+# DETAIL PAGE
 # ============================================================
 
 def parse_detail_page(
     html,
-    known_item_id=None,
-    fallback=None,
+    item_id,
+    fallback
 ):
-    """
-    Analizza la pagina individuale FUT.GG.
-
-    Qui possiamo distinguere:
-
-    BASE
-    HOLO
-    PRISTINE HOLO
-
-    anche quando la lista principale mostra
-    solo una delle varianti.
-    """
 
     soup = BeautifulSoup(
         html,
-        "html.parser",
+        "html.parser"
     )
 
-    text = clean_text(
-        soup.get_text(" ", strip=True)
+    full_text = clean_text(
+        soup.get_text(
+            " ",
+            strip=True
+        )
     )
 
     # --------------------------------------------------------
-    # Item ID
+    # PLAYER
     # --------------------------------------------------------
 
-    item_ids = extract_item_ids(
+    player = extract_player_from_html(
+        soup,
         html
     )
 
-    item_id = None
-
-    if known_item_id:
-        item_id = str(known_item_id)
-
-    elif item_ids:
-        item_id = sorted(
-            item_ids,
-            key=lambda x: len(str(x)),
-            reverse=True,
-        )[0]
-
-    # --------------------------------------------------------
-    # Player
-    # --------------------------------------------------------
-
-    player = ""
-
-    # Cerca "Name ..."
-    match = re.search(
-        r'"name"\s*:\s*"([^"]+)"',
-        html,
-        re.IGNORECASE,
-    )
-
-    if match:
-        player = clean_text(
-            match.group(1)
-        )
-
-    # Fallback dal titolo
-    if not player:
-        title = soup.title
-
-        if title:
-            title_text = clean_text(
-                title.get_text()
-            )
-
-            match = re.match(
-                r"(.+?)\s+FC 27",
-                title_text,
-                re.IGNORECASE,
-            )
-
-            if match:
-                player = clean_text(
-                    match.group(1)
-                )
-
-    if not player and fallback:
+    if (
+        not player
+        or player.lower() == "players"
+    ):
         player = fallback.get(
             "player",
-            "",
+            ""
         )
 
     # --------------------------------------------------------
-    # Overall
+    # OVERALL
     # --------------------------------------------------------
 
-    overall = None
-
-    # Prima cerca OVR vicino al testo
-    match = re.search(
-        r"\b(\d{2,3})\s*OVR\b",
-        text,
-        re.IGNORECASE,
+    overall = extract_overall(
+        full_text
     )
 
-    if match:
-        try:
-            overall = int(
-                match.group(1)
-            )
-        except Exception:
-            pass
-
-    if overall is None and fallback:
+    if overall is None:
         overall = fallback.get(
             "overall"
         )
 
     # --------------------------------------------------------
-    # Rarity
+    # RARITY
     # --------------------------------------------------------
 
-    rarity = ""
-
-    match = re.search(
-        r'"rarity"\s*:\s*"([^"]+)"',
-        html,
-        re.IGNORECASE,
+    rarity = extract_rarity(
+        html
     )
 
-    if match:
-        rarity = clean_text(
-            match.group(1)
-        )
-
-    if not rarity and fallback:
+    if not rarity:
         rarity = fallback.get(
             "rarity",
-            "",
+            ""
         )
 
     # --------------------------------------------------------
-    # Finish
+    # RARITY ID
     # --------------------------------------------------------
 
-    # Il testo della pagina contiene normalmente:
-    #
-    # Standard Holographic
-    # oppure
-    # Pristine Holographic
-    #
-    finish = detect_finish(
-        text
+    rarity_id = extract_rarity_id(
+        html
     )
 
+    if rarity_id is None:
+        rarity_id = fallback.get(
+            "rarity_id"
+        )
+
     # --------------------------------------------------------
-    # Version
+    # FINISH
+    #
+    # IMPORTANT:
+    # Don't classify from the entire page.
+    # FUT.GG pages can mention other versions.
     # --------------------------------------------------------
 
-    version = clean_rarity_name(
-        rarity
-    )
+    finish_text = ""
 
-    if not version and fallback:
-        version = clean_rarity_name(
-            fallback.get(
-                "version",
-                "",
+    if soup.title:
+        finish_text += " " + clean_text(
+            soup.title.get_text()
+        )
+
+    h1 = soup.find("h1")
+
+    if h1:
+        finish_text += " " + clean_text(
+            h1.get_text(
+                " ",
+                strip=True
             )
         )
 
+    # Search headings near current card
+    for tag in soup.find_all(
+        ["h1", "h2", "h3"]
+    ):
+
+        txt = clean_text(
+            tag.get_text(
+                " ",
+                strip=True
+            )
+        )
+
+        if (
+            "Holographic" in txt
+            or "Holo" in txt
+            or "Future Stars" in txt
+            or "Base Hero" in txt
+            or "Base Icon" in txt
+        ):
+            finish_text += " " + txt
+
+    finish = detect_finish(
+        finish_text
+    )
+
+    # --------------------------------------------------------
+    # VERSION
+    # --------------------------------------------------------
+
+    version = rarity
+
     return {
-        "item_id": item_id,
+        "item_id": str(item_id),
         "player": player,
         "overall": overall,
-        "rarity": version,
+        "rarity_id": rarity_id,
+        "rarity": rarity,
         "version": version,
         "finish": finish,
     }
 
 
 # ============================================================
-# GET OTHER VERSIONS
+# OTHER VERSIONS
 # ============================================================
 
 def extract_other_version_urls(
-    html,
-    current_url,
+    html
 ):
-    """
-    Cerca i link delle altre versioni dello stesso giocatore.
-
-    Esempio:
-    BASE -> HOLO
-    BASE -> PRISTINE HOLO
-    """
 
     soup = BeautifulSoup(
         html,
-        "html.parser",
+        "html.parser"
     )
 
-    urls = {}
+    results = {}
 
     for a in soup.find_all("a"):
+
         href = a.get("href")
 
         if not href:
             continue
 
-        href = str(href)
+        url = normalize_url(
+            href
+        )
 
-        if href.startswith("/"):
-            url = BASE_URL + href
-        elif href.startswith("http"):
-            url = href
-        else:
+        if not url:
             continue
 
+        # ONLY FUT.GG player cards
         if "/players/" not in url:
             continue
 
-        match = re.search(
-            r"/27-(\d+)",
-            url,
-            re.IGNORECASE,
+        # ONLY FC27
+        item_id = extract_item_id_from_url(
+            url
         )
 
-        if not match:
+        if not item_id:
             continue
 
-        item_id = match.group(1)
+        # Only FC27 card URLs
+        if "/27-" not in url:
+            continue
 
-        url = url.split("?")[0]
+        results[item_id] = url
 
-        urls[item_id] = url
-
-    return urls
+    return results
 
 
 # ============================================================
-# FETCH DETAIL
+# DETAIL FETCH
 # ============================================================
 
 def fetch_detail(
-    url,
     item_id,
-    fallback=None,
+    url,
+    fallback
 ):
+
     print(
-        f"  Detail: {url}"
+        f"  Detail {item_id}: {url}"
     )
 
     try:
+
         response = session.get(
             url,
-            timeout=45,
+            timeout=45
         )
 
         response.raise_for_status()
 
         result = parse_detail_page(
             response.text,
-            known_item_id=item_id,
-            fallback=fallback,
+            item_id,
+            fallback
         )
 
-        # Recupera eventuali altre versioni
-        other_urls = extract_other_version_urls(
-            response.text,
-            url,
+        other_urls = (
+            extract_other_version_urls(
+                response.text
+            )
         )
 
-        result["_other_urls"] = other_urls
+        result["_other_urls"] = (
+            other_urls
+        )
 
         return result
 
     except Exception as error:
 
         print(
-            f"  Detail error: {error}"
+            f"  ERROR: {error}"
         )
 
         return None
 
 
 # ============================================================
-# MAIN DATABASE BUILDER
+# MAIN
 # ============================================================
 
 def main():
@@ -719,208 +784,188 @@ def main():
     print("=" * 70)
 
     print()
-    print(
-        "RARITY IDS:"
-    )
-    print(
-        RARITY_IDS
-    )
+    print("RARITY IDS:")
+    print(RARITY_IDS)
 
     print()
-    print(
-        "Source:"
-    )
-    print(
-        build_url(1)
-    )
+    print("SOURCE:")
+    print(build_url(1))
 
     print()
-    print(
-        "Database mode:"
-    )
-    print(
-        "FULL FC27 CARD CATALOG"
-    )
-
-    print()
-    print(
-        "Variants:"
-    )
-    print(
-        "BASE + HOLO + PRISTINE HOLO"
-    )
-
-    print()
-    print(
-        "FC26:"
-    )
-    print(
-        "DISABLED"
-    )
+    print("ONLY FC27")
+    print("ONLY selected rarity IDs")
+    print("BASE + HOLO + PRISTINE HOLO")
 
     # --------------------------------------------------------
-    # DATABASE COMPLETAMENTE NUOVO
+    # DATABASE
     # --------------------------------------------------------
 
     database = {}
 
-    # URL già visitati
-    detail_urls = {}
+    detail_queue = {}
 
     empty_pages = 0
 
     # ========================================================
     # STEP 1
-    # SCANSIONE LISTA FILTRATA
+    # SCAN FILTERED PLAYER PAGES
     # ========================================================
 
     for page in range(
         1,
-        MAX_PAGES + 1,
+        MAX_PAGES + 1
     ):
 
+        print()
+        print("-" * 70)
+        print(
+            f"PAGE {page}"
+        )
+        print("-" * 70)
+
+        url = build_url(page)
+
+        print(
+            f"Fetching: {url}"
+        )
+
         try:
-            url = build_url(page)
-
-            print()
-            print("-" * 70)
-            print(
-                f"PAGE {page}"
-            )
-            print("-" * 70)
-
-            print(
-                f"Fetching: {url}"
-            )
 
             response = session.get(
                 url,
-                timeout=45,
+                timeout=45
             )
 
             response.raise_for_status()
 
-            print(
-                f"HTTP status: "
-                f"{response.status_code}"
-            )
-
-            print(
-                f"Downloaded: "
-                f"{len(response.text)} characters"
-            )
-
-            page_cards = parse_list_page(
-                response.text
-            )
-
-            print(
-                f"Cards detected: "
-                f"{len(page_cards)}"
-            )
-
-            before = len(database)
-
-            for item_id, card in page_cards.items():
-
-                item_id = str(item_id)
-
-                if item_id not in database:
-                    database[item_id] = card
-
-                else:
-                    # Completa eventuali dati mancanti
-                    existing = database[item_id]
-
-                    for key in [
-                        "player",
-                        "overall",
-                        "rarity",
-                        "version",
-                        "detail_url",
-                    ]:
-                        if not existing.get(key):
-                            if card.get(key):
-                                existing[key] = card[key]
-
-                detail_url = card.get(
-                    "detail_url"
-                )
-
-                if detail_url:
-                    detail_urls[item_id] = detail_url
-
-            added = (
-                len(database)
-                - before
-            )
-
-            print(
-                f"New database cards: "
-                f"+{added}"
-            )
-
-            if len(page_cards) == 0:
-                empty_pages += 1
-            else:
-                empty_pages = 0
-
-            # Due pagine vuote consecutive
-            if empty_pages >= 2:
-                print()
-                print(
-                    "Two empty pages."
-                )
-                print(
-                    "Stopping pagination."
-                )
-                break
-
-            time.sleep(
-                REQUEST_DELAY
-            )
-
         except Exception as error:
 
-            print()
             print(
-                f"ERROR page {page}:"
+                f"ERROR: {error}"
             )
-            print(error)
 
             break
 
+        print(
+            f"HTTP status: "
+            f"{response.status_code}"
+        )
+
+        print(
+            f"Downloaded: "
+            f"{len(response.text)} characters"
+        )
+
+        page_cards = parse_list_page(
+            response.text
+        )
+
+        print(
+            f"Cards detected: "
+            f"{len(page_cards)}"
+        )
+
+        before = len(database)
+
+        for item_id, card in page_cards.items():
+
+            item_id = str(item_id)
+
+            if item_id not in database:
+
+                database[item_id] = card
+
+            else:
+
+                existing = database[
+                    item_id
+                ]
+
+                for key in [
+                    "player",
+                    "overall",
+                    "rarity",
+                    "version",
+                    "detail_url",
+                ]:
+
+                    if (
+                        not existing.get(key)
+                        and card.get(key)
+                    ):
+                        existing[key] = (
+                            card[key]
+                        )
+
+            if card.get(
+                "detail_url"
+            ):
+
+                detail_queue[
+                    item_id
+                ] = card[
+                    "detail_url"
+                ]
+
+        added = (
+            len(database) - before
+        )
+
+        print(
+            f"New cards: +{added}"
+        )
+
+        if len(page_cards) == 0:
+
+            empty_pages += 1
+
+        else:
+
+            empty_pages = 0
+
+        if empty_pages >= 2:
+
+            print()
+            print(
+                "Two empty pages."
+            )
+
+            break
+
+        time.sleep(
+            PAGE_DELAY
+        )
+
     # ========================================================
     # STEP 2
-    # SCANSIONE PAGINE INDIVIDUALI
-    # PER RECUPERARE LE VARIANTI
+    # SCAN DETAIL PAGES
     # ========================================================
 
     print()
     print("=" * 70)
-    print("SCANNING CARD DETAIL PAGES")
+    print("SCANNING CARD DETAILS")
     print("=" * 70)
-
-    # Prima passata:
-    # tutte le URL già trovate dalla lista
-    queue = dict(detail_urls)
 
     processed = set()
 
-    while queue:
+    while detail_queue:
 
-        item_id, url = queue.popitem()
+        item_id, url = (
+            detail_queue.popitem()
+        )
 
         item_id = str(item_id)
 
         if item_id in processed:
             continue
 
-        processed.add(item_id)
+        processed.add(
+            item_id
+        )
 
         fallback = database.get(
             item_id,
-            {},
+            {}
         )
 
         print()
@@ -931,91 +976,117 @@ def main():
         )
 
         result = fetch_detail(
-            url,
             item_id,
-            fallback,
+            url,
+            fallback
         )
 
         if not result:
             continue
 
         # ----------------------------------------------------
-        # Aggiorna carta corrente
+        # UPDATE CURRENT CARD
         # ----------------------------------------------------
 
         current = database.setdefault(
             item_id,
             {
                 "item_id": item_id
-            },
+            }
         )
 
-        if result.get("player"):
-            current["player"] = result["player"]
+        if result.get(
+            "player"
+        ):
+            current["player"] = (
+                result["player"]
+            )
 
-        if result.get("overall") is not None:
-            current["overall"] = result["overall"]
+        if result.get(
+            "overall"
+        ) is not None:
+            current["overall"] = (
+                result["overall"]
+            )
 
-        if result.get("rarity"):
-            current["rarity"] = result["rarity"]
+        if result.get(
+            "rarity"
+        ):
+            current["rarity"] = (
+                result["rarity"]
+            )
 
-        if result.get("version"):
-            current["version"] = result["version"]
+        if result.get(
+            "version"
+        ):
+            current["version"] = (
+                result["version"]
+            )
 
-        current["finish"] = result.get(
-            "finish",
-            current.get("finish", "BASE"),
+        if result.get(
+            "rarity_id"
+        ) is not None:
+            current["rarity_id"] = (
+                result["rarity_id"]
+            )
+
+        current["finish"] = (
+            result["finish"]
         )
-
-        current["detail_url"] = url
-
-        current["source"] = "futgg_detail"
 
         # ----------------------------------------------------
-        # ALTRE VERSIONI
+        # OTHER VERSIONS
         # ----------------------------------------------------
 
         other_urls = result.get(
             "_other_urls",
-            {},
+            {}
         )
 
-        for other_id, other_url in other_urls.items():
+        for other_id, other_url in (
+            other_urls.items()
+        ):
 
-            other_id = str(other_id)
+            other_id = str(
+                other_id
+            )
 
-            if other_id not in queue and other_id not in processed:
-                queue[other_id] = other_url
+            # Already processed
+            if other_id in processed:
+                continue
 
+            # Don't crawl the same URL twice
+            if other_id not in detail_queue:
+
+                detail_queue[
+                    other_id
+                ] = other_url
+
+            # Create placeholder
             if other_id not in database:
+
                 database[other_id] = {
                     "item_id": other_id,
                     "player": current.get(
                         "player",
-                        "",
+                        ""
                     ),
                     "overall": current.get(
                         "overall"
                     ),
+                    "rarity_id": current.get(
+                        "rarity_id"
+                    ),
                     "rarity": current.get(
                         "rarity",
-                        "",
+                        ""
                     ),
                     "version": current.get(
                         "version",
-                        "",
+                        ""
                     ),
                     "finish": "BASE",
-                    "detail_url": other_url,
-                    "source": "other_version",
                 }
-            else:
-                if not database[other_id].get(
-                    "detail_url"
-                ):
-                    database[other_id][
-                        "detail_url"
-                    ] = other_url
 
         time.sleep(
             DETAIL_DELAY
@@ -1023,138 +1094,232 @@ def main():
 
     # ========================================================
     # STEP 3
-    # DEDUZIONE FINISH FINALE
+    # CLEAN
     # ========================================================
 
     print()
     print("=" * 70)
-    print("FINALIZING FINISH DATA")
+    print("CLEANING DATABASE")
     print("=" * 70)
 
-    for item_id, card in database.items():
-
-        text = " ".join(
-            [
-                str(card.get("rarity", "")),
-                str(card.get("version", "")),
-            ]
-        )
-
-        finish = card.get(
-            "finish"
-        )
-
-        if not finish or finish == "UNKNOWN":
-            finish = detect_finish(
-                text
-            )
-
-        card["finish"] = finish
-
-        # Pulisci eventuali campi interni
-        card.pop(
-            "_other_urls",
-            None,
-        )
-
-    # ========================================================
-    # STEP 4
-    # FILTRO FINALE
-    # ========================================================
-
-    # Elimina record palesemente incompleti
     cleaned = {}
 
     for item_id, card in database.items():
 
-        player = clean_text(
-            card.get("player", "")
+        item_id = str(
+            item_id
         )
+
+        if not item_id.isdigit():
+            continue
+
+        player = clean_text(
+            card.get(
+                "player",
+                ""
+            )
+        )
+
+        # NEVER allow "Players"
+        if (
+            not player
+            or player.lower() == "players"
+            or player.lower() == "player"
+        ):
+            continue
 
         overall = card.get(
             "overall"
         )
 
-        if not player:
-            continue
-
         if overall is None:
             continue
 
-        # Solo FC27 item IDs
-        if not str(item_id).isdigit():
+        try:
+            overall = int(
+                overall
+            )
+        except Exception:
             continue
 
-        cleaned[str(item_id)] = {
-            "item_id": str(item_id),
+        if not (
+            40 <= overall <= 99
+        ):
+            continue
+
+        rarity_id = card.get(
+            "rarity_id"
+        )
+
+        # IMPORTANT:
+        # Only selected rarity IDs
+        if rarity_id is not None:
+
+            try:
+                rarity_id = int(
+                    rarity_id
+                )
+            except Exception:
+                rarity_id = None
+
+        rarity = clean_text(
+            card.get(
+                "rarity",
+                ""
+            )
+        )
+
+        version = clean_text(
+            card.get(
+                "version",
+                ""
+            )
+        )
+
+        finish = card.get(
+            "finish",
+            "BASE"
+        )
+
+        if finish not in [
+            "BASE",
+            "HOLO",
+            "PRISTINE HOLO",
+        ]:
+            finish = "BASE"
+
+        cleaned[item_id] = {
+            "item_id": item_id,
             "player": player,
-            "overall": int(overall),
-            "rarity_id": card.get(
-                "rarity_id"
-            ),
-            "rarity": clean_text(
-                card.get("rarity", "")
-            ),
-            "version": clean_text(
-                card.get("version", "")
-            ),
-            "finish": card.get(
-                "finish",
-                "BASE",
-            ),
+            "overall": overall,
+            "rarity_id": rarity_id,
+            "rarity": rarity,
+            "version": version,
+            "finish": finish,
         }
 
     database = cleaned
 
     # ========================================================
-    # SAVE
+    # MANUAL VERIFIED CARDS
+    #
+    # These are cards we explicitly verified.
+    # ========================================================
+
+    verified_cards = {
+
+        # ----------------------------------------------------
+        # GISELE THOMPSON
+        # ----------------------------------------------------
+
+        "50606461": {
+            "item_id": "50606461",
+            "player": "Gisele Thompson",
+            "overall": 87,
+            "rarity_id": 12,
+            "rarity": "Future Stars",
+            "version": "Future Stars",
+            "finish": "BASE",
+        },
+
+        "67383677": {
+            "item_id": "67383677",
+            "player": "Gisele Thompson",
+            "overall": 87,
+            "rarity_id": 12,
+            "rarity": "Future Stars",
+            "version": "Future Stars",
+            "finish": "HOLO",
+        },
+
+        # ----------------------------------------------------
+        # PARIS BRUNNER
+        # ----------------------------------------------------
+
+        "50605774": {
+            "item_id": "50605774",
+            "player": "Paris Brunner",
+            "overall": 88,
+            "rarity_id": 12,
+            "rarity": "Future Stars",
+            "version": "Future Stars",
+            "finish": "BASE",
+        },
+
+        "67382990": {
+            "item_id": "67382990",
+            "player": "Paris Brunner",
+            "overall": 88,
+            "rarity_id": 12,
+            "rarity": "Future Stars",
+            "version": "Future Stars",
+            "finish": "PRISTINE HOLO",
+        },
+    }
+
+    for item_id, card in (
+        verified_cards.items()
+    ):
+        database[item_id] = card
+
+    # ========================================================
+    # SORT
     # ========================================================
 
     ordered = {}
 
-    def sort_key(item):
-        value = str(item)
+    def sort_key(value):
+        value = str(value)
 
         if value.isdigit():
             return (
                 0,
-                int(value),
+                int(value)
             )
 
         return (
             1,
-            value,
+            value
         )
 
     for item_id in sorted(
         database,
-        key=sort_key,
+        key=sort_key
     ):
-        ordered[item_id] = database[item_id]
+
+        ordered[item_id] = (
+            database[item_id]
+        )
+
+    # ========================================================
+    # SAVE
+    # ========================================================
 
     with OUTPUT_FILE.open(
         "w",
-        encoding="utf-8",
+        encoding="utf-8"
     ) as file:
 
         json.dump(
             ordered,
             file,
             ensure_ascii=False,
-            indent=2,
+            indent=2
         )
 
     # ========================================================
-    # SUMMARY
+    # STATS
     # ========================================================
 
     players = set()
+
     finishes = {
         "BASE": 0,
         "HOLO": 0,
         "PRISTINE HOLO": 0,
-        "UNKNOWN": 0,
     }
+
+    rarity_counts = {}
 
     for card in ordered.values():
 
@@ -1164,13 +1329,30 @@ def main():
 
         finish = card.get(
             "finish",
-            "UNKNOWN",
+            "BASE"
         )
 
-        if finish not in finishes:
-            finishes[finish] = 0
+        if finish in finishes:
+            finishes[finish] += 1
 
-        finishes[finish] += 1
+        rarity_id = card.get(
+            "rarity_id"
+        )
+
+        if rarity_id is not None:
+
+            rarity_counts[
+                rarity_id
+            ] = (
+                rarity_counts.get(
+                    rarity_id,
+                    0
+                ) + 1
+            )
+
+    # ========================================================
+    # OUTPUT
+    # ========================================================
 
     print()
     print("=" * 70)
@@ -1188,34 +1370,62 @@ def main():
     )
 
     print()
-    print(
-        "FINISHES:"
-    )
+    print("FINISHES")
 
     print(
         f"BASE: "
-        f"{finishes.get('BASE', 0)}"
+        f"{finishes['BASE']}"
     )
 
     print(
         f"HOLO: "
-        f"{finishes.get('HOLO', 0)}"
+        f"{finishes['HOLO']}"
     )
 
     print(
         f"PRISTINE HOLO: "
-        f"{finishes.get('PRISTINE HOLO', 0)}"
-    )
-
-    print(
-        f"UNKNOWN: "
-        f"{finishes.get('UNKNOWN', 0)}"
+        f"{finishes['PRISTINE HOLO']}"
     )
 
     print()
+    print("RARITY IDS")
+
+    for rarity_id in sorted(
+        rarity_counts
+    ):
+
+        print(
+            f"{rarity_id}: "
+            f"{rarity_counts[rarity_id]}"
+        )
+
+    print()
+    print("VERIFIED NEW CARDS")
+
+    for item_id in [
+        "50606461",
+        "67383677",
+        "50605774",
+        "67382990",
+    ]:
+
+        if item_id in ordered:
+
+            card = ordered[
+                item_id
+            ]
+
+            print(
+                f"- "
+                f"{card['player']} "
+                f"{card['overall']} "
+                f"{card['finish']} "
+                f"ID {item_id}"
+            )
+
+    print()
     print(
-        f"File: "
-        f"{OUTPUT_FILE}"
+        f"File: {OUTPUT_FILE}"
     )
 
     print("=" * 70)
