@@ -72,17 +72,14 @@ KNOWN_FINISHES = {
     "67186651": "PRISTINE HOLO",
     "67335573": "PRISTINE HOLO",
     "67135573": "PRISTINE HOLO",   # Márquez
-
     "67335157": "PRISTINE HOLO",   # Angerer
     "67384140": "PRISTINE HOLO",   # Prinz
     "67275770": "PRISTINE HOLO",   # Baresi
     "67180472": "PRISTINE HOLO",   # Foudy
     "67298908": "PRISTINE HOLO",   # Moore
-
     "67348095": "PRISTINE HOLO",   # Cucurella
     "67368151": "PRISTINE HOLO",   # Harder
     "67382990": "PRISTINE HOLO",   # Paris Brunner
-
     "67301045": "PRISTINE HOLO",   # van Basten
     "67119128": "PRISTINE HOLO",   # van Nistelrooy
 
@@ -206,7 +203,6 @@ def parse_card_alt(alt):
         return None
 
     player = parts[0]
-
     overall = None
 
     for part in parts[1:]:
@@ -216,9 +212,7 @@ def parse_card_alt(alt):
         )
 
         if match:
-            overall = int(
-                match.group(1)
-            )
+            overall = int(match.group(1))
             break
 
     if not player or overall is None:
@@ -249,10 +243,10 @@ def extract_item_id_from_value(value):
 
     value = str(value)
 
-    # FUT.GG example:
+    # Esempio FUT.GG:
     # .../2027/futgg-player-item-card/27-67335157.hash.webp
     #
-    # Prende SOLO 67335157, mai 2027.
+    # Prende esclusivamente 67335157 e non 2027.
 
     match = re.search(
         r"(?:^|[/_-])27-(\d{4,10})(?=[./?_-]|$)",
@@ -297,21 +291,19 @@ def find_item_id_for_image(img):
         "item-id",
     ]
 
-    # 1. Immagine
+    # Immagine
     for attr in attributes:
         value = img.get(attr)
 
         if not value:
             continue
 
-        item_id = extract_item_id_from_value(
-            value
-        )
+        item_id = extract_item_id_from_value(value)
 
         if item_id:
             return item_id
 
-    # 2. Parent immediato
+    # Parent immediato
     parent = img.parent
 
     if parent:
@@ -330,7 +322,7 @@ def find_item_id_for_image(img):
             if item_id:
                 return item_id
 
-    # 3. Link più vicino
+    # Link <a> più vicino
     parent_link = img.find_parent("a")
 
     if parent_link:
@@ -349,7 +341,7 @@ def find_item_id_for_image(img):
             if item_id:
                 return item_id
 
-    # 4. Figli immediati del wrapper
+    # Figli immediati
     if parent:
         for child in parent.find_all(
             recursive=False
@@ -519,7 +511,7 @@ def parse_lineup(
         if not alt:
             continue
 
-        # Slot FUT.GG vuoto
+        # Slot vuoto di FUT.GG
         if alt.lower() == "player card":
             slots.append(None)
 
@@ -571,7 +563,7 @@ def parse_lineup(
                 version
             )
 
-        # 4. Fallback giocatore
+        # 4. Player fallback
         if finish is None:
             finish = KNOWN_PLAYER_FINISHES.get(
                 player
@@ -644,8 +636,6 @@ def card_key(card):
 
     item_id = card.get("item_id")
 
-    # Item ID distingue perfettamente
-    # BASE / HOLO / PRISTINE HOLO.
     if item_id:
         return f"item:{item_id}"
 
@@ -772,9 +762,9 @@ def find_changes(
     previous_cards,
 ):
     """
-    Confronta le carte ignorando completamente l'ordine.
+    Confronta le carte ignorando l'ordine.
 
-    Gestisce anche duplicati reali.
+    Gestisce anche eventuali duplicati reali.
 
     Ritorna:
         new_cards
@@ -828,7 +818,7 @@ def find_changes(
     new_cards = []
     removed_cards = []
 
-    # Nuove
+    # IN
     for key, count in current_counts.items():
         previous_count = previous_counts.get(
             key,
@@ -845,7 +835,7 @@ def find_changes(
                     current_by_key[key]
                 )
 
-    # Uscite
+    # OUT
     for key, count in previous_counts.items():
         current_count = current_counts.get(
             key,
@@ -973,19 +963,20 @@ def build_telegram_message(
     previous_data,
 ):
     """
-    Il messaggio viene SEMPRE inviato.
+    Messaggio inviato SEMPRE.
 
     Carta già presente:
         Nome 88 · FINISH
 
-    Carta appena entrata:
+    Carta nuova:
         🟢 Nome 88 · FINISH
 
-    Carta appena uscita:
+    Carta uscita:
         🔴 OUT — Nome 88 · FINISH
 
-    Il semplice cambio d'ordine NON genera
-    pallini verdi o OUT.
+    Prima degli OUT viene lasciata una riga vuota.
+
+    Il semplice cambio di ordine viene ignorato.
     """
 
     lines = [
@@ -1026,15 +1017,14 @@ def build_telegram_message(
             if valid_card(card)
         ]
 
-        # Trova cambi reali
+        # Trova i cambi reali
         new_cards, removed_cards = find_changes(
             current_cards,
             previous_cards,
         )
 
-        # Conteggio carte nuove.
-        # Serve per gestire correttamente
-        # anche eventuali duplicati.
+        # Conta le carte nuove.
+        # Serve anche per eventuali duplicati.
         new_counts = {}
 
         for card in new_cards:
@@ -1063,7 +1053,7 @@ def build_telegram_message(
         for card in current_cards:
             key = card_key(card)
 
-            # Nuova carta
+            # Carta appena entrata
             if new_counts.get(
                 key,
                 0,
@@ -1085,11 +1075,15 @@ def build_telegram_message(
         # OUT
         # ----------------------------------------------------
 
-        for card in removed_cards:
-            lines.append(
-                "🔴 OUT — "
-                + card_display_name(card)
-            )
+        if removed_cards:
+            # UNA RIGA VUOTA tra current lineup e OUT
+            lines.append("")
+
+            for card in removed_cards:
+                lines.append(
+                    "🔴 OUT — "
+                    + card_display_name(card)
+                )
 
         # ----------------------------------------------------
         # SEPARATOR
@@ -1116,7 +1110,6 @@ def main():
 
     database = load_database()
 
-    # Stato della precedente esecuzione
     previous_data = clean_state(
         load_previous_state()
     )
@@ -1162,10 +1155,9 @@ def main():
                 f"{category_name}: {e}"
             )
 
-            # Se FUT.GG ha un errore temporaneo,
-            # manteniamo la lineup precedente.
-            #
-            # In questo modo non genera falsi OUT.
+            # In caso di errore FUT.GG,
+            # conserva la lineup precedente.
+            # Evita falsi OUT.
             current_data[
                 category_name
             ] = previous_data.get(
@@ -1191,8 +1183,7 @@ def main():
 
     print("=" * 60)
 
-    # Il messaggio viene inviato SEMPRE,
-    # anche quando non è cambiato niente.
+    # INVIA SEMPRE
     send_telegram_message(
         message
     )
