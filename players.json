@@ -3,31 +3,31 @@
     {
       "player": "Šašić",
       "overall": 89,
-      "item_id": "2027",
+      "item_id": null,
       "finish": "BASE"
     },
     {
       "player": "Litmanen",
       "overall": 88,
-      "item_id": "2027",
+      "item_id": null,
       "finish": "BASE"
     },
     {
       "player": "Mascherano",
       "overall": 88,
-      "item_id": "2027",
+      "item_id": null,
       "finish": "BASE"
     },
     {
       "player": "Milito",
       "overall": 88,
-      "item_id": "2027",
+      "item_id": null,
       "finish": "BASE"
     },
     {
       "player": "Šašić",
       "overall": 89,
-      "item_id": "2027",
+      "item_id": null,
       "finish": "BASE"
     }
   ],
@@ -35,31 +35,31 @@
     {
       "player": "Angerer",
       "overall": 92,
-      "item_id": "2027",
+      "item_id": null,
       "finish": "BASE"
     },
     {
       "player": "Prinz",
       "overall": 92,
-      "item_id": "2027",
+      "item_id": null,
       "finish": "BASE"
     },
     {
       "player": "Baresi",
       "overall": 91,
-      "item_id": "2027",
+      "item_id": null,
       "finish": "BASE"
     },
     {
       "player": "van Basten",
       "overall": 91,
-      "item_id": "2027",
+      "item_id": null,
       "finish": "BASE"
     },
     {
       "player": "van Nistelrooy",
       "overall": 89,
-      "item_id": "2027",
+      "item_id": null,
       "finish": "BASE"
     }
   ],
@@ -67,38 +67,38 @@
     {
       "player": "Cucurella",
       "overall": 88,
-      "item_id": "2027",
+      "item_id": null,
       "finish": "BASE"
     },
     {
       "player": "Harder",
       "overall": 88,
-      "item_id": "2027",
+      "item_id": null,
       "finish": "BASE"
     },
     {
       "player": "Mora",
       "overall": 87,
-      "item_id": "2027",
+      "item_id": null,
       "finish": "BASE"
     },
     {
       "player": "Bonny",
       "overall": 87,
-      "item_id": "2027",
+      "item_id": null,
       "finish": "BASE"
     },
     null,
     {
       "player": "Harder",
       "overall": 88,
-      "item_id": "2027",
+      "item_id": null,
       "finish": "BASE"
     },
     {
       "player": "Undav",
       "overall": 87,
-      "item_id": "2027",
+      "item_id": null,
       "finish": "BASE"
     },
     null,
@@ -106,7 +106,7 @@
     {
       "player": "Yohannes",
       "overall": 86,
-      "item_id": "2027",
+      "item_id": null,
       "finish": "BASE"
     }
   ]
