@@ -1,168 +1,113 @@
 {
   "Heroes": [
     {
-      "empty": false,
       "player": "Šašić",
       "overall": 89,
-      "item_id": "67335170",
-      "finish": "PRISTINE HOLO",
-      "version": "Base Hero"
+      "item_id": "2027",
+      "finish": "BASE"
     },
     {
-      "empty": false,
       "player": "Litmanen",
       "overall": 88,
-      "item_id": "67114537",
-      "finish": "PRISTINE HOLO",
-      "version": "Base Hero"
+      "item_id": "2027",
+      "finish": "BASE"
     },
     {
-      "empty": false,
       "player": "Mascherano",
       "overall": 88,
-      "item_id": "67251618",
-      "finish": "BASE",
-      "version": "Base Hero"
+      "item_id": "2027",
+      "finish": "BASE"
     },
     {
-      "empty": false,
       "player": "Milito",
       "overall": 88,
-      "item_id": "67371135",
-      "finish": "PRISTINE HOLO",
-      "version": "Base Hero"
+      "item_id": "2027",
+      "finish": "BASE"
     },
     {
-      "empty": false,
       "player": "Šašić",
       "overall": 89,
-      "item_id": "226306",
-      "finish": "BASE",
-      "version": "Base Hero"
+      "item_id": "2027",
+      "finish": "BASE"
     }
   ],
   "Holographics": [
     {
-      "empty": false,
       "player": "Angerer",
       "overall": 92,
-      "item_id": "67335157",
-      "finish": "PRISTINE HOLO",
-      "version": "Base Icon"
+      "item_id": "2027",
+      "finish": "BASE"
     },
     {
-      "empty": false,
       "player": "Prinz",
       "overall": 92,
-      "item_id": "67384140",
-      "finish": "PRISTINE HOLO",
-      "version": "Base Icon"
+      "item_id": "2027",
+      "finish": "BASE"
     },
     {
-      "empty": false,
       "player": "Baresi",
       "overall": 91,
-      "item_id": "67275770",
-      "finish": "PRISTINE HOLO",
-      "version": "Base Icon"
+      "item_id": "2027",
+      "finish": "BASE"
     },
     {
-      "empty": false,
       "player": "van Basten",
       "overall": 91,
-      "item_id": "67301045",
-      "finish": "BASE",
-      "version": "Base Icon"
+      "item_id": "2027",
+      "finish": "BASE"
     },
     {
-      "empty": false,
       "player": "van Nistelrooy",
       "overall": 89,
-      "item_id": "67119128",
-      "finish": "BASE",
-      "version": "Base Icon"
+      "item_id": "2027",
+      "finish": "BASE"
     }
   ],
   "Season 1": [
     {
-      "empty": false,
       "player": "Cucurella",
       "overall": 88,
-      "item_id": "67348095",
-      "finish": "PRISTINE HOLO",
-      "version": "Destined for Glory"
+      "item_id": "2027",
+      "finish": "BASE"
     },
     {
-      "empty": false,
       "player": "Harder",
       "overall": 88,
-      "item_id": "67368151",
-      "finish": "PRISTINE HOLO",
-      "version": "Destined for Glory"
+      "item_id": "2027",
+      "finish": "BASE"
     },
     {
-      "empty": false,
       "player": "Mora",
       "overall": 87,
-      "item_id": "67188263",
-      "finish": "HOLO",
-      "version": "Future Stars"
+      "item_id": "2027",
+      "finish": "BASE"
     },
     {
-      "empty": false,
       "player": "Bonny",
       "overall": 87,
-      "item_id": "67368429",
-      "finish": "HOLO",
-      "version": "Future Stars"
+      "item_id": "2027",
+      "finish": "BASE"
     },
+    null,
     {
-      "empty": true,
-      "player": "Player Card",
-      "overall": null,
-      "item_id": null,
-      "finish": null,
-      "version": null
-    },
-    {
-      "empty": false,
       "player": "Harder",
       "overall": 88,
-      "item_id": "50590935",
-      "finish": "BASE",
-      "version": "Destined for Glory"
+      "item_id": "2027",
+      "finish": "BASE"
     },
     {
-      "empty": false,
       "player": "Undav",
       "overall": 87,
-      "item_id": "67353040",
-      "finish": "HOLO",
-      "version": "Destined for Glory"
+      "item_id": "2027",
+      "finish": "BASE"
     },
+    null,
+    null,
     {
-      "empty": true,
-      "player": "Player Card",
-      "overall": null,
-      "item_id": null,
-      "finish": null,
-      "version": null
-    },
-    {
-      "empty": true,
-      "player": "Player Card",
-      "overall": null,
-      "item_id": null,
-      "finish": null,
-      "version": null
-    },
-    {
-      "empty": false,
       "player": "Yohannes",
       "overall": 86,
-      "item_id": "67386815",
-      "finish": "HOLO",
-      "version": "Future Stars"
+      "item_id": "2027",
+      "finish": "BASE"
     }
   ]
 }
