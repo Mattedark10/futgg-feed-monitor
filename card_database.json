@@ -1,3890 +1,3890 @@
 {
   "27": {
     "item_id": "27",
-    "player": "Isak",
-    "overall": 88,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "HOLO"
   },
   "41": {
     "item_id": "41",
-    "player": "Cha Bum Kun",
-    "overall": 88,
+    "player": "Players",
+    "overall": 92,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "51": {
     "item_id": "51",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "240": {
     "item_id": "240",
-    "player": "Isak",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
   },
   "246": {
     "item_id": "246",
-    "player": "Hagi",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "250": {
     "item_id": "250",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "330": {
     "item_id": "330",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "488": {
     "item_id": "488",
-    "player": "Cha Bum Kun",
-    "overall": 88,
+    "player": "Players",
+    "overall": 91,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "570": {
     "item_id": "570",
-    "player": "Hagi",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "1025": {
     "item_id": "1025",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "1041": {
     "item_id": "1041",
-    "player": "Isak",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
   },
   "1088": {
     "item_id": "1088",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "1114": {
     "item_id": "1114",
-    "player": "Cha Bum Kun",
-    "overall": 88,
+    "player": "Players",
+    "overall": 91,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "1116": {
     "item_id": "1116",
-    "player": "Koeman",
+    "player": "Players",
     "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "1179": {
     "item_id": "1179",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 92,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "1183": {
     "item_id": "1183",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "1201": {
     "item_id": "1201",
-    "player": "Hagi",
-    "overall": 88,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "1238": {
     "item_id": "1238",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "1397": {
     "item_id": "1397",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 94,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "1551": {
     "item_id": "1551",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "1605": {
     "item_id": "1605",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "1615": {
     "item_id": "1615",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "1620": {
     "item_id": "1620",
-    "player": "Hagi",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "1625": {
     "item_id": "1625",
-    "player": "Sawa",
+    "player": "Players",
     "overall": 91,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "1668": {
     "item_id": "1668",
-    "player": "Wright",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "1845": {
     "item_id": "1845",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "3622": {
     "item_id": "3622",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "4231": {
     "item_id": "4231",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "4833": {
     "item_id": "4833",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "5003": {
     "item_id": "5003",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 91,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "5419": {
     "item_id": "5419",
-    "player": "Cha Bum Kun",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "5454": {
     "item_id": "5454",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "5467": {
     "item_id": "5467",
-    "player": "Chérif",
-    "overall": 80,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "5471": {
     "item_id": "5471",
-    "player": "Cha Bum Kun",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "5479": {
     "item_id": "5479",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "5589": {
     "item_id": "5589",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "5661": {
     "item_id": "5661",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "5673": {
     "item_id": "5673",
-    "player": "Hagi",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "5679": {
     "item_id": "5679",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "5740": {
     "item_id": "5740",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "6235": {
     "item_id": "6235",
-    "player": "Isak",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
   },
   "6975": {
     "item_id": "6975",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "7289": {
     "item_id": "7289",
-    "player": "Cha Bum Kun",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "7512": {
     "item_id": "7512",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "7743": {
     "item_id": "7743",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "7763": {
     "item_id": "7763",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "8348": {
     "item_id": "8348",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "8473": {
     "item_id": "8473",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "9676": {
     "item_id": "9676",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "10264": {
     "item_id": "10264",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "10535": {
     "item_id": "10535",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 91,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "10704": {
     "item_id": "10704",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "10959": {
     "item_id": "10959",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "13128": {
     "item_id": "13128",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "13743": {
     "item_id": "13743",
-    "player": "Koeman",
+    "player": "Players",
     "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "15723": {
     "item_id": "15723",
-    "player": "Chérif",
-    "overall": 80,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "16254": {
     "item_id": "16254",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "16619": {
     "item_id": "16619",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "20289": {
     "item_id": "20289",
-    "player": "Cha Bum Kun",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "20775": {
     "item_id": "20775",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "23174": {
     "item_id": "23174",
-    "player": "Riquelme",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "25420": {
     "item_id": "25420",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "25924": {
     "item_id": "25924",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "26709": {
     "item_id": "26709",
-    "player": "Chérif",
-    "overall": 80,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "28130": {
     "item_id": "28130",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 93,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "28765": {
     "item_id": "28765",
-    "player": "Isak",
-    "overall": 88,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "HOLO"
   },
   "30110": {
     "item_id": "30110",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "31432": {
     "item_id": "31432",
-    "player": "Isak",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
   },
   "34079": {
     "item_id": "34079",
-    "player": "Cha Bum Kun",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "37576": {
     "item_id": "37576",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 94,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "39386": {
     "item_id": "39386",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "41236": {
     "item_id": "41236",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 91,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "44897": {
     "item_id": "44897",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "45197": {
     "item_id": "45197",
-    "player": "Hagi",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "45661": {
     "item_id": "45661",
-    "player": "Cha Bum Kun",
-    "overall": 88,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "45674": {
     "item_id": "45674",
-    "player": "Cha Bum Kun",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "47390": {
     "item_id": "47390",
-    "player": "Isak",
-    "overall": 88,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "HOLO"
   },
   "48940": {
     "item_id": "48940",
-    "player": "Cha Bum Kun",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "49369": {
     "item_id": "49369",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "50752": {
     "item_id": "50752",
-    "player": "Isak",
-    "overall": 88,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "HOLO"
   },
   "51257": {
     "item_id": "51257",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "51412": {
     "item_id": "51412",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "51539": {
     "item_id": "51539",
-    "player": "Cha Bum Kun",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "53302": {
     "item_id": "53302",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "54050": {
     "item_id": "54050",
-    "player": "Pajor",
+    "player": "Players",
     "overall": 90,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "71557": {
     "item_id": "71557",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "71587": {
     "item_id": "71587",
-    "player": "Cha Bum Kun",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "71608": {
     "item_id": "71608",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "77676": {
     "item_id": "77676",
-    "player": "Hagi",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "77787": {
     "item_id": "77787",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "77790": {
     "item_id": "77790",
-    "player": "Hagi",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "81644": {
     "item_id": "81644",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "82092": {
     "item_id": "82092",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "82094": {
     "item_id": "82094",
-    "player": "Riquelme",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "84415": {
     "item_id": "84415",
-    "player": "Isak",
-    "overall": 88,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
   },
   "120274": {
     "item_id": "120274",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "120533": {
     "item_id": "120533",
-    "player": "Hagi",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "121939": {
     "item_id": "121939",
-    "player": "Isak",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
   },
   "121944": {
     "item_id": "121944",
-    "player": "Hagi",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "135455": {
     "item_id": "135455",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "PRISTINE HOLO"
   },
   "137186": {
     "item_id": "137186",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "138123": {
     "item_id": "138123",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "138449": {
     "item_id": "138449",
-    "player": "Pajor",
+    "player": "Players",
     "overall": 90,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "138956": {
     "item_id": "138956",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "140601": {
     "item_id": "140601",
-    "player": "Riquelme",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "142754": {
     "item_id": "142754",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "150418": {
     "item_id": "150418",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "153079": {
     "item_id": "153079",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "155897": {
     "item_id": "155897",
-    "player": "Anderson",
+    "player": "Players",
     "overall": 85,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "156353": {
     "item_id": "156353",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "156616": {
     "item_id": "156616",
-    "player": "Wright",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "161840": {
     "item_id": "161840",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "162895": {
     "item_id": "162895",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "166124": {
     "item_id": "166124",
-    "player": "Hagi",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "166149": {
     "item_id": "166149",
-    "player": "Isak",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
   },
   "166676": {
     "item_id": "166676",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "166691": {
     "item_id": "166691",
-    "player": "Sawa",
+    "player": "Players",
     "overall": 91,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "166906": {
     "item_id": "166906",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 91,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "167134": {
     "item_id": "167134",
-    "player": "Hagi",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "167135": {
     "item_id": "167135",
-    "player": "Sawa",
+    "player": "Players",
     "overall": 91,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "167198": {
     "item_id": "167198",
-    "player": "Cha Bum Kun",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "167425": {
     "item_id": "167425",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "167680": {
     "item_id": "167680",
-    "player": "Koeman",
+    "player": "Players",
     "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "168473": {
     "item_id": "168473",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 93,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "168886": {
     "item_id": "168886",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "170890": {
     "item_id": "170890",
-    "player": "Cha Bum Kun",
-    "overall": 88,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "171877": {
     "item_id": "171877",
-    "player": "Cha Bum Kun",
-    "overall": 88,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "173210": {
     "item_id": "173210",
-    "player": "Isak",
-    "overall": 88,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "HOLO"
   },
   "176676": {
     "item_id": "176676",
-    "player": "Koeman",
+    "player": "Players",
     "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "181783": {
     "item_id": "181783",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "182521": {
     "item_id": "182521",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "183277": {
     "item_id": "183277",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "184943": {
     "item_id": "184943",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "190042": {
     "item_id": "190042",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 95,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "190044": {
     "item_id": "190044",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "190045": {
     "item_id": "190045",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 93,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "190046": {
     "item_id": "190046",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "190048": {
     "item_id": "190048",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 92,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "191190": {
     "item_id": "191190",
-    "player": "Cha Bum Kun",
-    "overall": 88,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "191208": {
     "item_id": "191208",
-    "player": "Cha Bum Kun",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "191694": {
     "item_id": "191694",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "191695": {
     "item_id": "191695",
-    "player": "Cha Bum Kun",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "191972": {
     "item_id": "191972",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "192181": {
     "item_id": "192181",
-    "player": "Isak",
-    "overall": 88,
+    "player": "Players",
+    "overall": 91,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
   },
   "192190": {
     "item_id": "192190",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "201535": {
     "item_id": "201535",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "214098": {
     "item_id": "214098",
-    "player": "Isak",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
   },
   "214100": {
     "item_id": "214100",
-    "player": "Sawa",
+    "player": "Players",
     "overall": 91,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "214101": {
     "item_id": "214101",
-    "player": "Wright",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "214267": {
     "item_id": "214267",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "214649": {
     "item_id": "214649",
-    "player": "Isak",
-    "overall": 88,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "HOLO"
   },
   "215732": {
     "item_id": "215732",
-    "player": "Chérif",
-    "overall": 80,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "221162": {
     "item_id": "221162",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "222000": {
     "item_id": "222000",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "226293": {
     "item_id": "226293",
-    "player": "Angerer",
+    "player": "Players",
     "overall": 92,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "226301": {
     "item_id": "226301",
-    "player": "Sawa",
+    "player": "Players",
     "overall": 91,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "226306": {
     "item_id": "226306",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "226307": {
     "item_id": "226307",
-    "player": "Isak",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
   },
   "226330": {
     "item_id": "226330",
-    "player": "Cha Bum Kun",
-    "overall": 88,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "226359": {
     "item_id": "226359",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 92,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "226362": {
     "item_id": "226362",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "226369": {
     "item_id": "226369",
-    "player": "Pajor",
+    "player": "Players",
     "overall": 90,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "226373": {
     "item_id": "226373",
-    "player": "Hagi",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "226764": {
     "item_id": "226764",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "226895": {
     "item_id": "226895",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "226975": {
     "item_id": "226975",
-    "player": "Pajor",
+    "player": "Players",
     "overall": 90,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "227002": {
     "item_id": "227002",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "227006": {
     "item_id": "227006",
-    "player": "Sawa",
+    "player": "Players",
     "overall": 91,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "227261": {
     "item_id": "227261",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "227262": {
     "item_id": "227262",
-    "player": "Hagi",
-    "overall": 88,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "227263": {
     "item_id": "227263",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "227270": {
     "item_id": "227270",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "227271": {
     "item_id": "227271",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "227315": {
     "item_id": "227315",
-    "player": "Hagi",
-    "overall": 88,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "227324": {
     "item_id": "227324",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "230025": {
     "item_id": "230025",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 92,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "233700": {
     "item_id": "233700",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "PRISTINE HOLO"
   },
   "237067": {
     "item_id": "237067",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 95,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "238382": {
     "item_id": "238382",
-    "player": "Pajor",
+    "player": "Players",
     "overall": 90,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "238384": {
     "item_id": "238384",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "238388": {
     "item_id": "238388",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "238424": {
     "item_id": "238424",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "238427": {
     "item_id": "238427",
-    "player": "Cha Bum Kun",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "238428": {
     "item_id": "238428",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "238430": {
     "item_id": "238430",
-    "player": "Hagi",
-    "overall": 88,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "238435": {
     "item_id": "238435",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "238439": {
     "item_id": "238439",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 93,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "238443": {
     "item_id": "238443",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "239261": {
     "item_id": "239261",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "242510": {
     "item_id": "242510",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "PRISTINE HOLO"
   },
   "242519": {
     "item_id": "242519",
-    "player": "Sawa",
+    "player": "Players",
     "overall": 91,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "242625": {
     "item_id": "242625",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "243027": {
     "item_id": "243027",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "243029": {
     "item_id": "243029",
-    "player": "Hagi",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "243030": {
     "item_id": "243030",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "243075": {
     "item_id": "243075",
-    "player": "Pajor",
+    "player": "Players",
     "overall": 90,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "247515": {
     "item_id": "247515",
-    "player": "Wright",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "247553": {
     "item_id": "247553",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 93,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "247699": {
     "item_id": "247699",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "247703": {
     "item_id": "247703",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "248146": {
     "item_id": "248146",
-    "player": "Wright",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "250890": {
     "item_id": "250890",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "251483": {
     "item_id": "251483",
-    "player": "Hagi",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "254642": {
     "item_id": "254642",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 92,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "261593": {
     "item_id": "261593",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "262112": {
     "item_id": "262112",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "262271": {
     "item_id": "262271",
-    "player": "Riquelme",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "262285": {
     "item_id": "262285",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "266473": {
     "item_id": "266473",
-    "player": "Isak",
-    "overall": 88,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "HOLO"
   },
   "266690": {
     "item_id": "266690",
-    "player": "Koeman",
+    "player": "Players",
     "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "266691": {
     "item_id": "266691",
-    "player": "Isak",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
   },
   "266694": {
     "item_id": "266694",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "266801": {
     "item_id": "266801",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "267275": {
     "item_id": "267275",
-    "player": "Isak",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
   },
   "268513": {
     "item_id": "268513",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "273812": {
     "item_id": "273812",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "274750": {
     "item_id": "274750",
-    "player": "Isak",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
   },
   "274966": {
     "item_id": "274966",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "274967": {
     "item_id": "274967",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "275049": {
     "item_id": "275049",
-    "player": "Hagi",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "275092": {
     "item_id": "275092",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "275243": {
     "item_id": "275243",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 93,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "275276": {
     "item_id": "275276",
-    "player": "Angerer",
+    "player": "Players",
     "overall": 92,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "50402374": {
     "item_id": "50402374",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50402434": {
     "item_id": "50402434",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50402614": {
     "item_id": "50402614",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50402615": {
     "item_id": "50402615",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50403654": {
     "item_id": "50403654",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 84,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50403818": {
     "item_id": "50403818",
-    "player": "Fakili",
+    "player": "Players",
     "overall": 84,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "50404662": {
     "item_id": "50404662",
-    "player": "Dunk",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50405513": {
     "item_id": "50405513",
-    "player": "Chérif",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50406911": {
     "item_id": "50406911",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50406920": {
     "item_id": "50406920",
-    "player": "Chérif",
-    "overall": 80,
+    "player": "Players",
+    "overall": 84,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50407181": {
     "item_id": "50407181",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50407276": {
     "item_id": "50407276",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 84,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50408681": {
     "item_id": "50408681",
-    "player": "Maamma",
+    "player": "Players",
     "overall": 84,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50408698": {
     "item_id": "50408698",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50411047": {
     "item_id": "50411047",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50411180": {
     "item_id": "50411180",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50411878": {
     "item_id": "50411878",
-    "player": "Dunk",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50412024": {
     "item_id": "50412024",
-    "player": "Isak",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
   },
   "50412322": {
     "item_id": "50412322",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50413187": {
     "item_id": "50413187",
-    "player": "Fakili",
+    "player": "Players",
     "overall": 84,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "50413511": {
     "item_id": "50413511",
-    "player": "Isak",
-    "overall": 88,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "HOLO"
   },
   "50414596": {
     "item_id": "50414596",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 84,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50415142": {
     "item_id": "50415142",
-    "player": "Pajor",
+    "player": "Players",
     "overall": 90,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "50415664": {
     "item_id": "50415664",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 84,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50416920": {
     "item_id": "50416920",
-    "player": "Palmisani",
+    "player": "Players",
     "overall": 82,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50418277": {
     "item_id": "50418277",
-    "player": "Dunk",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50508651": {
     "item_id": "50508651",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50515359": {
     "item_id": "50515359",
-    "player": "Chérif",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50519998": {
     "item_id": "50519998",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50520193": {
     "item_id": "50520193",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50520215": {
     "item_id": "50520215",
-    "player": "Hagi",
-    "overall": 88,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50522413": {
     "item_id": "50522413",
-    "player": "Chérif",
-    "overall": 80,
+    "player": "Players",
+    "overall": 81,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50524633": {
     "item_id": "50524633",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50529429": {
     "item_id": "50529429",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 84,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50531752": {
     "item_id": "50531752",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 83,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50536618": {
     "item_id": "50536618",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 84,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50539513": {
     "item_id": "50539513",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "PRISTINE HOLO"
   },
   "50540979": {
     "item_id": "50540979",
-    "player": "Cha Bum Kun",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "50542162": {
     "item_id": "50542162",
-    "player": "Fakili",
+    "player": "Players",
     "overall": 84,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "50542545": {
     "item_id": "50542545",
-    "player": "Dunk",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50544661": {
     "item_id": "50544661",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "50547923": {
     "item_id": "50547923",
-    "player": "Chérif",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50551331": {
     "item_id": "50551331",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 84,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50553139": {
     "item_id": "50553139",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50554313": {
     "item_id": "50554313",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "50555345": {
     "item_id": "50555345",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50555358": {
     "item_id": "50555358",
-    "player": "Dunk",
-    "overall": 80,
+    "player": "Players",
+    "overall": 83,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50555799": {
     "item_id": "50555799",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50558541": {
     "item_id": "50558541",
-    "player": "Cha Bum Kun",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "50558851": {
     "item_id": "50558851",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 92,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "50559009": {
     "item_id": "50559009",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 88,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "50559029": {
     "item_id": "50559029",
-    "player": "Chérif",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50559326": {
     "item_id": "50559326",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "50561206": {
     "item_id": "50561206",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "50562269": {
     "item_id": "50562269",
-    "player": "Pajor",
+    "player": "Players",
     "overall": 90,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "50562547": {
     "item_id": "50562547",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50562620": {
     "item_id": "50562620",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50563395": {
     "item_id": "50563395",
-    "player": "Sawa",
+    "player": "Players",
     "overall": 91,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "50564136": {
     "item_id": "50564136",
-    "player": "Dunk",
-    "overall": 80,
+    "player": "Players",
+    "overall": 84,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50565067": {
     "item_id": "50565067",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "50565379": {
     "item_id": "50565379",
-    "player": "Isak",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
   },
   "50566782": {
     "item_id": "50566782",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50568937": {
     "item_id": "50568937",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "50569088": {
     "item_id": "50569088",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50569719": {
     "item_id": "50569719",
-    "player": "Chérif",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50569878": {
     "item_id": "50569878",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50570392": {
     "item_id": "50570392",
-    "player": "Hagi",
-    "overall": 88,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50570733": {
     "item_id": "50570733",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 91,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "50570879": {
     "item_id": "50570879",
-    "player": "Hagi",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "50571279": {
     "item_id": "50571279",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50571455": {
     "item_id": "50571455",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 84,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50571678": {
     "item_id": "50571678",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "50571688": {
     "item_id": "50571688",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50572365": {
     "item_id": "50572365",
-    "player": "Hagi",
-    "overall": 88,
+    "player": "Players",
+    "overall": 84,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50572884": {
     "item_id": "50572884",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "50573299": {
     "item_id": "50573299",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "50573384": {
     "item_id": "50573384",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "50573494": {
     "item_id": "50573494",
-    "player": "Pajor",
+    "player": "Players",
     "overall": 90,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "50573586": {
     "item_id": "50573586",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50573648": {
     "item_id": "50573648",
-    "player": "Dunk",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50574092": {
     "item_id": "50574092",
-    "player": "Koeman",
-    "overall": 89,
+    "player": "Players",
+    "overall": 84,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50574189": {
     "item_id": "50574189",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50574527": {
     "item_id": "50574527",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50574555": {
     "item_id": "50574555",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50574612": {
     "item_id": "50574612",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50574662": {
     "item_id": "50574662",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50574893": {
     "item_id": "50574893",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50575824": {
     "item_id": "50575824",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50577550": {
     "item_id": "50577550",
-    "player": "Chérif",
-    "overall": 80,
+    "player": "Players",
+    "overall": 82,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50578336": {
     "item_id": "50578336",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50579475": {
     "item_id": "50579475",
-    "player": "Isak",
-    "overall": 88,
+    "player": "Players",
+    "overall": 91,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
   },
   "50579813": {
     "item_id": "50579813",
-    "player": "Isak",
-    "overall": 88,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "HOLO"
   },
   "50583793": {
     "item_id": "50583793",
-    "player": "Sawa",
-    "overall": 91,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "50584019": {
     "item_id": "50584019",
-    "player": "Pajor",
-    "overall": 90,
-    "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
-  },
-  "50584200": {
-    "item_id": "50584200",
-    "player": "Anderson",
-    "overall": 85,
-    "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
-  },
-  "50584757": {
-    "item_id": "50584757",
-    "player": "Anderson",
-    "overall": 85,
-    "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
-  },
-  "50585769": {
-    "item_id": "50585769",
-    "player": "Chérif",
-    "overall": 80,
-    "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
-  },
-  "50586853": {
-    "item_id": "50586853",
-    "player": "Palmisani",
-    "overall": 82,
-    "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
-  },
-  "50586923": {
-    "item_id": "50586923",
-    "player": "Chérif",
-    "overall": 80,
-    "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
-  },
-  "50587082": {
-    "item_id": "50587082",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 91,
     "rarity_id": null,
     "rarity": "Future Stars",
     "version": "Future Stars",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
-  "50588551": {
-    "item_id": "50588551",
-    "player": "Chérif",
+  "50584200": {
+    "item_id": "50584200",
+    "player": "Players",
+    "overall": 81,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
+  },
+  "50584757": {
+    "item_id": "50584757",
+    "player": "Players",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
+  },
+  "50585769": {
+    "item_id": "50585769",
+    "player": "Players",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
+  },
+  "50586853": {
+    "item_id": "50586853",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
-  "50588656": {
-    "item_id": "50588656",
-    "player": "Isak",
-    "overall": 88,
+  "50586923": {
+    "item_id": "50586923",
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
-  "50588927": {
-    "item_id": "50588927",
-    "player": "Anderson",
+  "50587082": {
+    "item_id": "50587082",
+    "player": "Players",
     "overall": 85,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
+  },
+  "50588551": {
+    "item_id": "50588551",
+    "player": "Players",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
+  },
+  "50588656": {
+    "item_id": "50588656",
+    "player": "Players",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
+  },
+  "50588927": {
+    "item_id": "50588927",
+    "player": "Players",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50589605": {
     "item_id": "50589605",
-    "player": "Chérif",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50590026": {
     "item_id": "50590026",
-    "player": "Isak",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
   },
   "50590628": {
     "item_id": "50590628",
-    "player": "Isak",
-    "overall": 88,
-    "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
-  },
-  "50590762": {
-    "item_id": "50590762",
-    "player": "Chérif",
-    "overall": 80,
-    "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
-  },
-  "50590935": {
-    "item_id": "50590935",
-    "player": "Angerer",
-    "overall": 92,
-    "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
-  },
-  "50591213": {
-    "item_id": "50591213",
-    "player": "Angerer",
-    "overall": 92,
-    "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
-  },
-  "50591227": {
-    "item_id": "50591227",
-    "player": "Dunk",
-    "overall": 80,
-    "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
-  },
-  "50591895": {
-    "item_id": "50591895",
-    "player": "Hagi",
-    "overall": 88,
-    "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
-  },
-  "50592556": {
-    "item_id": "50592556",
-    "player": "Chérif",
-    "overall": 80,
-    "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
-  },
-  "50592947": {
-    "item_id": "50592947",
-    "player": "Isak",
-    "overall": 88,
-    "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
-  },
-  "50593503": {
-    "item_id": "50593503",
-    "player": "Koeman",
+    "player": "Players",
     "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
+  },
+  "50590762": {
+    "item_id": "50590762",
+    "player": "Players",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
+  },
+  "50590935": {
+    "item_id": "50590935",
+    "player": "Players",
+    "overall": 88,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
+  },
+  "50591213": {
+    "item_id": "50591213",
+    "player": "Players",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "HOLO"
+  },
+  "50591227": {
+    "item_id": "50591227",
+    "player": "Players",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
+  },
+  "50591895": {
+    "item_id": "50591895",
+    "player": "Players",
+    "overall": 87,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "HOLO"
+  },
+  "50592556": {
+    "item_id": "50592556",
+    "player": "Players",
+    "overall": 83,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
+  },
+  "50592947": {
+    "item_id": "50592947",
+    "player": "Players",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "HOLO"
+  },
+  "50593503": {
+    "item_id": "50593503",
+    "player": "Players",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "HOLO"
   },
   "50593509": {
     "item_id": "50593509",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50593513": {
     "item_id": "50593513",
-    "player": "Chérif",
-    "overall": 80,
+    "player": "Players",
+    "overall": 82,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50594290": {
     "item_id": "50594290",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50594511": {
     "item_id": "50594511",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50595413": {
     "item_id": "50595413",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50595660": {
     "item_id": "50595660",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "50595905": {
     "item_id": "50595905",
-    "player": "Chérif",
-    "overall": 80,
+    "player": "Players",
+    "overall": 82,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50596036": {
     "item_id": "50596036",
-    "player": "Hagi",
-    "overall": 88,
+    "player": "Players",
+    "overall": 84,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50596510": {
     "item_id": "50596510",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50596668": {
     "item_id": "50596668",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 81,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50596705": {
     "item_id": "50596705",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50596965": {
     "item_id": "50596965",
-    "player": "Cha Bum Kun",
-    "overall": 88,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50597341": {
     "item_id": "50597341",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50597687": {
     "item_id": "50597687",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "50597775": {
     "item_id": "50597775",
-    "player": "Hagi",
-    "overall": 88,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50598543": {
     "item_id": "50598543",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50599622": {
     "item_id": "50599622",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50600351": {
     "item_id": "50600351",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50600784": {
     "item_id": "50600784",
-    "player": "Pajor",
-    "overall": 90,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Future Stars",
+    "version": "Future Stars",
+    "finish": "PRISTINE HOLO"
   },
   "50600834": {
     "item_id": "50600834",
-    "player": "Chérif",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50600878": {
     "item_id": "50600878",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50600885": {
     "item_id": "50600885",
-    "player": "Fakili",
+    "player": "Players",
     "overall": 84,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "50601349": {
     "item_id": "50601349",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50602505": {
     "item_id": "50602505",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50603069": {
     "item_id": "50603069",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50603094": {
     "item_id": "50603094",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "50603566": {
     "item_id": "50603566",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50603785": {
     "item_id": "50603785",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50604260": {
     "item_id": "50604260",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 84,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50604626": {
     "item_id": "50604626",
-    "player": "Hagi",
-    "overall": 88,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50604801": {
     "item_id": "50604801",
-    "player": "Cha Bum Kun",
-    "overall": 88,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50604825": {
     "item_id": "50604825",
-    "player": "Dunk",
-    "overall": 80,
+    "player": "Players",
+    "overall": 81,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50605211": {
     "item_id": "50605211",
-    "player": "Chérif",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50605215": {
     "item_id": "50605215",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50605487": {
     "item_id": "50605487",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50605554": {
     "item_id": "50605554",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 84,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50605774": {
     "item_id": "50605774",
-    "player": "Wright",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "50606401": {
     "item_id": "50606401",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 84,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50606461": {
     "item_id": "50606461",
-    "player": "Cha Bum Kun",
-    "overall": 88,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50606677": {
     "item_id": "50606677",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50607933": {
     "item_id": "50607933",
-    "player": "Maamma",
+    "player": "Players",
     "overall": 84,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50608090": {
     "item_id": "50608090",
-    "player": "Fakili",
+    "player": "Players",
     "overall": 84,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "50608342": {
     "item_id": "50608342",
-    "player": "Hagi",
-    "overall": 88,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50608343": {
     "item_id": "50608343",
-    "player": "Chérif",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50608373": {
     "item_id": "50608373",
-    "player": "Palmisani",
+    "player": "Players",
     "overall": 82,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50608873": {
     "item_id": "50608873",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "50608900": {
     "item_id": "50608900",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50609133": {
     "item_id": "50609133",
-    "player": "Chérif",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50609459": {
     "item_id": "50609459",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 84,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50609494": {
     "item_id": "50609494",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50609517": {
     "item_id": "50609517",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 83,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50609599": {
     "item_id": "50609599",
-    "player": "Hagi",
-    "overall": 88,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50609822": {
     "item_id": "50609822",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50609974": {
     "item_id": "50609974",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50610421": {
     "item_id": "50610421",
-    "player": "Cha Bum Kun",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "50610428": {
     "item_id": "50610428",
-    "player": "Maamma",
-    "overall": 84,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50610726": {
     "item_id": "50610726",
-    "player": "Maamma",
+    "player": "Players",
     "overall": 84,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "50611252": {
     "item_id": "50611252",
-    "player": "Hagi",
-    "overall": 88,
+    "player": "Players",
+    "overall": 85,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "50611347": {
     "item_id": "50611347",
-    "player": "Fakili",
+    "player": "Players",
     "overall": 84,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "50611447": {
     "item_id": "50611447",
-    "player": "Cha Bum Kun",
-    "overall": 88,
+    "player": "Players",
+    "overall": 90,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "67302212": {
     "item_id": "67302212",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "67308779": {
     "item_id": "67308779",
-    "player": "Dunk",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "67329765": {
     "item_id": "67329765",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 89,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "67330561": {
     "item_id": "67330561",
-    "player": "Chérif",
-    "overall": 80,
+    "player": "Players",
+    "overall": 84,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "67336110": {
     "item_id": "67336110",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "67336957": {
     "item_id": "67336957",
-    "player": "Riquelme",
-    "overall": 88,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "67341275": {
     "item_id": "67341275",
-    "player": "Chérif",
-    "overall": 80,
+    "player": "Players",
+    "overall": 82,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "67349089": {
     "item_id": "67349089",
-    "player": "Fakili",
+    "player": "Players",
     "overall": 84,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "67352494": {
     "item_id": "67352494",
-    "player": "Anderson",
-    "overall": 85,
+    "player": "Players",
+    "overall": 82,
     "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "67354218": {
     "item_id": "67354218",
-    "player": "Dunk",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "67355727": {
     "item_id": "67355727",
-    "player": "Wright",
-    "overall": 88,
+    "player": "Players",
+    "overall": 86,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "67356819": {
     "item_id": "67356819",
-    "player": "Fakili",
-    "overall": 84,
-    "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
-  },
-  "67361026": {
-    "item_id": "67361026",
-    "player": "Palmisani",
-    "overall": 82,
+    "player": "Players",
+    "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
+  },
+  "67361026": {
+    "item_id": "67361026",
+    "player": "Players",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "67363107": {
     "item_id": "67363107",
-    "player": "Anderson",
+    "player": "Players",
+    "overall": 85,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
+  },
+  "67363653": {
+    "item_id": "67363653",
+    "player": "Players",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
+  },
+  "67365539": {
+    "item_id": "67365539",
+    "player": "Players",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
+  },
+  "67371770": {
+    "item_id": "67371770",
+    "player": "Players",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
+  },
+  "67373516": {
+    "item_id": "67373516",
+    "player": "Players",
+    "overall": 86,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "HOLO"
+  },
+  "67373922": {
+    "item_id": "67373922",
+    "player": "Players",
+    "overall": 84,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
+  },
+  "67374762": {
+    "item_id": "67374762",
+    "player": "Players",
+    "overall": 89,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
+  },
+  "67376394": {
+    "item_id": "67376394",
+    "player": "Players",
     "overall": 85,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
-  "67363653": {
-    "item_id": "67363653",
-    "player": "Palmisani",
-    "overall": 82,
+  "67376538": {
+    "item_id": "67376538",
+    "player": "Players",
+    "overall": 83,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
-  "67365539": {
-    "item_id": "67365539",
-    "player": "Maamma",
-    "overall": 84,
+  "67377753": {
+    "item_id": "67377753",
+    "player": "Players",
+    "overall": 83,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "HOLO"
   },
-  "67371770": {
-    "item_id": "67371770",
-    "player": "Chérif",
+  "67379423": {
+    "item_id": "67379423",
+    "player": "Players",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
+  },
+  "67379904": {
+    "item_id": "67379904",
+    "player": "Players",
+    "overall": 82,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
+  },
+  "67382428": {
+    "item_id": "67382428",
+    "player": "Players",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
+  },
+  "67383910": {
+    "item_id": "67383910",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
-  "67373516": {
-    "item_id": "67373516",
-    "player": "Isak",
-    "overall": 88,
-    "rarity_id": null,
-    "rarity": "Destined for Glory",
-    "version": "Destined for Glory",
-    "finish": "BASE"
-  },
-  "67373922": {
-    "item_id": "67373922",
-    "player": "Maamma",
+  "67386075": {
+    "item_id": "67386075",
+    "player": "Players",
     "overall": 84,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
-  "67374762": {
-    "item_id": "67374762",
-    "player": "Sawa",
+  "67386507": {
+    "item_id": "67386507",
+    "player": "Players",
     "overall": 91,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
-  },
-  "67376394": {
-    "item_id": "67376394",
-    "player": "Fakili",
-    "overall": 84,
-    "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
-  },
-  "67376538": {
-    "item_id": "67376538",
-    "player": "Palmisani",
-    "overall": 82,
-    "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
-  },
-  "67377753": {
-    "item_id": "67377753",
-    "player": "Koeman",
-    "overall": 89,
-    "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
-  },
-  "67379423": {
-    "item_id": "67379423",
-    "player": "Anderson",
-    "overall": 85,
-    "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
-  },
-  "67379904": {
-    "item_id": "67379904",
-    "player": "Chérif",
-    "overall": 80,
-    "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
-  },
-  "67382428": {
-    "item_id": "67382428",
-    "player": "Chérif",
-    "overall": 80,
-    "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
-  },
-  "67383910": {
-    "item_id": "67383910",
-    "player": "Dunk",
-    "overall": 80,
-    "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
-  },
-  "67386075": {
-    "item_id": "67386075",
-    "player": "Anderson",
-    "overall": 85,
-    "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
-  },
-  "67386507": {
-    "item_id": "67386507",
-    "player": "Cha Bum Kun",
-    "overall": 88,
-    "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   },
   "67388037": {
     "item_id": "67388037",
-    "player": "Palmisani",
-    "overall": 82,
-    "rarity_id": null,
-    "rarity": "Team of the week",
-    "version": "Team of the week",
-    "finish": "BASE"
-  },
-  "67388405": {
-    "item_id": "67388405",
-    "player": "Chérif",
+    "player": "Players",
     "overall": 80,
     "rarity_id": null,
     "rarity": "Team of the week",
     "version": "Team of the week",
-    "finish": "BASE"
+    "finish": "HOLO"
+  },
+  "67388405": {
+    "item_id": "67388405",
+    "player": "Players",
+    "overall": 80,
+    "rarity_id": null,
+    "rarity": "Base Hero",
+    "version": "Base Hero",
+    "finish": "HOLO"
   },
   "84112442": {
     "item_id": "84112442",
-    "player": "Angerer",
-    "overall": 92,
+    "player": "Players",
+    "overall": 87,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "HOLO"
   },
   "84137646": {
     "item_id": "84137646",
-    "player": "Fakili",
-    "overall": 84,
+    "player": "Players",
+    "overall": 82,
     "rarity_id": null,
-    "rarity": "Future Stars",
-    "version": "Future Stars",
-    "finish": "BASE"
+    "rarity": "Team of the week",
+    "version": "Team of the week",
+    "finish": "HOLO"
   },
   "84163723": {
     "item_id": "84163723",
-    "player": "Cha Bum Kun",
+    "player": "Players",
+    "overall": 91,
+    "rarity_id": null,
+    "rarity": "Base Icon",
+    "version": "Base Icon",
+    "finish": "PRISTINE HOLO"
+  },
+  "84165253": {
+    "item_id": "84165253",
+    "player": "Players",
     "overall": 88,
     "rarity_id": null,
     "rarity": "Base Icon",
     "version": "Base Icon",
-    "finish": "BASE"
-  },
-  "84165253": {
-    "item_id": "84165253",
-    "player": "Koeman",
-    "overall": 89,
-    "rarity_id": null,
-    "rarity": "Base Icon",
-    "version": "Base Icon",
-    "finish": "BASE"
+    "finish": "PRISTINE HOLO"
   }
 }
