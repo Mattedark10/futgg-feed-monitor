@@ -1,21 +1,15 @@
 {
   "Heroes": [
     {
-      "player": "Vialli",
+      "player": "Šašić",
       "overall": 89,
-      "item_id": "67342564",
+      "item_id": "67335170",
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "Litmanen",
+      "player": "Zamorano",
       "overall": 88,
-      "item_id": "67114537",
-      "finish": "PRISTINE HOLO"
-    },
-    {
-      "player": "Márquez",
-      "overall": 88,
-      "item_id": "67135573",
+      "item_id": "67186651",
       "finish": "PRISTINE HOLO"
     },
     {
@@ -28,6 +22,12 @@
       "player": "Šašić",
       "overall": 89,
       "item_id": "226306",
+      "finish": "BASE"
+    },
+    {
+      "player": "Vialli",
+      "overall": 89,
+      "item_id": "233700",
       "finish": "BASE"
     }
   ],
