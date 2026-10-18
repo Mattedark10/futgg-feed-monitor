@@ -54,17 +54,13 @@ CATEGORIES = {
 
 KNOWN_FINISHES = {
 
-    # --------------------------------------------------------
     # PRISTINE HOLO
-    # --------------------------------------------------------
-
     "67335170": "PRISTINE HOLO",
     "67114537": "PRISTINE HOLO",
     "67335237": "PRISTINE HOLO",
     "67371135": "PRISTINE HOLO",
     "67342564": "PRISTINE HOLO",
     "67186651": "PRISTINE HOLO",
-
     "67335573": "PRISTINE HOLO",
     "67135573": "PRISTINE HOLO",
 
@@ -77,10 +73,7 @@ KNOWN_FINISHES = {
     "67348095": "PRISTINE HOLO",
     "67368151": "PRISTINE HOLO",
 
-    # --------------------------------------------------------
     # HOLO
-    # --------------------------------------------------------
-
     "67179830": "HOLO",
     "67188263": "HOLO",
     "67368429": "HOLO",
@@ -89,10 +82,7 @@ KNOWN_FINISHES = {
     "67386815": "HOLO",
     "67374557": "HOLO",
 
-    # --------------------------------------------------------
     # BASE
-    # --------------------------------------------------------
-
     "226306": "BASE",
     "233700": "BASE",
     "5673": "BASE",
@@ -107,6 +97,7 @@ KNOWN_FINISHES = {
 # ============================================================
 
 def fetch_url(url):
+
     print(f"Fetching: {url}")
 
     response = requests.get(
@@ -115,8 +106,13 @@ def fetch_url(url):
         timeout=30,
     )
 
-    print(f"HTTP status: {response.status_code}")
-    print(f"Downloaded: {len(response.text)} characters")
+    print(
+        f"HTTP status: {response.status_code}"
+    )
+
+    print(
+        f"Downloaded: {len(response.text)} characters"
+    )
 
     response.raise_for_status()
 
@@ -124,21 +120,22 @@ def fetch_url(url):
 
 
 # ============================================================
-# IMAGE / PLAYER VALIDATION
+# ALT PARSING
 # ============================================================
 
 def parse_player_alt(img):
+
     if not img:
         return None
 
-    values = [
-        img.get("alt"),
-        img.get("data-alt"),
-        img.get("title"),
-        img.get("aria-label"),
-    ]
+    for attr in (
+        "alt",
+        "data-alt",
+        "title",
+        "aria-label",
+    ):
 
-    for value in values:
+        value = img.get(attr)
 
         if not value:
             continue
@@ -153,7 +150,90 @@ def parse_player_alt(img):
     return None
 
 
-def is_player_placeholder(name):
+def parse_card_name_and_rating(
+    raw_name
+):
+
+    if not raw_name:
+        return None, None
+
+    raw_name = html.unescape(
+        raw_name
+    ).strip()
+
+    # FUT.GG format:
+    #
+    # Šašić - 89 - Base Hero
+    # Cucurella - 88 - Destined for Glory
+    # Mora - 87 - Future Stars
+    #
+    # We only need the first two parts.
+
+    parts = [
+        part.strip()
+        for part in raw_name.split("-")
+    ]
+
+    if len(parts) >= 2:
+
+        possible_rating = parts[1]
+
+        match = re.search(
+            r"\b(\d{2})\b",
+            possible_rating
+        )
+
+        if match:
+
+            rating = int(
+                match.group(1)
+            )
+
+            if 70 <= rating <= 99:
+
+                player_name = parts[0].strip()
+
+                if player_name:
+                    return (
+                        player_name,
+                        rating
+                    )
+
+    # Fallback for unexpected formatting.
+
+    match = re.search(
+        r"^(.*?)\s*[-|]\s*(\d{2})\b",
+        raw_name
+    )
+
+    if match:
+
+        player_name = (
+            match.group(1).strip()
+        )
+
+        rating = int(
+            match.group(2)
+        )
+
+        if 70 <= rating <= 99:
+
+            return (
+                player_name,
+                rating
+            )
+
+    return None, None
+
+
+# ============================================================
+# PLACEHOLDERS / UI
+# ============================================================
+
+def is_player_placeholder(
+    name
+):
+
     if not name:
         return False
 
@@ -163,49 +243,18 @@ def is_player_placeholder(name):
         name.lower().strip()
     )
 
-    normalized = normalized.replace(
-        "–",
-        "-"
-    )
-
-    normalized = normalized.replace(
-        "—",
-        "-"
-    )
-
-    placeholders = {
+    return normalized in {
         "player card",
         "player-card",
-        "player card placeholder",
         "empty slot",
         "empty",
     }
 
-    return normalized in placeholders
 
+def is_bad_ui_text(
+    name
+):
 
-def extract_overall(name):
-    if not name:
-        return None
-
-    # Normal FC ratings.
-    matches = re.findall(
-        r"(?<!\d)(\d{2})(?!\d)",
-        name
-    )
-
-    for value in matches:
-
-        rating = int(value)
-
-        # FC ratings we care about.
-        if 70 <= rating <= 99:
-            return rating
-
-    return None
-
-
-def is_bad_ui_text(name):
     if not name:
         return True
 
@@ -228,7 +277,6 @@ def is_bad_ui_text(name):
         "next",
         "previous",
         "arrow",
-        "star",
         "token",
         "coin",
     ]
@@ -241,59 +289,71 @@ def is_bad_ui_text(name):
     return False
 
 
-def is_real_player_card(img):
-    """
-    A valid player-card image must have:
+def is_real_player_card(
+    img
+):
 
-    - a player name
-    - a valid FC rating
-    - no known UI text
-    """
+    raw_name = parse_player_alt(
+        img
+    )
 
-    name = parse_player_alt(img)
-
-    if not name:
+    if not raw_name:
         return False
 
-    if is_player_placeholder(name):
+    if is_player_placeholder(
+        raw_name
+    ):
         return False
 
-    if is_bad_ui_text(name):
+    if is_bad_ui_text(
+        raw_name
+    ):
         return False
 
-    overall = extract_overall(name)
+    player_name, rating = (
+        parse_card_name_and_rating(
+            raw_name
+        )
+    )
 
-    if overall is None:
+    if not player_name:
+        return False
+
+    if rating is None:
         return False
 
     return True
 
 
-def is_valid_lineup_image(img):
-    """
-    Valid lineup slot:
+def is_valid_lineup_image(
+    img
+):
 
-    1. Real player card
-    OR
-    2. Player Card placeholder
-    """
+    raw_name = parse_player_alt(
+        img
+    )
 
-    name = parse_player_alt(img)
-
-    if not name:
+    if not raw_name:
         return False
 
-    if is_player_placeholder(name):
+    if is_player_placeholder(
+        raw_name
+    ):
         return True
 
-    return is_real_player_card(img)
+    return is_real_player_card(
+        img
+    )
 
 
 # ============================================================
-# ITEM ID EXTRACTION
+# ITEM ID
 # ============================================================
 
-def extract_item_ids(text):
+def extract_item_ids(
+    text
+):
+
     if not text:
         return []
 
@@ -302,10 +362,23 @@ def extract_item_ids(text):
     )
 
     patterns = [
+
+        # FUT.GG image URL:
+        # .../2027/futgg-player-item-card/27-67335170....
+        r"/27-(\d{4,})(?:[./?_-]|$)",
+
+        # Generic 27-ITEMID
+        r"\b27-(\d{4,})\b",
+
+        # itemId
         r"item[_\-\s]?id[\"'\s:=]+(\d{4,})",
+
         r"itemId[\"'\s:=]+(\d{4,})",
+
         r"itemID[\"'\s:=]+(\d{4,})",
+
         r"item[_\-]?id=(\d{4,})",
+
         r"item/(\d{4,})",
     ]
 
@@ -327,7 +400,9 @@ def extract_item_ids(text):
     return found
 
 
-def extract_item_id_from_attributes(element):
+def extract_item_id_from_attributes(
+    element
+):
 
     if not element:
         return None
@@ -347,12 +422,16 @@ def extract_item_id_from_attributes(element):
 
     for attr in attributes:
 
-        value = element.get(attr)
+        value = element.get(
+            attr
+        )
 
         if not value:
             continue
 
-        ids = extract_item_ids(value)
+        ids = extract_item_ids(
+            value
+        )
 
         if ids:
             return ids[0]
@@ -360,50 +439,9 @@ def extract_item_id_from_attributes(element):
     return None
 
 
-def find_unique_card_wrapper(img):
-
-    if not img:
-        return None
-
-    current = img
-
-    for _ in range(6):
-
-        current = current.parent
-
-        if not current:
-            break
-
-        images = current.find_all(
-            "img"
-        )
-
-        valid_images = [
-            x
-            for x in images
-            if is_real_player_card(x)
-        ]
-
-        # IMPORTANT:
-        # Never accept a container containing multiple
-        # player cards.
-        if len(valid_images) != 1:
-            continue
-
-        if valid_images[0] is not img:
-            continue
-
-        ids = extract_item_ids(
-            str(current)
-        )
-
-        if ids:
-            return current
-
-    return None
-
-
-def find_item_id_for_image(img):
+def find_item_id_for_image(
+    img
+):
 
     if not img:
         return None
@@ -464,17 +502,38 @@ def find_item_id_for_image(img):
             return item_id
 
     # --------------------------------------------------------
-    # 4. UNIQUE CARD WRAPPER
+    # 4. SMALL LOCAL WRAPPER
     # --------------------------------------------------------
 
-    wrapper = find_unique_card_wrapper(
-        img
-    )
+    current = img
 
-    if wrapper:
+    for _ in range(5):
+
+        current = current.parent
+
+        if not current:
+            break
+
+        local_images = current.find_all(
+            "img"
+        )
+
+        valid_player_images = [
+            x
+            for x in local_images
+            if is_real_player_card(x)
+        ]
+
+        # Never use a large wrapper containing
+        # several cards.
+        if len(valid_player_images) != 1:
+            continue
+
+        if valid_player_images[0] is not img:
+            continue
 
         ids = extract_item_ids(
-            str(wrapper)
+            str(current)
         )
 
         if ids:
@@ -504,7 +563,10 @@ def load_card_database():
 
             data = json.load(f)
 
-        if isinstance(data, dict):
+        if isinstance(
+            data,
+            dict
+        ):
             return data
 
     except Exception as e:
@@ -529,13 +591,18 @@ def finish_from_database(
     )
 
     if item_id in KNOWN_FINISHES:
-        return KNOWN_FINISHES[item_id]
+        return KNOWN_FINISHES[
+            item_id
+        ]
 
     record = database.get(
         item_id
     )
 
-    if isinstance(record, dict):
+    if isinstance(
+        record,
+        dict
+    ):
 
         finish = record.get(
             "finish"
@@ -602,7 +669,10 @@ def save_card_database(
 
     for record in database.values():
 
-        if not isinstance(record, dict):
+        if not isinstance(
+            record,
+            dict
+        ):
             continue
 
         player = record.get(
@@ -645,7 +715,10 @@ def load_previous_state():
 
             data = json.load(f)
 
-        if isinstance(data, dict):
+        if isinstance(
+            data,
+            dict
+        ):
             return data
 
     except Exception as e:
@@ -676,7 +749,7 @@ def save_previous_state(
 
 
 # ============================================================
-# FIND CHEAPEST LINEUP
+# FIND LINEUP
 # ============================================================
 
 def find_cheapest_lineup_images(
@@ -692,10 +765,13 @@ def find_cheapest_lineup_images(
     )
 
     if headings:
+
         print(
             "Cheapest grade heading found."
         )
+
     else:
+
         print(
             "Cheapest grade heading NOT found."
         )
@@ -704,52 +780,62 @@ def find_cheapest_lineup_images(
         "img"
     )
 
-    # --------------------------------------------------------
-    # ONLY VALID PLAYER / PLACEHOLDER IMAGES
-    # --------------------------------------------------------
+    valid_images = [
+        img
+        for img in all_images
+        if is_valid_lineup_image(img)
+    ]
 
-    valid_images = []
-
-    for img in all_images:
-
-        if is_valid_lineup_image(img):
-
-            valid_images.append(
-                img
-            )
-
-    real_count = sum(
-        1
+    real_players = [
+        img
         for img in valid_images
         if is_real_player_card(img)
-    )
+    ]
 
-    placeholder_count = sum(
-        1
+    placeholders = [
+        img
         for img in valid_images
         if is_player_placeholder(
             parse_player_alt(img)
         )
-    )
+    ]
 
     print(
         f"Valid lineup images found: "
         f"{len(valid_images)} "
-        f"(players={real_count}, "
-        f"placeholders={placeholder_count})"
+        f"(players={len(real_players)}, "
+        f"placeholders={len(placeholders)})"
     )
 
     # --------------------------------------------------------
-    # SEARCH CONTAINERS
+    # IMPORTANT:
+    #
+    # Find the container around the "Cheapest grade" heading
+    # first. This avoids accidentally selecting "Add players"
+    # or other UI sections.
     # --------------------------------------------------------
+
+    lineup_heading = None
+
+    for heading in headings:
+
+        if heading.parent:
+
+            lineup_heading = heading.parent
+
+            break
 
     candidates = []
 
-    for img in valid_images:
+    # --------------------------------------------------------
+    # SEARCH FROM HEADING
+    # --------------------------------------------------------
 
-        current = img
+    if lineup_heading:
 
-        for depth in range(1, 10):
+        current = lineup_heading
+
+        for depth in range(1, 12):
 
             current = current.parent
 
@@ -760,46 +846,79 @@ def find_cheapest_lineup_images(
                 "img"
             )
 
-            candidate_images = [
-                x
-                for x in images
-                if is_valid_lineup_image(x)
+            candidate = [
+                img
+                for img in images
+                if is_valid_lineup_image(img)
             ]
 
-            if len(candidate_images) != expected_slots:
+            if len(candidate) != expected_slots:
                 continue
 
-            # Candidate must contain at least one real card.
+            # Must contain at least one actual card.
             if not any(
-                is_real_player_card(x)
-                for x in candidate_images
+                is_real_player_card(img)
+                for img in candidate
             ):
-                continue
-
-            # For the current page's lineup, all selected
-            # images must be unique DOM image nodes.
-            if len(set(
-                id(x)
-                for x in candidate_images
-            )) != expected_slots:
                 continue
 
             candidates.append(
                 (
                     depth,
                     current,
-                    candidate_images
+                    candidate
                 )
             )
 
+    # --------------------------------------------------------
+    # FALLBACK SEARCH
+    # --------------------------------------------------------
+
+    if not candidates:
+
+        for img in valid_images:
+
+            current = img
+
+            for depth in range(1, 9):
+
+                current = current.parent
+
+                if not current:
+                    break
+
+                candidate = [
+                    x
+                    for x in current.find_all("img")
+                    if is_valid_lineup_image(x)
+                ]
+
+                if len(candidate) != expected_slots:
+                    continue
+
+                if not any(
+                    is_real_player_card(x)
+                    for x in candidate
+                ):
+                    continue
+
+                candidates.append(
+                    (
+                        depth,
+                        current,
+                        candidate
+                    )
+                )
+
     if candidates:
 
-        # Prefer smallest matching container.
         candidates.sort(
             key=lambda x: x[0]
         )
 
-        depth, container, images = candidates[0]
+        depth, container, images = (
+            candidates[0]
+        )
 
         print(
             f"Selected lineup candidate: "
@@ -809,21 +928,41 @@ def find_cheapest_lineup_images(
         return images
 
     # --------------------------------------------------------
-    # FALLBACK
+    # LAST FALLBACK
     # --------------------------------------------------------
 
-    # Never return arbitrary images.
-    # Only valid player/Player Card images.
-    fallback = valid_images[
-        :expected_slots
-    ]
+    # Build lineup from real player cards first,
+    # preserving placeholders only if necessary.
+    result = []
+
+    for img in valid_images:
+
+        if is_real_player_card(img):
+
+            result.append(img)
+
+            if len(result) >= expected_slots:
+                break
+
+    if len(result) < expected_slots:
+
+        for img in valid_images:
+
+            if is_player_placeholder(
+                parse_player_alt(img)
+            ):
+
+                result.append(img)
+
+                if len(result) >= expected_slots:
+                    break
 
     print(
         f"Fallback lineup candidate: "
-        f"{len(fallback)} slots"
+        f"{len(result)} slots"
     )
 
-    return fallback
+    return result
 
 
 # ============================================================
@@ -835,16 +974,13 @@ def parse_lineup_slot(
     database
 ):
 
-    player_name = parse_player_alt(
+    raw_name = parse_player_alt(
         img
     )
 
-    # --------------------------------------------------------
-    # EMPTY / PLACEHOLDER
-    # --------------------------------------------------------
-
+    # Empty slot
     if is_player_placeholder(
-        player_name
+        raw_name
     ):
 
         return {
@@ -855,10 +991,7 @@ def parse_lineup_slot(
             "empty": True,
         }
 
-    # --------------------------------------------------------
-    # INVALID IMAGE
-    # --------------------------------------------------------
-
+    # Invalid UI
     if not is_real_player_card(
         img
     ):
@@ -871,12 +1004,10 @@ def parse_lineup_slot(
             "empty": True,
         }
 
-    # --------------------------------------------------------
-    # REAL PLAYER
-    # --------------------------------------------------------
-
-    overall = extract_overall(
-        player_name
+    player_name, overall = (
+        parse_card_name_and_rating(
+            raw_name
+        )
     )
 
     item_id = find_item_id_for_image(
@@ -959,27 +1090,11 @@ def parse_category(
             database
         )
 
-        # Safety:
-        # NEVER allow Gallery Token, Grading score,
-        # FC Coin or other UI elements into the lineup.
-        if not card["empty"]:
-
-            if is_bad_ui_text(
-                card["player"]
-            ):
-                continue
-
-            if card["overall"] is None:
-                continue
-
         lineup.append(
             card
         )
 
-    # --------------------------------------------------------
-    # FILL MISSING SLOTS
-    # --------------------------------------------------------
-
+    # Fill missing positions.
     while len(lineup) < config["slots"]:
 
         lineup.append({
@@ -989,10 +1104,6 @@ def parse_category(
             "finish": "UNKNOWN",
             "empty": True,
         })
-
-    # --------------------------------------------------------
-    # LOG
-    # --------------------------------------------------------
 
     print(
         f"Rendered lineup: "
@@ -1020,15 +1131,19 @@ def parse_category(
 
 
 # ============================================================
-# CARD IDENTITY
+# IDENTITY
 # ============================================================
 
-def card_identity(card):
+def card_identity(
+    card
+):
 
     if not card:
         return None
 
-    if card.get("empty"):
+    if card.get(
+        "empty"
+    ):
         return None
 
     item_id = card.get(
@@ -1072,10 +1187,12 @@ def card_identity(card):
 
 
 # ============================================================
-# NORMALIZATION
+# NORMALIZE
 # ============================================================
 
-def normalize_card(card):
+def normalize_card(
+    card
+):
 
     if not isinstance(
         card,
@@ -1113,9 +1230,12 @@ def normalize_card(card):
     }
 
 
-def unique_cards(cards):
+def unique_cards(
+    cards
+):
 
     result = []
+
     seen = set()
 
     for card in cards:
@@ -1203,7 +1323,9 @@ def calculate_changes(
 # FORMAT
 # ============================================================
 
-def format_card(card):
+def format_card(
+    card
+):
 
     player = card.get(
         "player",
@@ -1261,7 +1383,7 @@ def send_telegram_message(
         return
 
     url = (
-        f"https://api.telegram.org/"
+        "https://api.telegram.org/"
         f"bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     )
 
@@ -1313,20 +1435,14 @@ def build_category_message(
         "<b>📋 Current lineup 📋</b>"
     )
 
-    # --------------------------------------------------------
-    # CURRENT
-    # --------------------------------------------------------
-
+    # Current lineup
     for card in current_lineup:
 
         lines.append(
             f"🟢 {format_card(card)}"
         )
 
-    # --------------------------------------------------------
     # OUT
-    # --------------------------------------------------------
-
     for card in out_cards:
 
         lines.append(
@@ -1350,16 +1466,14 @@ def build_telegram_message(
             category_name
         ]
 
-        section = build_category_message(
-            category_name,
-            CATEGORIES[category_name],
-            result["current"],
-            result["new"],
-            result["out"],
-        )
-
         sections.append(
-            section
+            build_category_message(
+                category_name,
+                CATEGORIES[category_name],
+                result["current"],
+                result["new"],
+                result["out"],
+            )
         )
 
     return (
@@ -1517,8 +1631,8 @@ def main():
                 f"{category_name}: {e}"
             )
 
-            # Do not declare everything OUT if FUT.GG
-            # temporarily fails.
+            # Do NOT wipe the previous state if
+            # FUT.GG temporarily fails.
             lineup = previous_state.get(
                 category_name,
                 []
@@ -1551,7 +1665,7 @@ def main():
         }
 
     # --------------------------------------------------------
-    # SAVE CURRENT STATE
+    # SAVE STATE
     # --------------------------------------------------------
 
     save_previous_state(
