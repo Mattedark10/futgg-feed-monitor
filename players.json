@@ -65,17 +65,16 @@
   ],
   "Season 1": [
     {
+      "player": "Cucurella",
+      "overall": 88,
+      "item_id": "67348095",
+      "finish": "PRISTINE HOLO"
+    },
+    {
       "player": "Harder",
       "overall": 88,
       "item_id": "67368151",
       "finish": "PRISTINE HOLO"
-    },
-    null,
-    {
-      "player": "Jacobo Ramón",
-      "overall": 87,
-      "item_id": "67179830",
-      "finish": "HOLO"
     },
     {
       "player": "Mora",
@@ -102,12 +101,13 @@
       "item_id": "67353040",
       "finish": "HOLO"
     },
+    null,
+    null,
     {
-      "player": "Nico Paz",
-      "overall": 87,
-      "item_id": "67386710",
-      "finish": "BASE"
-    },
-    null
+      "player": "Yohannes",
+      "overall": 86,
+      "item_id": "67386815",
+      "finish": "HOLO"
+    }
   ]
 }
