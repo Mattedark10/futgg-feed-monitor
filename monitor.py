@@ -72,14 +72,17 @@ KNOWN_FINISHES = {
     "67186651": "PRISTINE HOLO",
     "67335573": "PRISTINE HOLO",
     "67135573": "PRISTINE HOLO",   # Márquez
+
     "67335157": "PRISTINE HOLO",   # Angerer
     "67384140": "PRISTINE HOLO",   # Prinz
     "67275770": "PRISTINE HOLO",   # Baresi
     "67180472": "PRISTINE HOLO",   # Foudy
     "67298908": "PRISTINE HOLO",   # Moore
+
     "67348095": "PRISTINE HOLO",   # Cucurella
     "67368151": "PRISTINE HOLO",   # Harder
     "67382990": "PRISTINE HOLO",   # Paris Brunner
+
     "67301045": "PRISTINE HOLO",   # van Basten
     "67119128": "PRISTINE HOLO",   # van Nistelrooy
 
@@ -113,7 +116,7 @@ KNOWN_PLAYER_FINISHES = {
 
 
 # ============================================================
-# FETCH PAGE
+# FETCH
 # ============================================================
 
 def fetch_page(url):
@@ -151,7 +154,6 @@ def load_database():
             data = json.load(f)
 
         if not isinstance(data, dict):
-            print("Database has invalid format.")
             return {}
 
         print(f"Database items: {len(data)}")
@@ -164,7 +166,7 @@ def load_database():
 
 
 # ============================================================
-# TEXT HELPERS
+# TEXT
 # ============================================================
 
 def normalize_text(value):
@@ -183,7 +185,7 @@ def clean_player_name(value):
 
 
 # ============================================================
-# PARSE CARD ALT
+# CARD ALT
 # ============================================================
 
 def parse_card_alt(alt):
@@ -204,6 +206,7 @@ def parse_card_alt(alt):
         return None
 
     player = parts[0]
+
     overall = None
 
     for part in parts[1:]:
@@ -213,7 +216,9 @@ def parse_card_alt(alt):
         )
 
         if match:
-            overall = int(match.group(1))
+            overall = int(
+                match.group(1)
+            )
             break
 
     if not player or overall is None:
@@ -222,7 +227,9 @@ def parse_card_alt(alt):
     version = ""
 
     if len(parts) >= 3:
-        version = " - ".join(parts[2:])
+        version = " - ".join(
+            parts[2:]
+        )
 
     return {
         "player": clean_player_name(player),
@@ -233,7 +240,7 @@ def parse_card_alt(alt):
 
 
 # ============================================================
-# ITEM ID EXTRACTION
+# ITEM ID
 # ============================================================
 
 def extract_item_id_from_value(value):
@@ -242,11 +249,10 @@ def extract_item_id_from_value(value):
 
     value = str(value)
 
-    # FUT.GG:
+    # FUT.GG example:
     # .../2027/futgg-player-item-card/27-67335157.hash.webp
     #
-    # Prendiamo SOLO il numero dopo 27-
-    # così non viene mai letto 2027 come Item ID.
+    # Prende SOLO 67335157, mai 2027.
 
     match = re.search(
         r"(?:^|[/_-])27-(\d{4,10})(?=[./?_-]|$)",
@@ -279,8 +285,6 @@ def extract_item_id_from_value(value):
 
 
 def find_item_id_for_image(img):
-
-    # 1. Attributi dell'immagine
     attributes = [
         "src",
         "data-src",
@@ -293,13 +297,16 @@ def find_item_id_for_image(img):
         "item-id",
     ]
 
+    # 1. Immagine
     for attr in attributes:
         value = img.get(attr)
 
         if not value:
             continue
 
-        item_id = extract_item_id_from_value(value)
+        item_id = extract_item_id_from_value(
+            value
+        )
 
         if item_id:
             return item_id
@@ -316,14 +323,14 @@ def find_item_id_for_image(img):
             "item-id",
             "data-card-id",
         ]:
-            value = parent.get(attr)
-
-            item_id = extract_item_id_from_value(value)
+            item_id = extract_item_id_from_value(
+                parent.get(attr)
+            )
 
             if item_id:
                 return item_id
 
-    # 3. Link <a> più vicino
+    # 3. Link più vicino
     parent_link = img.find_parent("a")
 
     if parent_link:
@@ -335,16 +342,18 @@ def find_item_id_for_image(img):
             "item-id",
             "data-card-id",
         ]:
-            value = parent_link.get(attr)
-
-            item_id = extract_item_id_from_value(value)
+            item_id = extract_item_id_from_value(
+                parent_link.get(attr)
+            )
 
             if item_id:
                 return item_id
 
     # 4. Figli immediati del wrapper
     if parent:
-        for child in parent.find_all(recursive=False):
+        for child in parent.find_all(
+            recursive=False
+        ):
             if child is img:
                 continue
 
@@ -359,9 +368,9 @@ def find_item_id_for_image(img):
                 "data-itemid",
                 "item-id",
             ]:
-                value = child.get(attr)
-
-                item_id = extract_item_id_from_value(value)
+                item_id = extract_item_id_from_value(
+                    child.get(attr)
+                )
 
                 if item_id:
                     return item_id
@@ -374,7 +383,9 @@ def find_item_id_for_image(img):
 # ============================================================
 
 def finish_from_version(version):
-    version = normalize_text(version).lower()
+    version = normalize_text(
+        version
+    ).lower()
 
     if not version:
         return None
@@ -385,17 +396,23 @@ def finish_from_version(version):
     if "holographic" in version:
         return "HOLO"
 
-    if re.search(r"\bholo\b", version):
+    if re.search(
+        r"\bholo\b",
+        version,
+    ):
         return "HOLO"
 
     return "BASE"
 
 
 # ============================================================
-# FIND LINEUP CONTAINER
+# LINEUP CONTAINER
 # ============================================================
 
-def find_best_lineup_container(soup, target_slots):
+def find_best_lineup_container(
+    soup,
+    target_slots,
+):
     candidates = []
 
     text_nodes = soup.find_all(
@@ -418,6 +435,7 @@ def find_best_lineup_container(soup, target_slots):
                 break
 
             images = current.find_all("img")
+
             card_images = []
 
             for img in images:
@@ -432,15 +450,16 @@ def find_best_lineup_container(soup, target_slots):
                     card_images.append(img)
                     continue
 
-                parsed = parse_card_alt(alt)
-
-                if parsed:
+                if parse_card_alt(alt):
                     card_images.append(img)
 
             if len(card_images) >= target_slots:
                 candidates.append(
                     (
-                        abs(len(card_images) - target_slots),
+                        abs(
+                            len(card_images)
+                            - target_slots
+                        ),
                         len(str(current)),
                         current,
                     )
@@ -500,7 +519,7 @@ def parse_lineup(
         if not alt:
             continue
 
-        # Slot vuoto
+        # Slot FUT.GG vuoto
         if alt.lower() == "player card":
             slots.append(None)
 
@@ -518,7 +537,9 @@ def parse_lineup(
         overall = parsed["overall"]
         version = parsed["version"]
 
-        item_id = find_item_id_for_image(img)
+        item_id = find_item_id_for_image(
+            img
+        )
 
         finish = None
 
@@ -535,7 +556,9 @@ def parse_lineup(
             )
 
             if isinstance(db_item, dict):
-                db_finish = db_item.get("finish")
+                db_finish = db_item.get(
+                    "finish"
+                )
 
                 if db_finish:
                     finish = normalize_text(
@@ -544,9 +567,11 @@ def parse_lineup(
 
         # 3. Versione
         if finish is None:
-            finish = finish_from_version(version)
+            finish = finish_from_version(
+                version
+            )
 
-        # 4. Player fallback
+        # 4. Fallback giocatore
         if finish is None:
             finish = KNOWN_PLAYER_FINISHES.get(
                 player
@@ -602,11 +627,14 @@ def parse_lineup(
 
 
 # ============================================================
-# CARD KEY
+# CARD IDENTITY
 # ============================================================
 
 def card_key(card):
-    if not isinstance(card, dict):
+    if not isinstance(
+        card,
+        dict,
+    ):
         return None
 
     player = card.get("player")
@@ -616,8 +644,8 @@ def card_key(card):
 
     item_id = card.get("item_id")
 
-    # Item ID è la chiave migliore:
-    # distingue BASE / HOLO / PRISTINE
+    # Item ID distingue perfettamente
+    # BASE / HOLO / PRISTINE HOLO.
     if item_id:
         return f"item:{item_id}"
 
@@ -628,12 +656,11 @@ def card_key(card):
     )
 
 
-# ============================================================
-# VALID CARD
-# ============================================================
-
 def valid_card(card):
-    if not isinstance(card, dict):
+    if not isinstance(
+        card,
+        dict,
+    ):
         return False
 
     player = card.get("player")
@@ -641,7 +668,12 @@ def valid_card(card):
     if not player:
         return False
 
-    if str(player).strip().lower() == "player card":
+    if (
+        str(player)
+        .strip()
+        .lower()
+        == "player card"
+    ):
         return False
 
     if card.get("overall") is None:
@@ -666,20 +698,28 @@ def load_previous_state():
         ) as f:
             data = json.load(f)
 
-        if not isinstance(data, dict):
+        if not isinstance(
+            data,
+            dict,
+        ):
             return {}
 
         return data
 
     except Exception as e:
-        print(f"State load error: {e}")
+        print(
+            f"State load error: {e}"
+        )
         return {}
 
 
 def clean_state(data):
     cleaned = {}
 
-    if not isinstance(data, dict):
+    if not isinstance(
+        data,
+        dict,
+    ):
         return cleaned
 
     for category_name in CATEGORIES:
@@ -688,11 +728,19 @@ def clean_state(data):
             [],
         )
 
-        if not isinstance(cards, list):
-            cleaned[category_name] = []
+        if not isinstance(
+            cards,
+            list,
+        ):
+            cleaned[
+                category_name
+            ] = []
+
             continue
 
-        cleaned[category_name] = [
+        cleaned[
+            category_name
+        ] = [
             card
             for card in cards
             if valid_card(card)
@@ -716,6 +764,111 @@ def save_state(current_data):
 
 
 # ============================================================
+# FIND CHANGES
+# ============================================================
+
+def find_changes(
+    current_cards,
+    previous_cards,
+):
+    """
+    Confronta le carte ignorando completamente l'ordine.
+
+    Gestisce anche duplicati reali.
+
+    Ritorna:
+        new_cards
+        removed_cards
+    """
+
+    current_counts = {}
+    previous_counts = {}
+
+    current_by_key = {}
+    previous_by_key = {}
+
+    # Current
+    for card in current_cards:
+        key = card_key(card)
+
+        if key is None:
+            continue
+
+        current_counts[key] = (
+            current_counts.get(
+                key,
+                0,
+            ) + 1
+        )
+
+        current_by_key.setdefault(
+            key,
+            card,
+        )
+
+    # Previous
+    for card in previous_cards:
+        key = card_key(card)
+
+        if key is None:
+            continue
+
+        previous_counts[key] = (
+            previous_counts.get(
+                key,
+                0,
+            ) + 1
+        )
+
+        previous_by_key.setdefault(
+            key,
+            card,
+        )
+
+    new_cards = []
+    removed_cards = []
+
+    # Nuove
+    for key, count in current_counts.items():
+        previous_count = previous_counts.get(
+            key,
+            0,
+        )
+
+        difference = (
+            count - previous_count
+        )
+
+        if difference > 0:
+            for _ in range(difference):
+                new_cards.append(
+                    current_by_key[key]
+                )
+
+    # Uscite
+    for key, count in previous_counts.items():
+        current_count = current_counts.get(
+            key,
+            0,
+        )
+
+        difference = (
+            count - current_count
+        )
+
+        if difference > 0:
+            for _ in range(difference):
+                removed_cards.append(
+                    previous_by_key[key]
+                )
+
+    return (
+        new_cards,
+        removed_cards,
+    )
+
+
+# ============================================================
 # TELEGRAM
 # ============================================================
 
@@ -734,7 +887,10 @@ def telegram_escape(value):
 
 def card_display_name(card):
     player = telegram_escape(
-        card.get("player", "")
+        card.get(
+            "player",
+            "",
+        )
     )
 
     overall = card.get(
@@ -758,11 +914,15 @@ def card_display_name(card):
 
 def send_telegram_message(message):
     if not TELEGRAM_BOT_TOKEN:
-        print("TELEGRAM_BOT_TOKEN is missing.")
+        print(
+            "TELEGRAM_BOT_TOKEN is missing."
+        )
         return False
 
     if not TELEGRAM_CHAT_ID:
-        print("TELEGRAM_CHAT_ID is missing.")
+        print(
+            "TELEGRAM_CHAT_ID is missing."
+        )
         return False
 
     url = (
@@ -805,106 +965,6 @@ def send_telegram_message(message):
 
 
 # ============================================================
-# FIND CHANGES
-# ============================================================
-
-def find_changes(current_cards, previous_cards):
-    """
-    Restituisce:
-        new_cards
-        removed_cards
-
-    Ignora completamente l'ordine.
-
-    Usa anche i conteggi, quindi eventuali duplicati
-    reali vengono gestiti correttamente.
-    """
-
-    current_counts = {}
-    previous_counts = {}
-
-    current_by_key = {}
-    previous_by_key = {}
-
-    # Current
-    for card in current_cards:
-        key = card_key(card)
-
-        if key is None:
-            continue
-
-        current_counts[key] = (
-            current_counts.get(key, 0) + 1
-        )
-
-        current_by_key.setdefault(
-            key,
-            card,
-        )
-
-    # Previous
-    for card in previous_cards:
-        key = card_key(card)
-
-        if key is None:
-            continue
-
-        previous_counts[key] = (
-            previous_counts.get(key, 0) + 1
-        )
-
-        previous_by_key.setdefault(
-            key,
-            card,
-        )
-
-    new_cards = []
-    removed_cards = []
-
-    # --------------------------------------------------------
-    # IN
-    # --------------------------------------------------------
-
-    for key, current_count in current_counts.items():
-        previous_count = previous_counts.get(
-            key,
-            0,
-        )
-
-        difference = (
-            current_count - previous_count
-        )
-
-        if difference > 0:
-            for _ in range(difference):
-                new_cards.append(
-                    current_by_key[key]
-                )
-
-    # --------------------------------------------------------
-    # OUT
-    # --------------------------------------------------------
-
-    for key, previous_count in previous_counts.items():
-        current_count = current_counts.get(
-            key,
-            0,
-        )
-
-        difference = (
-            previous_count - current_count
-        )
-
-        if difference > 0:
-            for _ in range(difference):
-                removed_cards.append(
-                    previous_by_key[key]
-                )
-
-    return new_cards, removed_cards
-
-
-# ============================================================
 # BUILD TELEGRAM MESSAGE
 # ============================================================
 
@@ -913,15 +973,37 @@ def build_telegram_message(
     previous_data,
 ):
     """
-    Telegram viene generato SOLO se cambia realmente
-    almeno una carta.
+    Il messaggio viene SEMPRE inviato.
 
-    Cambio ordine = ignorato.
+    Carta già presente:
+        Nome 88 · FINISH
+
+    Carta appena entrata:
+        🟢 Nome 88 · FINISH
+
+    Carta appena uscita:
+        🔴 OUT — Nome 88 · FINISH
+
+    Il semplice cambio d'ordine NON genera
+    pallini verdi o OUT.
     """
 
-    category_changes = []
+    lines = [
+        "📋 <b>Current lineup</b> 📋",
+        "",
+    ]
 
-    for category_name in CATEGORIES:
+    category_names = list(
+        CATEGORIES.keys()
+    )
+
+    for category_index, category_name in enumerate(
+        category_names
+    ):
+        emoji = CATEGORIES[
+            category_name
+        ]["emoji"]
+
         current_slots = current_data.get(
             category_name,
             [],
@@ -944,67 +1026,80 @@ def build_telegram_message(
             if valid_card(card)
         ]
 
+        # Trova cambi reali
         new_cards, removed_cards = find_changes(
             current_cards,
             previous_cards,
         )
 
-        if new_cards or removed_cards:
-            category_changes.append(
-                {
-                    "category": category_name,
-                    "new": new_cards,
-                    "removed": removed_cards,
-                }
+        # Conteggio carte nuove.
+        # Serve per gestire correttamente
+        # anche eventuali duplicati.
+        new_counts = {}
+
+        for card in new_cards:
+            key = card_key(card)
+
+            new_counts[key] = (
+                new_counts.get(
+                    key,
+                    0,
+                ) + 1
             )
 
-    # ========================================================
-    # NOTHING CHANGED
-    # ========================================================
-
-    if not category_changes:
-        return None
-
-    # ========================================================
-    # MESSAGE
-    # ========================================================
-
-    lines = [
-        "📋 <b>Lineup changes</b> 📋",
-        "",
-    ]
-
-    for index, change in enumerate(
-        category_changes
-    ):
-        category_name = change["category"]
-
-        emoji = CATEGORIES[
-            category_name
-        ]["emoji"]
-
-        if index > 0:
-            lines.append(
-                "--------------------"
-            )
+        # ----------------------------------------------------
+        # CATEGORY
+        # ----------------------------------------------------
 
         lines.append(
             f"{emoji} "
             f"<b>{category_name.upper()}</b>"
         )
 
-        # NUOVE CARTE
-        for card in change["new"]:
-            lines.append(
-                "🟢 IN — "
-                + card_display_name(card)
-            )
+        # ----------------------------------------------------
+        # CURRENT LINEUP
+        # ----------------------------------------------------
 
-        # CARTE USCITE
-        for card in change["removed"]:
+        for card in current_cards:
+            key = card_key(card)
+
+            # Nuova carta
+            if new_counts.get(
+                key,
+                0,
+            ) > 0:
+                lines.append(
+                    "🟢 "
+                    + card_display_name(card)
+                )
+
+                new_counts[key] -= 1
+
+            # Carta già presente
+            else:
+                lines.append(
+                    card_display_name(card)
+                )
+
+        # ----------------------------------------------------
+        # OUT
+        # ----------------------------------------------------
+
+        for card in removed_cards:
             lines.append(
                 "🔴 OUT — "
                 + card_display_name(card)
+            )
+
+        # ----------------------------------------------------
+        # SEPARATOR
+        # ----------------------------------------------------
+
+        if category_index < (
+            len(category_names) - 1
+        ):
+            lines.append(
+                "--------------------"
             )
 
     return "\n".join(lines)
@@ -1021,6 +1116,7 @@ def main():
 
     database = load_database()
 
+    # Stato della precedente esecuzione
     previous_data = clean_state(
         load_previous_state()
     )
@@ -1028,7 +1124,7 @@ def main():
     current_data = {}
 
     # ========================================================
-    # SCAN
+    # SCAN FUT.GG
     # ========================================================
 
     for category_name, config in CATEGORIES.items():
@@ -1045,7 +1141,9 @@ def main():
         )
 
         try:
-            html = fetch_page(url)
+            html = fetch_page(
+                url
+            )
 
             lineup = parse_lineup(
                 html=html,
@@ -1064,10 +1162,10 @@ def main():
                 f"{category_name}: {e}"
             )
 
-            # Se FUT.GG dà errore, conserviamo
-            # lo stato precedente.
+            # Se FUT.GG ha un errore temporaneo,
+            # manteniamo la lineup precedente.
             #
-            # Così NON manda falsi OUT.
+            # In questo modo non genera falsi OUT.
             current_data[
                 category_name
             ] = previous_data.get(
@@ -1076,7 +1174,7 @@ def main():
             )
 
     # ========================================================
-    # CHANGES
+    # TELEGRAM
     # ========================================================
 
     message = build_telegram_message(
@@ -1086,28 +1184,21 @@ def main():
 
     print()
     print("=" * 60)
+    print("TELEGRAM MESSAGE")
+    print("=" * 60)
 
-    if message:
-        print("LINEUP CHANGES DETECTED")
-        print("=" * 60)
-        print(message)
-        print("=" * 60)
+    print(message)
 
-        send_telegram_message(
-            message
-        )
+    print("=" * 60)
 
-    else:
-        print("NO LINEUP CHANGES")
-        print("=" * 60)
-        print(
-            "Nothing changed. "
-            "Telegram message not sent."
-        )
-        print("=" * 60)
+    # Il messaggio viene inviato SEMPRE,
+    # anche quando non è cambiato niente.
+    send_telegram_message(
+        message
+    )
 
     # ========================================================
-    # SAVE NEW STATE
+    # SAVE STATE
     # ========================================================
 
     save_state(
@@ -1115,7 +1206,9 @@ def main():
     )
 
     print()
-    print("State saved successfully.")
+    print(
+        "State saved successfully."
+    )
 
     print(
         "Finished at:",
