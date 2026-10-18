@@ -1,36 +1,36 @@
 {
   "Heroes": [
     {
-      "player": "Grading score",
-      "overall": null,
+      "player": "Šašić - 89 - Base Hero",
+      "overall": 89,
       "item_id": null,
       "finish": "UNKNOWN",
       "empty": false
     },
     {
-      "player": "Grading score",
-      "overall": null,
+      "player": "Litmanen - 88 - Base Hero",
+      "overall": 88,
       "item_id": null,
       "finish": "UNKNOWN",
       "empty": false
     },
     {
-      "player": "Grading score",
-      "overall": null,
+      "player": "Márquez - 88 - Base Hero",
+      "overall": 88,
       "item_id": null,
       "finish": "UNKNOWN",
       "empty": false
     },
     {
-      "player": "Grading score",
-      "overall": null,
+      "player": "Milito - 88 - Base Hero",
+      "overall": 88,
       "item_id": null,
       "finish": "UNKNOWN",
       "empty": false
     },
     {
-      "player": "Grading score",
-      "overall": null,
+      "player": "Šašić - 89 - Base Hero",
+      "overall": 89,
       "item_id": null,
       "finish": "UNKNOWN",
       "empty": false
@@ -38,111 +38,111 @@
   ],
   "Holographics": [
     {
-      "player": "Grading score",
+      "player": "Player Card",
       "overall": null,
       "item_id": null,
       "finish": "UNKNOWN",
-      "empty": false
+      "empty": true
     },
     {
-      "player": "Grading score",
+      "player": "Player Card",
       "overall": null,
       "item_id": null,
       "finish": "UNKNOWN",
-      "empty": false
+      "empty": true
     },
     {
-      "player": "Grading score",
+      "player": "Player Card",
       "overall": null,
       "item_id": null,
       "finish": "UNKNOWN",
-      "empty": false
+      "empty": true
     },
     {
-      "player": "Grading score",
+      "player": "Player Card",
       "overall": null,
       "item_id": null,
       "finish": "UNKNOWN",
-      "empty": false
+      "empty": true
     },
     {
-      "player": "Grading score",
+      "player": "Player Card",
       "overall": null,
       "item_id": null,
       "finish": "UNKNOWN",
-      "empty": false
+      "empty": true
     }
   ],
   "Season 1": [
     {
-      "player": "Gallery Token",
-      "overall": null,
+      "player": "Cucurella - 88 - Destined for Glory",
+      "overall": 88,
       "item_id": null,
       "finish": "UNKNOWN",
       "empty": false
     },
     {
-      "player": "Grading score",
+      "player": "Player Card",
       "overall": null,
+      "item_id": null,
+      "finish": "UNKNOWN",
+      "empty": true
+    },
+    {
+      "player": "Player Card",
+      "overall": null,
+      "item_id": null,
+      "finish": "UNKNOWN",
+      "empty": true
+    },
+    {
+      "player": "Cucurella - 88 - Destined for Glory",
+      "overall": 88,
       "item_id": null,
       "finish": "UNKNOWN",
       "empty": false
     },
     {
-      "player": "FC Coin",
-      "overall": null,
+      "player": "Undav - 87 - Destined for Glory",
+      "overall": 87,
       "item_id": null,
       "finish": "UNKNOWN",
       "empty": false
     },
     {
-      "player": "Gallery Token",
+      "player": "Player Card",
       "overall": null,
       "item_id": null,
       "finish": "UNKNOWN",
-      "empty": false
+      "empty": true
     },
     {
-      "player": "Grading score",
+      "player": "Player Card",
       "overall": null,
       "item_id": null,
       "finish": "UNKNOWN",
-      "empty": false
+      "empty": true
     },
     {
-      "player": "FC Coin",
+      "player": "Player Card",
       "overall": null,
       "item_id": null,
       "finish": "UNKNOWN",
-      "empty": false
+      "empty": true
     },
     {
-      "player": "Gallery Token",
+      "player": "Player Card",
       "overall": null,
       "item_id": null,
       "finish": "UNKNOWN",
-      "empty": false
+      "empty": true
     },
     {
-      "player": "Grading score",
+      "player": "Player Card",
       "overall": null,
       "item_id": null,
       "finish": "UNKNOWN",
-      "empty": false
-    },
-    {
-      "player": "FC Coin",
-      "overall": null,
-      "item_id": null,
-      "finish": "UNKNOWN",
-      "empty": false
-    },
-    {
-      "player": "Gallery Token",
-      "overall": null,
-      "item_id": null,
-      "finish": "UNKNOWN",
-      "empty": false
+      "empty": true
     }
   ]
 }
