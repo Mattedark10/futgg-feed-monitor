@@ -144,5 +144,171 @@
       "finish": "HOLO",
       "empty": false
     }
+  ],
+  "heroes": [
+    {
+      "player": "Šašić",
+      "overall": 89,
+      "version": "Base Hero",
+      "item_id": "67335170",
+      "finish": "PRISTINE HOLO",
+      "empty": false
+    },
+    {
+      "player": "Litmanen",
+      "overall": 88,
+      "version": "Base Hero",
+      "item_id": "67114537",
+      "finish": "PRISTINE HOLO",
+      "empty": false
+    },
+    {
+      "player": "Márquez",
+      "overall": 88,
+      "version": "Base Hero",
+      "item_id": "67135573",
+      "finish": "PRISTINE HOLO",
+      "empty": false
+    },
+    {
+      "player": "Milito",
+      "overall": 88,
+      "version": "Base Hero",
+      "item_id": "67371135",
+      "finish": "PRISTINE HOLO",
+      "empty": false
+    },
+    {
+      "player": "Šašić",
+      "overall": 89,
+      "version": "Base Hero",
+      "item_id": "226306",
+      "finish": "BASE",
+      "empty": false
+    }
+  ],
+  "holographics": [
+    {
+      "player": "Angerer",
+      "overall": 92,
+      "version": "Base Icon",
+      "item_id": "67335157",
+      "finish": "PRISTINE HOLO",
+      "empty": false
+    },
+    {
+      "player": "Prinz",
+      "overall": 92,
+      "version": "Base Icon",
+      "item_id": "67384140",
+      "finish": "PRISTINE HOLO",
+      "empty": false
+    },
+    {
+      "player": "Baresi",
+      "overall": 91,
+      "version": "Base Icon",
+      "item_id": "67275770",
+      "finish": "PRISTINE HOLO",
+      "empty": false
+    },
+    {
+      "player": "Foudy",
+      "overall": 90,
+      "version": "Base Icon",
+      "item_id": "67180472",
+      "finish": "PRISTINE HOLO",
+      "empty": false
+    },
+    {
+      "player": "Moore",
+      "overall": 90,
+      "version": "Base Icon",
+      "item_id": "67298908",
+      "finish": "PRISTINE HOLO",
+      "empty": false
+    }
+  ],
+  "season1": [
+    {
+      "player": "Cucurella",
+      "overall": 88,
+      "version": "Destined for Glory",
+      "item_id": "67348095",
+      "finish": "PRISTINE HOLO",
+      "empty": false
+    },
+    {
+      "player": "Godts",
+      "overall": 88,
+      "version": "Future Stars",
+      "item_id": "50590026",
+      "finish": "BASE",
+      "empty": false
+    },
+    {
+      "player": "Player Card",
+      "overall": null,
+      "version": null,
+      "item_id": null,
+      "finish": null,
+      "empty": true
+    },
+    {
+      "player": "Jacobo Ramón",
+      "overall": 87,
+      "version": "Future Stars",
+      "item_id": "67179830",
+      "finish": "HOLO",
+      "empty": false
+    },
+    {
+      "player": "Mora",
+      "overall": 87,
+      "version": "Future Stars",
+      "item_id": "67188263",
+      "finish": "HOLO",
+      "empty": false
+    },
+    {
+      "player": "Bonny",
+      "overall": 87,
+      "version": "Future Stars",
+      "item_id": "67368429",
+      "finish": "HOLO",
+      "empty": false
+    },
+    {
+      "player": "Player Card",
+      "overall": null,
+      "version": null,
+      "item_id": null,
+      "finish": null,
+      "empty": true
+    },
+    {
+      "player": "Cucurella",
+      "overall": 88,
+      "version": "Destined for Glory",
+      "item_id": "50570879",
+      "finish": "BASE",
+      "empty": false
+    },
+    {
+      "player": "Undav",
+      "overall": 87,
+      "version": "Destined for Glory",
+      "item_id": "67353040",
+      "finish": "HOLO",
+      "empty": false
+    },
+    {
+      "player": "Bischof",
+      "overall": 86,
+      "version": "Future Stars",
+      "item_id": "67372629",
+      "finish": "HOLO",
+      "empty": false
+    }
   ]
 }
