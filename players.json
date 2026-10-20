@@ -51,15 +51,15 @@
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "Foudy",
-      "overall": 90,
-      "item_id": "67180472",
+      "player": "van Basten",
+      "overall": 91,
+      "item_id": "67301045",
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "Moore",
-      "overall": 90,
-      "item_id": "67298908",
+      "player": "van Nistelrooy",
+      "overall": 89,
+      "item_id": "67119128",
       "finish": "PRISTINE HOLO"
     }
   ],
@@ -70,12 +70,7 @@
       "item_id": "67368151",
       "finish": "PRISTINE HOLO"
     },
-    {
-      "player": "Godts",
-      "overall": 88,
-      "item_id": "50590026",
-      "finish": "BASE"
-    },
+    null,
     {
       "player": "Jacobo Ramón",
       "overall": 87,
