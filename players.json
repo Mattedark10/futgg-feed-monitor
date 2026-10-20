@@ -70,7 +70,12 @@
       "item_id": "67368151",
       "finish": "PRISTINE HOLO"
     },
-    null,
+    {
+      "player": "Godts",
+      "overall": 88,
+      "item_id": "50590026",
+      "finish": "BASE"
+    },
     {
       "player": "Jacobo Ramón",
       "overall": 87,
