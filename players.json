@@ -70,7 +70,12 @@
       "item_id": "67368151",
       "finish": "PRISTINE HOLO"
     },
-    null,
+    {
+      "player": "Mastantuono",
+      "overall": 88,
+      "item_id": "84165253",
+      "finish": "BASE"
+    },
     {
       "player": "Jacobo Ramón",
       "overall": 87,
@@ -89,7 +94,12 @@
       "item_id": "67368429",
       "finish": "HOLO"
     },
-    null,
+    {
+      "player": "Thompson",
+      "overall": 87,
+      "item_id": "67383677",
+      "finish": "HOLO"
+    },
     {
       "player": "Harder",
       "overall": 88,
@@ -108,6 +118,11 @@
       "item_id": "67386710",
       "finish": "BASE"
     },
-    null
+    {
+      "player": "Alajbegović",
+      "overall": 86,
+      "item_id": "67184397",
+      "finish": "BASE"
+    }
   ]
 }
