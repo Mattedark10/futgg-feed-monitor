@@ -65,10 +65,16 @@
   ],
   "Season 1": [
     {
-      "player": "Harder",
+      "player": "Cucurella",
       "overall": 88,
-      "item_id": "67368151",
+      "item_id": "67348095",
       "finish": "PRISTINE HOLO"
+    },
+    {
+      "player": "Godts",
+      "overall": 88,
+      "item_id": "50590026",
+      "finish": "BASE"
     },
     {
       "player": "Mastantuono",
@@ -101,9 +107,9 @@
       "finish": "HOLO"
     },
     {
-      "player": "Harder",
+      "player": "Cucurella",
       "overall": 88,
-      "item_id": "50590935",
+      "item_id": "50570879",
       "finish": "BASE"
     },
     {
@@ -113,16 +119,10 @@
       "finish": "HOLO"
     },
     {
-      "player": "Nico Paz",
-      "overall": 87,
-      "item_id": "67386710",
-      "finish": "BASE"
-    },
-    {
-      "player": "Alajbegović",
+      "player": "Bischof",
       "overall": 86,
-      "item_id": "67184397",
-      "finish": "BASE"
+      "item_id": "67372629",
+      "finish": "HOLO"
     }
   ]
 }
