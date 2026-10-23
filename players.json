@@ -1,9 +1,9 @@
 {
   "Heroes": [
     {
-      "player": "Vialli",
+      "player": "Šašić",
       "overall": 89,
-      "item_id": "67342564",
+      "item_id": "67335170",
       "finish": "PRISTINE HOLO"
     },
     {
@@ -71,22 +71,10 @@
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "Brunner",
+      "player": "Harder",
       "overall": 88,
-      "item_id": "50605774",
-      "finish": "BASE"
-    },
-    {
-      "player": "Mastantuono",
-      "overall": 88,
-      "item_id": "84165253",
-      "finish": "BASE"
-    },
-    {
-      "player": "Jacobo Ramón",
-      "overall": 87,
-      "item_id": "67179830",
-      "finish": "HOLO"
+      "item_id": "67368151",
+      "finish": "PRISTINE HOLO"
     },
     {
       "player": "Mora",
@@ -107,9 +95,9 @@
       "finish": "HOLO"
     },
     {
-      "player": "Cucurella",
+      "player": "Harder",
       "overall": 88,
-      "item_id": "50570879",
+      "item_id": "50590935",
       "finish": "BASE"
     },
     {
@@ -119,9 +107,21 @@
       "finish": "HOLO"
     },
     {
-      "player": "Bischof",
+      "player": "Alajbegović",
       "overall": 86,
-      "item_id": "67372629",
+      "item_id": "67184397",
+      "finish": "BASE"
+    },
+    {
+      "player": "Tresoldi",
+      "overall": 86,
+      "item_id": "67375759",
+      "finish": "BASE"
+    },
+    {
+      "player": "Yohannes",
+      "overall": 86,
+      "item_id": "67386815",
       "finish": "HOLO"
     }
   ]
