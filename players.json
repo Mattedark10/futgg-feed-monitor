@@ -71,10 +71,22 @@
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "Harder",
+      "player": "Brunner",
       "overall": 88,
-      "item_id": "67368151",
-      "finish": "PRISTINE HOLO"
+      "item_id": "50605774",
+      "finish": "BASE"
+    },
+    {
+      "player": "Mastantuono",
+      "overall": 88,
+      "item_id": "84165253",
+      "finish": "BASE"
+    },
+    {
+      "player": "Jacobo Ramón",
+      "overall": 87,
+      "item_id": "67179830",
+      "finish": "HOLO"
     },
     {
       "player": "Mora",
@@ -95,9 +107,9 @@
       "finish": "HOLO"
     },
     {
-      "player": "Harder",
+      "player": "Cucurella",
       "overall": 88,
-      "item_id": "50590935",
+      "item_id": "50570879",
       "finish": "BASE"
     },
     {
@@ -107,21 +119,9 @@
       "finish": "HOLO"
     },
     {
-      "player": "Alajbegović",
+      "player": "Bischof",
       "overall": 86,
-      "item_id": "67184397",
-      "finish": "BASE"
-    },
-    {
-      "player": "Tresoldi",
-      "overall": 86,
-      "item_id": "67375759",
-      "finish": "BASE"
-    },
-    {
-      "player": "Yohannes",
-      "overall": 86,
-      "item_id": "67386815",
+      "item_id": "67372629",
       "finish": "HOLO"
     }
   ]
