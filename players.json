@@ -7,27 +7,27 @@
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "Vialli",
-      "overall": 89,
-      "item_id": "67342564",
+      "player": "Litmanen",
+      "overall": 88,
+      "item_id": "67114537",
+      "finish": "PRISTINE HOLO"
+    },
+    {
+      "player": "Keßler",
+      "overall": 88,
+      "item_id": "67335237",
+      "finish": "PRISTINE HOLO"
+    },
+    {
+      "player": "Milito",
+      "overall": 88,
+      "item_id": "67371135",
       "finish": "PRISTINE HOLO"
     },
     {
       "player": "Šašić",
       "overall": 89,
       "item_id": "226306",
-      "finish": "BASE"
-    },
-    {
-      "player": "Vialli",
-      "overall": 89,
-      "item_id": "233700",
-      "finish": "BASE"
-    },
-    {
-      "player": "Litmanen",
-      "overall": 88,
-      "item_id": "5673",
       "finish": "BASE"
     }
   ],
@@ -65,22 +65,16 @@
   ],
   "Season 1": [
     {
+      "player": "Cucurella",
+      "overall": 88,
+      "item_id": "67348095",
+      "finish": "PRISTINE HOLO"
+    },
+    {
       "player": "Harder",
       "overall": 88,
       "item_id": "67368151",
       "finish": "PRISTINE HOLO"
-    },
-    {
-      "player": "Mastantuono",
-      "overall": 88,
-      "item_id": "84165253",
-      "finish": "BASE"
-    },
-    {
-      "player": "Jacobo Ramón",
-      "overall": 87,
-      "item_id": "67179830",
-      "finish": "HOLO"
     },
     {
       "player": "Mora",
@@ -113,16 +107,22 @@
       "finish": "HOLO"
     },
     {
-      "player": "Nico Paz",
-      "overall": 87,
-      "item_id": "67386710",
-      "finish": "BASE"
-    },
-    {
       "player": "Alajbegović",
       "overall": 86,
       "item_id": "67184397",
       "finish": "BASE"
+    },
+    {
+      "player": "Tresoldi",
+      "overall": 86,
+      "item_id": "67375759",
+      "finish": "BASE"
+    },
+    {
+      "player": "Yohannes",
+      "overall": 86,
+      "item_id": "67386815",
+      "finish": "HOLO"
     }
   ]
 }
