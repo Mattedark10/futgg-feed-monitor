@@ -7,9 +7,15 @@
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "Zamorano",
+      "player": "Litmanen",
       "overall": 88,
-      "item_id": "67186651",
+      "item_id": "67114537",
+      "finish": "PRISTINE HOLO"
+    },
+    {
+      "player": "Keßler",
+      "overall": 88,
+      "item_id": "67335237",
       "finish": "PRISTINE HOLO"
     },
     {
@@ -22,12 +28,6 @@
       "player": "Šašić",
       "overall": 89,
       "item_id": "226306",
-      "finish": "BASE"
-    },
-    {
-      "player": "Vialli",
-      "overall": 89,
-      "item_id": "233700",
       "finish": "BASE"
     }
   ],
@@ -45,9 +45,9 @@
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "Baresi",
+      "player": "van Basten",
       "overall": 91,
-      "item_id": "67275770",
+      "item_id": "67301045",
       "finish": "PRISTINE HOLO"
     },
     {
