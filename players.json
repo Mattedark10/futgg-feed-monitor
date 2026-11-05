@@ -65,33 +65,21 @@
   ],
   "Season 1": [
     {
+      "player": "Brunner",
+      "overall": 88,
+      "item_id": "67382990",
+      "finish": "PRISTINE HOLO"
+    },
+    {
       "player": "Harder",
       "overall": 88,
       "item_id": "67368151",
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "Mastantuono",
-      "overall": 88,
-      "item_id": "84165253",
-      "finish": "BASE"
-    },
-    {
-      "player": "Jacobo Ramón",
-      "overall": 87,
-      "item_id": "67179830",
-      "finish": "HOLO"
-    },
-    {
       "player": "Mora",
       "overall": 87,
       "item_id": "67188263",
-      "finish": "HOLO"
-    },
-    {
-      "player": "Bonny",
-      "overall": 87,
-      "item_id": "67368429",
       "finish": "HOLO"
     },
     {
@@ -113,15 +101,27 @@
       "finish": "HOLO"
     },
     {
-      "player": "Nico Paz",
-      "overall": 87,
-      "item_id": "67386710",
-      "finish": "BASE"
-    },
-    {
       "player": "Alajbegović",
       "overall": 86,
       "item_id": "67184397",
+      "finish": "BASE"
+    },
+    {
+      "player": "Yohannes",
+      "overall": 86,
+      "item_id": "67386815",
+      "finish": "HOLO"
+    },
+    {
+      "player": "Kökçü",
+      "overall": 86,
+      "item_id": "67352109",
+      "finish": "BASE"
+    },
+    {
+      "player": "Undav",
+      "overall": 87,
+      "item_id": "50575824",
       "finish": "BASE"
     }
   ]
