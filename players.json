@@ -7,9 +7,15 @@
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "Vialli",
-      "overall": 89,
-      "item_id": "67342564",
+      "player": "Zamorano",
+      "overall": 88,
+      "item_id": "67186651",
+      "finish": "PRISTINE HOLO"
+    },
+    {
+      "player": "Milito",
+      "overall": 88,
+      "item_id": "67371135",
       "finish": "PRISTINE HOLO"
     },
     {
@@ -22,12 +28,6 @@
       "player": "Vialli",
       "overall": 89,
       "item_id": "233700",
-      "finish": "BASE"
-    },
-    {
-      "player": "Bierhoff",
-      "overall": 86,
-      "item_id": "67324596",
       "finish": "BASE"
     }
   ],
