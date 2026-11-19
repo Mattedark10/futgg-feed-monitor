@@ -57,13 +57,19 @@
       "finish": "BASE"
     },
     {
-      "player": "Foudy",
+      "player": "Moore",
       "overall": 90,
-      "item_id": "67180472",
+      "item_id": "67298908",
       "finish": "PRISTINE HOLO"
     }
   ],
   "Season 1": [
+    {
+      "player": "Brunner",
+      "overall": 88,
+      "item_id": "67382990",
+      "finish": "PRISTINE HOLO"
+    },
     {
       "player": "Harder",
       "overall": 88,
@@ -75,30 +81,6 @@
       "overall": 88,
       "item_id": "50605774",
       "finish": "BASE"
-    },
-    {
-      "player": "Mastantuono",
-      "overall": 88,
-      "item_id": "84165253",
-      "finish": "BASE"
-    },
-    {
-      "player": "Jacobo Ramón",
-      "overall": 87,
-      "item_id": "67179830",
-      "finish": "HOLO"
-    },
-    {
-      "player": "Mora",
-      "overall": 87,
-      "item_id": "67188263",
-      "finish": "HOLO"
-    },
-    {
-      "player": "Bonny",
-      "overall": 87,
-      "item_id": "67368429",
-      "finish": "HOLO"
     },
     {
       "player": "Thompson",
@@ -119,10 +101,28 @@
       "finish": "HOLO"
     },
     {
+      "player": "Alajbegović",
+      "overall": 86,
+      "item_id": "67184397",
+      "finish": "BASE"
+    },
+    {
       "player": "Yohannes",
       "overall": 86,
       "item_id": "67386815",
       "finish": "HOLO"
+    },
+    {
+      "player": "Thompson",
+      "overall": 87,
+      "item_id": "50606461",
+      "finish": "BASE"
+    },
+    {
+      "player": "Undav",
+      "overall": 87,
+      "item_id": "50575824",
+      "finish": "BASE"
     }
   ]
 }
