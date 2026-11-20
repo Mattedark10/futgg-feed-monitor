@@ -7,9 +7,15 @@
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "Zamorano",
+      "player": "Litmanen",
       "overall": 88,
-      "item_id": "67186651",
+      "item_id": "67114537",
+      "finish": "PRISTINE HOLO"
+    },
+    {
+      "player": "Keßler",
+      "overall": 88,
+      "item_id": "67335237",
       "finish": "PRISTINE HOLO"
     },
     {
@@ -22,12 +28,6 @@
       "player": "Šašić",
       "overall": 89,
       "item_id": "226306",
-      "finish": "BASE"
-    },
-    {
-      "player": "Vialli",
-      "overall": 89,
-      "item_id": "233700",
       "finish": "BASE"
     }
   ],
@@ -45,9 +45,9 @@
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "van Basten",
+      "player": "Baresi",
       "overall": 91,
-      "item_id": "67301045",
+      "item_id": "67275770",
       "finish": "PRISTINE HOLO"
     },
     {
@@ -57,13 +57,19 @@
       "finish": "BASE"
     },
     {
-      "player": "Moore",
+      "player": "Foudy",
       "overall": 90,
-      "item_id": "67298908",
+      "item_id": "67180472",
       "finish": "PRISTINE HOLO"
     }
   ],
   "Season 1": [
+    {
+      "player": "Brunner",
+      "overall": 88,
+      "item_id": "67382990",
+      "finish": "PRISTINE HOLO"
+    },
     {
       "player": "Harder",
       "overall": 88,
@@ -71,33 +77,9 @@
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "Brunner",
-      "overall": 88,
-      "item_id": "50605774",
-      "finish": "BASE"
-    },
-    {
-      "player": "Mastantuono",
-      "overall": 88,
-      "item_id": "84165253",
-      "finish": "BASE"
-    },
-    {
-      "player": "Jacobo Ramón",
-      "overall": 87,
-      "item_id": "67179830",
-      "finish": "HOLO"
-    },
-    {
       "player": "Mora",
       "overall": 87,
       "item_id": "67188263",
-      "finish": "HOLO"
-    },
-    {
-      "player": "Bonny",
-      "overall": 87,
-      "item_id": "67368429",
       "finish": "HOLO"
     },
     {
@@ -119,10 +101,28 @@
       "finish": "HOLO"
     },
     {
+      "player": "Alajbegović",
+      "overall": 86,
+      "item_id": "67184397",
+      "finish": "BASE"
+    },
+    {
       "player": "Yohannes",
       "overall": 86,
       "item_id": "67386815",
       "finish": "HOLO"
+    },
+    {
+      "player": "Thompson",
+      "overall": 87,
+      "item_id": "50606461",
+      "finish": "BASE"
+    },
+    {
+      "player": "Yohannes",
+      "overall": 86,
+      "item_id": "50609599",
+      "finish": "BASE"
     }
   ]
 }
