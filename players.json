@@ -7,27 +7,27 @@
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "Litmanen",
-      "overall": 88,
-      "item_id": "67114537",
-      "finish": "PRISTINE HOLO"
-    },
-    {
-      "player": "Laudehr",
-      "overall": 88,
-      "item_id": "67335171",
-      "finish": "BASE"
-    },
-    {
-      "player": "Keßler",
-      "overall": 88,
-      "item_id": "67335237",
+      "player": "Vialli",
+      "overall": 89,
+      "item_id": "67342564",
       "finish": "PRISTINE HOLO"
     },
     {
       "player": "Šašić",
       "overall": 89,
       "item_id": "226306",
+      "finish": "BASE"
+    },
+    {
+      "player": "Vialli",
+      "overall": 89,
+      "item_id": "233700",
+      "finish": "BASE"
+    },
+    {
+      "player": "Al Jaber",
+      "overall": 86,
+      "item_id": "67277750",
       "finish": "BASE"
     }
   ],
@@ -69,12 +69,6 @@
       "overall": 88,
       "item_id": "67368151",
       "finish": "PRISTINE HOLO"
-    },
-    {
-      "player": "Brunner",
-      "overall": 88,
-      "item_id": "50605774",
-      "finish": "BASE"
     },
     {
       "player": "Mastantuono",
@@ -119,9 +113,15 @@
       "finish": "HOLO"
     },
     {
-      "player": "Tresoldi",
+      "player": "Nico Paz",
+      "overall": 87,
+      "item_id": "67386710",
+      "finish": "BASE"
+    },
+    {
+      "player": "Alajbegović",
       "overall": 86,
-      "item_id": "67375759",
+      "item_id": "67184397",
       "finish": "BASE"
     }
   ]
