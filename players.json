@@ -7,15 +7,9 @@
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "Litmanen",
+      "player": "Zamorano",
       "overall": 88,
-      "item_id": "67114537",
-      "finish": "PRISTINE HOLO"
-    },
-    {
-      "player": "Keßler",
-      "overall": 88,
-      "item_id": "67335237",
+      "item_id": "67186651",
       "finish": "PRISTINE HOLO"
     },
     {
@@ -28,6 +22,12 @@
       "player": "Šašić",
       "overall": 89,
       "item_id": "226306",
+      "finish": "BASE"
+    },
+    {
+      "player": "Vialli",
+      "overall": 89,
+      "item_id": "233700",
       "finish": "BASE"
     }
   ],
@@ -65,39 +65,21 @@
   ],
   "Season 1": [
     {
+      "player": "Brunner",
+      "overall": 88,
+      "item_id": "67382990",
+      "finish": "PRISTINE HOLO"
+    },
+    {
       "player": "Harder",
       "overall": 88,
       "item_id": "67368151",
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "Brunner",
-      "overall": 88,
-      "item_id": "50605774",
-      "finish": "BASE"
-    },
-    {
-      "player": "Mastantuono",
-      "overall": 88,
-      "item_id": "84165253",
-      "finish": "BASE"
-    },
-    {
-      "player": "Jacobo Ramón",
-      "overall": 87,
-      "item_id": "67179830",
-      "finish": "HOLO"
-    },
-    {
       "player": "Mora",
       "overall": 87,
       "item_id": "67188263",
-      "finish": "HOLO"
-    },
-    {
-      "player": "Bonny",
-      "overall": 87,
-      "item_id": "67368429",
       "finish": "HOLO"
     },
     {
@@ -113,9 +95,15 @@
       "finish": "BASE"
     },
     {
-      "player": "Undav",
-      "overall": 87,
-      "item_id": "67353040",
+      "player": "Alajbegović",
+      "overall": 86,
+      "item_id": "67184397",
+      "finish": "BASE"
+    },
+    {
+      "player": "Bischof",
+      "overall": 86,
+      "item_id": "67372629",
       "finish": "HOLO"
     },
     {
@@ -123,6 +111,18 @@
       "overall": 86,
       "item_id": "67386815",
       "finish": "HOLO"
+    },
+    {
+      "player": "Mora",
+      "overall": 87,
+      "item_id": "50411047",
+      "finish": "BASE"
+    },
+    {
+      "player": "Kökçü",
+      "overall": 86,
+      "item_id": "67352109",
+      "finish": "BASE"
     }
   ]
 }
