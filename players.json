@@ -71,12 +71,6 @@
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "Brunner",
-      "overall": 88,
-      "item_id": "50605774",
-      "finish": "BASE"
-    },
-    {
       "player": "Mastantuono",
       "overall": 88,
       "item_id": "84165253",
@@ -117,6 +111,12 @@
       "overall": 87,
       "item_id": "67353040",
       "finish": "HOLO"
+    },
+    {
+      "player": "Nico Paz",
+      "overall": 87,
+      "item_id": "67386710",
+      "finish": "BASE"
     },
     {
       "player": "Alajbegović",
