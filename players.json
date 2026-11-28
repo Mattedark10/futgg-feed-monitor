@@ -13,10 +13,10 @@
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "Milito",
+      "player": "Francescoli",
       "overall": 88,
-      "item_id": "67371135",
-      "finish": "PRISTINE HOLO"
+      "item_id": "67383913",
+      "finish": "BASE"
     },
     {
       "player": "Šašić",
@@ -45,22 +45,22 @@
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "Sinclair",
-      "overall": 92,
-      "item_id": "100889655",
-      "finish": "BASE"
-    },
-    {
-      "player": "Shaw",
+      "player": "Gabriel",
       "overall": 91,
-      "item_id": "67355083",
+      "item_id": "134450308",
       "finish": "BASE"
     },
     {
-      "player": "Foudy",
+      "player": "Nedvěd",
       "overall": 90,
-      "item_id": "67180472",
-      "finish": "PRISTINE HOLO"
+      "item_id": "100669531",
+      "finish": "BASE"
+    },
+    {
+      "player": "Blanc",
+      "overall": 90,
+      "item_id": "100901739",
+      "finish": "BASE"
     }
   ],
   "Season 1": [
@@ -71,9 +71,9 @@
       "finish": "PRISTINE HOLO"
     },
     {
-      "player": "Mastantuono",
+      "player": "Godts",
       "overall": 88,
-      "item_id": "84165253",
+      "item_id": "50590026",
       "finish": "BASE"
     },
     {
